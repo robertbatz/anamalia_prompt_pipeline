@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Character Schema",
+  "description": "Schema for character assets in the Anamalia Prompt Assembler",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique identifier in snake_case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "species": {
+      "type": "string",
+      "description": "Animal species"
+    },
+    "anthro_ratio": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "Anthropomorphic ratio (0.0 = full animal, 1.0 = full human)"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Textual description for prompt generation"
+    },
+    "angles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["front", "3qL", "profileL", "back", "profileR", "3qR"]
+      },
+      "uniqueItems": true,
+      "description": "Available camera angles"
+    },
+    "constraints": {
+      "type": "string",
+      "description": "Character-specific constraints"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": ["id", "version", "species", "anthro_ratio", "descriptor", "angles"],
+  "additionalProperties": false
+}

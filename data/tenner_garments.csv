@@ -1,0 +1,11 @@
+id,version,category,zones,descriptor,exclusions,notes
+denim_jacket,1.0.0,outerwear,"torso;arms","Classic blue denim jacket with brass buttons and worn texture","formal_events","Casual and durable"
+lab_coat,1.0.0,outerwear,"torso;arms","White laboratory coat with button closure and pocket details","casual_settings","Scientific and professional"
+tuxedo,1.0.0,formalwear,"torso;arms","Black tuxedo jacket with satin lapels and tailored fit","casual_events","Elegant and formal"
+hoodie,1.0.0,casualwear,"torso;arms","Comfortable hooded sweatshirt with drawstring and kangaroo pocket","formal_events","Cozy and casual"
+vest,1.0.0,outerwear,"torso","Practical vest with multiple pockets and button closure","hot_weather","Functional and layered"
+cardigan,1.0.0,outerwear,"torso;arms","Cozy knitted cardigan with button closure and ribbed texture","sporty_activities","Academic and comfortable"
+blazer,1.0.0,formalwear,"torso;arms","Professional blazer with structured shoulders and button closure","casual_settings","Smart and professional"
+overalls,1.0.0,workwear,"torso;legs","Functional denim overalls with multiple pockets and adjustable straps","formal_events","Practical and work-focused"
+sweater,1.0.0,casualwear,"torso;arms","Warm knitted sweater with cable knit texture and crew neck","hot_weather","Comfortable and cozy"
+shirt,1.0.0,casualwear,"torso;arms","Classic button-down shirt with collar and cuffed sleeves","sporty_activities","Versatile and timeless"

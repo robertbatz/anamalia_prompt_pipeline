@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Wardrobe Schema",
+  "description": "Schema for wardrobe assets in the Anamalia Prompt Assembler",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique identifier in snake_case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["headwear", "neckwear", "torso", "arms", "legs", "accessories"],
+      "description": "Wardrobe category"
+    },
+    "zones": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["head", "torso", "arms", "legs", "neck", "waist", "hands", "feet"]
+      },
+      "uniqueItems": true,
+      "description": "Body zones this item affects"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Textual description for prompt generation"
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Conditions or items to exclude"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": ["id", "version", "category", "zones", "descriptor"],
+  "additionalProperties": false
+}

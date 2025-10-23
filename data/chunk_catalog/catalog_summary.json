@@ -1,0 +1,18 @@
+{
+  "total_chunks": 11,
+  "total_combinations": 4700,
+  "chunk_breakdown": {
+    "CHUNK1": 1000,
+    "CHUNK2": 1000,
+    "CHUNK3": 100,
+    "CHUNK4": 100,
+    "CHUNK5": 100,
+    "CHUNK6": 1000,
+    "CHUNK7": 1000,
+    "CHUNK8": 100,
+    "CHUNK9": 100,
+    "CHUNK10": 100,
+    "CHUNK11": 100
+  },
+  "average_combinations_per_chunk": 427.27272727272725
+}

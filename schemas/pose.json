@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pose Schema",
+  "description": "Schema for pose assets in the Anamalia Prompt Assembler",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique identifier in snake_case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Textual description for prompt generation"
+    },
+    "gesture_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags describing the gesture/pose"
+    },
+    "rotation_deg": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "Rotation angle in degrees"
+    },
+    "wardrobe_zones_allowed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["head", "torso", "arms", "legs", "headwear", "neckwear", "accessories"]
+      },
+      "description": "Wardrobe zones compatible with this pose"
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Items or conditions to exclude"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": ["id", "version", "descriptor", "gesture_tags"],
+  "additionalProperties": false
+}

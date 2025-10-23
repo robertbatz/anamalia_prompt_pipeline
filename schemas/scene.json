@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scene Schema",
+  "description": "Schema for scene assets in the Anamalia Prompt Assembler",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique identifier in snake_case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Textual description for prompt generation"
+    },
+    "camera_framing": {
+      "type": "string",
+      "enum": ["full-body", "medium", "close-up", "wide", "detail"],
+      "description": "Camera framing type"
+    },
+    "backdrop_geom": {
+      "type": "string",
+      "enum": ["floor_wall_90_deg", "studio_white", "outdoor_natural", "indoor_cozy"],
+      "description": "Backdrop geometry type"
+    },
+    "allowed_lighting_profiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Compatible lighting profiles"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": ["id", "version", "descriptor", "camera_framing", "backdrop_geom"],
+  "additionalProperties": false
+}

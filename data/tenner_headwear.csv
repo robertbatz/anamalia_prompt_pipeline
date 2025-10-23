@@ -1,0 +1,11 @@
+id,version,category,zones,descriptor,exclusions,notes
+cowboy_hat,1.0.0,headwear,"head","Wide-brimmed felt cowboy hat with weathered texture and subtle creases","windy_environments","Classic western style"
+sideways_baseball_cap,1.0.0,headwear,"head","Casual baseball cap worn sideways with team logo and adjustable strap","formal_events","Sporty and casual"
+knights_helmet,1.0.0,headwear,"head","Medieval knight's helmet with visor and chainmail coif","modern_settings","Medieval and protective"
+top_hat,1.0.0,headwear,"head","Elegant black top hat with silk band and polished finish","casual_events","Formal and distinguished"
+beanie,1.0.0,headwear,"head","Cozy knitted beanie with ribbed texture and folded brim","hot_weather","Warm and casual"
+sun_hat,1.0.0,headwear,"head","Wide-brimmed sun hat with natural fiber texture and chin strap","indoor_settings","Protective and stylish"
+beret,1.0.0,headwear,"head","Artistic beret with soft felt texture and subtle tilt","sporty_activities","Sophisticated and creative"
+hard_hat,1.0.0,headwear,"head","Industrial hard hat with safety strap and reflective strips","formal_events","Safety-focused and practical"
+crown,1.0.0,headwear,"head","Royal crown with ornate details and precious metal finish","casual_settings","Majestic and regal"
+pilots_cap,1.0.0,headwear,"head","Aviator's cap with leather details and adjustable chin strap","medieval_settings","Adventurous and professional"

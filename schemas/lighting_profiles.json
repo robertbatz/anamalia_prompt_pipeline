@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Lighting Profiles Schema",
+  "description": "Schema for detailed lighting configurations with codified phrases",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^lighting_[0-9]{3}$",
+      "description": "Unique lighting configuration identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the lighting configuration"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 100,
+      "description": "Human-readable description of lighting setup"
+    },
+    "color_temperature_k": {
+      "type": "number",
+      "minimum": 2000,
+      "maximum": 10000,
+      "description": "Color temperature in Kelvin"
+    },
+    "direction_degrees": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 360,
+      "description": "Primary light direction in degrees"
+    },
+    "key_light_position": {
+      "type": "string",
+      "description": "Position and angle of key light"
+    },
+    "fill_light_position": {
+      "type": "string",
+      "description": "Position and intensity of fill light"
+    },
+    "shadow_softness": {
+      "type": "string",
+      "description": "Description of shadow characteristics"
+    },
+    "ambient_tone": {
+      "type": "string",
+      "description": "Overall ambient lighting tone"
+    },
+    "lighting_phrase": {
+      "type": "string",
+      "minLength": 50,
+      "maxLength": 200,
+      "description": "Codified lighting phrase for consistent prompt generation"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Additional notes about lighting usage"
+    }
+  },
+  "required": ["id", "version", "descriptor", "color_temperature_k", "direction_degrees", "key_light_position", "fill_light_position", "shadow_softness", "ambient_tone", "lighting_phrase"],
+  "additionalProperties": false
+}

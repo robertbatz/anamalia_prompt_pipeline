@@ -1,0 +1,82 @@
+[
+  {
+    "SKELETON_1":"SKELETON_1",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is wearing <T2> and <T4>."
+  },
+  {
+    "SKELETON_1":"SKELETON _2",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is wearing <T3> and <T5>."
+  },
+  {
+    "SKELETON_1":"SKELETON_3",
+    "<T1> is wearing <T2> and <T4>.":"House in <T6> made of <T7>"
+  },
+  {
+    "SKELETON_1":"SKELETON _4",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is driving a car made of <T8>."
+  },
+  {
+    "SKELETON_1":"SKELETON_5",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is <T9>."
+  },
+  {
+    "SKELETON_1":"SKELETON _6",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is juggling <T11> and <T12>"
+  },
+  {
+    "SKELETON_1":"SKELETON_7",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is dancing <T13> in setting <T14>"
+  },
+  {
+    "SKELETON_1":"SKELETON _8",
+    "<T1> is wearing <T2> and <T4>.":"<T1> competing for world record to eat the most <T15>"
+  },
+  {
+    "SKELETON_1":"SKELETON_9",
+    "<T1> is wearing <T2> and <T4>.":"<T1> competing to bake the world's larget <T16>"
+  },
+  {
+    "SKELETON_1":"SKELETON _10",
+    "<T1> is wearing <T2> and <T4>.":"<T1> performing daring feat <T17>"
+  },
+  {
+    "SKELETON_1":"SKELETON_11",
+    "<T1> is wearing <T2> and <T4>.":"<T1> performing daring feat <T18>"
+  },
+  {
+    "SKELETON_1":"SKELETON_12",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is playing music on <T26>."
+  },
+  {
+    "SKELETON_1":"SKELETON _13",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is performing trick <T27> one handed."
+  },
+  {
+    "SKELETON_1":"SKELETON _14",
+    "<T1> is wearing <T2> and <T4>.":"<T1> is performing <T28>."
+  },
+  {
+    "SKELETON_1":"SKELETON _15",
+    "<T1> is wearing <T2> and <T4>.":"<T1> retired to a quiet life <T29>."
+  },
+  {
+    "SKELETON_1":"SKELETON _16",
+    "<T1> is wearing <T2> and <T4>.":"<T1> married a <T30>."
+  },
+  {
+    "SKELETON_1":"SKELETON _17",
+    "<T1> is wearing <T2> and <T4>.":"<T1> performed <T31> and disappeared forever."
+  },
+  {
+    "SKELETON_1":"SKELETON_18",
+    "<T1> is wearing <T2> and <T4>.":"house made of <T7>"
+  },
+  {
+    "SKELETON_1":"SKELETON_19",
+    "<T1> is wearing <T2> and <T4>.":"smelled of <T10>"
+  },
+  {
+    "SKELETON_1":"SKELETON_20",
+    "<T1> is wearing <T2> and <T4>.":"left a note saying <T32>"
+  }
+]

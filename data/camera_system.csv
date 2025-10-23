@@ -1,0 +1,11 @@
+id,version,descriptor,lens_type,focal_length,camera_height,angle_degrees,shot_type,orientation,stage_position,notes
+camera_001,1.0.0,"Fixed 35mm lens, eye-level height","35mm lens",35,1.0,0,"medium shot","front-facing","center","Canonical camera position for anthropomorphic characters"
+camera_002,1.0.0,"35mm lens, 3/4 human height","35mm lens",35,0.75,5,"medium shot","front-facing","center","Slightly elevated for better character framing"
+camera_003,1.0.0,"35mm lens, low angle","35mm lens",35,0.5,10,"low angle","front-facing","center","Dramatic low angle for heroic poses"
+camera_004,1.0.0,"35mm lens, high angle","35mm lens",35,1.5,-5,"high angle","front-facing","center","Overhead perspective for scene context"
+camera_005,1.0.0,"35mm lens, 3/4 left profile","35mm lens",35,1.0,0,"medium shot","3/4-left","center","Classic 3/4 profile for character depth"
+camera_006,1.0.0,"35mm lens, 3/4 right profile","35mm lens",35,1.0,0,"medium shot","3/4-right","center","Mirror of 3/4 left for variety"
+camera_007,1.0.0,"35mm lens, pure profile","35mm lens",35,1.0,0,"medium shot","profile-left","center","Side profile for silhouette emphasis"
+camera_008,1.0.0,"35mm lens, back 3/4","35mm lens",35,1.0,0,"medium shot","back-3/4","center","Rear perspective for environmental storytelling"
+camera_009,1.0.0,"50mm lens, tight portrait","50mm lens",50,1.0,0,"close-up","front-facing","center","Tighter framing for emotional moments"
+camera_010,1.0.0,"24mm lens, wide establishing","24mm lens",24,1.0,0,"wide shot","front-facing","center","Wide view for scene establishment"

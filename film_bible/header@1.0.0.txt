@@ -1,0 +1,49 @@
+# Anamalia Film Bible v1.0.0
+
+## Global Visual Constants
+
+### Camera System
+- Lens: 35mm
+- Height: Eye-level, tripod at 1m
+- Angle: 5° downward tilt
+- Framing: Consistent across all shots
+
+### Lighting Setup
+- Primary: Warm late-afternoon sunlight (4800K)
+- Direction: Front-left at 45° angle
+- Fill: Soft fill from right side
+- Rim: Subtle rim light for depth
+- Shadows: Diffused floor shadows
+
+### Material DNA
+- Body: Felted wool with visible fibers
+- Eyes: Hyper-realistic, expressive
+- Nose: Detailed, realistic texture
+- Gestures: Human-style expressive movements
+- Scale: Miniature stop-motion aesthetic
+
+### Backdrop Geometry
+- Floor: Matte off-white
+- Wall: Matte off-white
+- Junction: 90° angle where floor meets wall
+- Shadows: Subtle contact shadows
+
+### Color & Tone
+- Contrast: Soft, gentle
+- Palette: Warm, golden undertones
+- Film Look: Ektachrome-style
+- Mood: Nostalgic, handcrafted warmth
+
+### Emotional Tone
+- Atmosphere: Warm, optimistic, familiar
+- Expressions: Humanlike but not exaggerated
+- Energy: Gentle humor, nostalgia
+- Craft: Handcrafted, artisanal feel
+
+## Continuity Anchors
+These elements must remain constant across all renders:
+- Camera position and angle
+- Lighting direction and temperature
+- Material texture and feel
+- Backdrop geometry
+- Overall emotional tone

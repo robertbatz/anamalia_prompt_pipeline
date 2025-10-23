@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Texture Directives Schema",
+  "description": "Schema for material and texture consistency directives",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^texture_[0-9]{3}$",
+      "description": "Unique texture directive identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the texture directive"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 100,
+      "description": "Human-readable description of texture directive"
+    },
+    "material_type": {
+      "type": "string",
+      "description": "Primary material type"
+    },
+    "texture_characteristics": {
+      "type": "string",
+      "description": "Detailed texture characteristics"
+    },
+    "specular_properties": {
+      "type": "string",
+      "description": "Specular reflection properties"
+    },
+    "render_style": {
+      "type": "string",
+      "description": "Render style characteristics"
+    },
+    "texture_phrase": {
+      "type": "string",
+      "minLength": 50,
+      "maxLength": 300,
+      "description": "Codified texture phrase for consistent prompt generation"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Additional notes about texture usage"
+    }
+  },
+  "required": ["id", "version", "descriptor", "material_type", "texture_characteristics", "specular_properties", "render_style", "texture_phrase"],
+  "additionalProperties": false
+}

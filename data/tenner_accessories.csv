@@ -1,0 +1,11 @@
+id,version,category,zones,descriptor,exclusions,notes
+glasses,1.0.0,eyewear,"head","Round wire-rimmed glasses with clear lenses and subtle frame","sporty_activities","Intellectual and scholarly"
+watch,1.0.0,timepiece,"arms","Classic wristwatch with leather strap and analog face","water_activities","Time-conscious and professional"
+scarf,1.0.0,neckwear,"neck","Silk scarf with geometric pattern and soft drape","hot_weather","Stylish and protective"
+gloves,1.0.0,handwear,"hands","Leather gloves with fine stitching and comfortable fit","casual_settings","Practical and refined"
+belt,1.0.0,waistwear,"waist","Leather belt with brass buckle and subtle texture","loose_clothing","Functional and stylish"
+tie,1.0.0,neckwear,"neck","Silk necktie with subtle pattern and perfect knot","casual_settings","Professional and formal"
+bow_tie,1.0.0,neckwear,"neck","Black bow tie with satin finish and adjustable strap","casual_settings","Distinguished and quirky"
+suspenders,1.0.0,waistwear,"torso","Classic suspenders with metal clips and elastic straps","formal_events","Vintage and practical"
+cufflinks,1.0.0,formalwear,"arms","Silver cufflinks with engraved details and polished finish","casual_settings","Elegant and formal"
+pocket_square,1.0.0,formalwear,"torso","White pocket square with folded edges and silk texture","casual_settings","Sophisticated and dapper"

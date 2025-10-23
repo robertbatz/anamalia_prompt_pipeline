@@ -1,0 +1,123 @@
+{
+  "metadata": {
+    "name": "Anamalia Prompt Assembler Templates",
+    "generated_at": "20251023_112501",
+    "notes": "Each top-level key corresponds to a sheet. Replace example objects with your real data. Values should align with the CSV headers."
+  },
+  "film_bible_version": "film_bible@1.0.0",
+  "vocabulary_version": "lexicon@v1",
+  "characters": [
+    {
+      "id": "ruby_rhino",
+      "version": "1.0.3",
+      "species": "rhinoceros",
+      "anthro_ratio": 0.8,
+      "descriptor": "Felted wool rhinoceros with hyper-realistic eyes and expressive posture.",
+      "angles": [
+        "front",
+        "3qL",
+        "profileL",
+        "back",
+        "profileR",
+        "3qR"
+      ],
+      "constraints": "no clothes by default",
+      "notes": "Friendly and welcoming personality"
+    }
+  ],
+  "poses": [
+    {
+      "id": "arms_open_welcome",
+      "version": "1.1",
+      "descriptor": "Arms wide, palms forward, weight centered, cheerful posture.",
+      "gesture_tags": [
+        "welcome",
+        "greeting",
+        "open"
+      ],
+      "rotation_deg": 15,
+      "wardrobe_zones_allowed": [
+        "torso",
+        "headwear",
+        "neckwear"
+      ],
+      "exclusions": [],
+      "notes": "Optimistic energy"
+    }
+  ],
+  "wardrobe": [
+    {
+      "id": "sunhat",
+      "version": "1.0",
+      "category": "headwear",
+      "zones": [
+        "head"
+      ],
+      "descriptor": "Broad-brimmed straw sunhat with subtle felted texture and tiny stitching imperfections.",
+      "exclusions": [
+        "windy_environments"
+      ],
+      "notes": "Optional for outdoor scenes"
+    }
+  ],
+  "props": [
+    {
+      "id": "teacup",
+      "version": "1.0",
+      "category": "tabletop",
+      "held_or_grounded": "held",
+      "descriptor": "Porcelain teacup with fine crackle glaze, miniature stop-motion scale.",
+      "notes": "Use in indoor scenes only"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "piazza_v2",
+      "version": "2.0",
+      "descriptor": "Miniature cobblestone piazza stage; matte off-white wall meets floor at 90°.",
+      "camera_framing": "full-body",
+      "backdrop_geom": "floor_wall_90_deg",
+      "allowed_lighting_profiles": [
+        "golden_hour_v1",
+        "overcast_v1"
+      ],
+      "notes": "Use for outdoor day scenes"
+    }
+  ],
+  "lighting_profiles": [
+    {
+      "id": "golden_hour_v1",
+      "version": "1.0",
+      "descriptor": "Warm directional sunlight 45° from front-left with soft fill and gentle rim light.",
+      "temperature_K": 4800,
+      "key_dir_deg": 45,
+      "fill_logic": "opposite_side_25pct",
+      "rim_logic": "subtle_back_rim_15pct"
+    }
+  ],
+  "model_profiles": [
+    {
+      "id": "t2i_model_x@0.9",
+      "version": "0.9",
+      "model_name": "t2i-model-x",
+      "sampler": "DPM++",
+      "steps": 28,
+      "cfg": 5.5,
+      "resolution": "1920x1920",
+      "notes": "Base rendering setup"
+    }
+  ],
+  "lexicon": [
+    {
+      "category": "Material",
+      "term": "felted",
+      "allowed": true,
+      "synonyms": [
+        "woolen",
+        "fibrous",
+        "handcrafted"
+      ],
+      "notes": "Use for body or wardrobe materials"
+    }
+  ]
+}

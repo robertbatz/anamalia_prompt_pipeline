@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Lighting Profile Schema",
+  "description": "Schema for lighting profile assets in the Anamalia Prompt Assembler",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique identifier in snake_case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Textual description for prompt generation"
+    },
+    "temperature_K": {
+      "type": "number",
+      "minimum": 2000,
+      "maximum": 10000,
+      "description": "Light temperature in Kelvin"
+    },
+    "key_dir_deg": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 360,
+      "description": "Key light direction in degrees"
+    },
+    "fill_logic": {
+      "type": "string",
+      "enum": ["opposite_side_25pct", "same_side_50pct", "ambient_only", "no_fill"],
+      "description": "Fill light logic"
+    },
+    "rim_logic": {
+      "type": "string",
+      "enum": ["subtle_back_rim_15pct", "strong_rim_30pct", "no_rim", "hair_light"],
+      "description": "Rim light logic"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": ["id", "version", "descriptor", "temperature_K", "key_dir_deg"],
+  "additionalProperties": false
+}

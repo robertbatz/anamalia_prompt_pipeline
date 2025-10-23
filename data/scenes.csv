@@ -1,0 +1,2 @@
+id,version,descriptor,camera_framing,backdrop_geom,allowed_lighting_profiles,notes
+piazza_v2,2.0.0,"Miniature cobblestone piazza stage; matte off-white wall meets floor at 90°",full-body,floor_wall_90_deg,"golden_hour_v1;overcast_v1","Use for outdoor day scenes"

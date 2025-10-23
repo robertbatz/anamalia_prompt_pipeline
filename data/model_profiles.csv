@@ -1,0 +1,2 @@
+id,version,model_name,sampler,steps,cfg,resolution,notes
+t2i_model_x@0.9,0.9.0,t2i-model-x,DPM++,28,5.5,1920x1920,"Base rendering setup"

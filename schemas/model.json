@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Model Profile Schema",
+  "description": "Schema for model profile assets in the Anamalia Prompt Assembler",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_@]+$",
+      "description": "Unique identifier with version"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Model name"
+    },
+    "sampler": {
+      "type": "string",
+      "enum": ["DPM++", "Euler", "DDIM", "LMS", "Heun", "DPM2"],
+      "description": "Sampling method"
+    },
+    "steps": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Number of sampling steps"
+    },
+    "cfg": {
+      "type": "number",
+      "minimum": 1.0,
+      "maximum": 20.0,
+      "description": "Classifier-free guidance scale"
+    },
+    "resolution": {
+      "type": "string",
+      "pattern": "^\\d+x\\d+$",
+      "description": "Output resolution (e.g., 1920x1920)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": ["id", "version", "model_name", "sampler", "steps", "cfg", "resolution"],
+  "additionalProperties": false
+}

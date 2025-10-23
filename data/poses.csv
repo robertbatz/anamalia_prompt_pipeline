@@ -1,0 +1,2 @@
+id,version,descriptor,gesture_tags,rotation_deg,wardrobe_zones_allowed,exclusions,notes
+arms_open_welcome,1.1.0,"Arms wide, palms forward, weight centered, cheerful posture","welcome;greeting;open",15,"torso;headwear;neckwear",,"Optimistic energy"

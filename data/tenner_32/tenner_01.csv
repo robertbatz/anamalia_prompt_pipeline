@@ -1,0 +1,11 @@
+id,version,descriptor,option_index,notes
+tenner_01_00,1.0.0,rhino named Ruby,0,Tenner 1 option 0
+tenner_01_01,1.0.0,mouse named Maxine,1,Tenner 1 option 1
+tenner_01_02,1.0.0,sloth named Sammy,2,Tenner 1 option 2
+tenner_01_03,1.0.0,lion named Lisa,3,Tenner 1 option 3
+tenner_01_04,1.0.0,moose named Mabel,4,Tenner 1 option 4
+tenner_01_05,1.0.0,bear named Betty,5,Tenner 1 option 5
+tenner_01_06,1.0.0,wolf named Wendy,6,Tenner 1 option 6
+tenner_01_07,1.0.0,orangutan named Ozzie,7,Tenner 1 option 7
+tenner_01_08,1.0.0,gazelle named Gertrude,8,Tenner 1 option 8
+tenner_01_09,1.0.0,raccoon named Ramona,9,Tenner 1 option 9

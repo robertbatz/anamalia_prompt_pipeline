@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Camera System Schema",
+  "description": "Schema for virtual stop-motion stage camera configurations",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^camera_[0-9]{3}$",
+      "description": "Unique camera configuration identifier"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the camera configuration"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 100,
+      "description": "Human-readable description of camera configuration"
+    },
+    "lens_type": {
+      "type": "string",
+      "enum": ["35mm lens", "50mm lens", "24mm lens", "85mm lens", "macro lens"],
+      "description": "Type of lens used"
+    },
+    "focal_length": {
+      "type": "number",
+      "minimum": 16,
+      "maximum": 200,
+      "description": "Focal length in millimeters"
+    },
+    "camera_height": {
+      "type": "number",
+      "minimum": 0.3,
+      "maximum": 2.0,
+      "description": "Camera height in meters relative to stage"
+    },
+    "angle_degrees": {
+      "type": "number",
+      "minimum": -30,
+      "maximum": 30,
+      "description": "Camera angle in degrees (negative = looking down, positive = looking up)"
+    },
+    "shot_type": {
+      "type": "string",
+      "enum": ["close-up", "medium shot", "wide shot", "low angle", "high angle", "establishing shot"],
+      "description": "Type of shot composition"
+    },
+    "orientation": {
+      "type": "string",
+      "enum": ["front-facing", "3/4-left", "3/4-right", "profile-left", "profile-right", "back-3/4", "back-facing"],
+      "description": "Camera orientation relative to subject"
+    },
+    "stage_position": {
+      "type": "string",
+      "enum": ["center", "left", "right", "back", "front"],
+      "description": "Camera position on the virtual stage"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Additional notes about camera usage"
+    }
+  },
+  "required": ["id", "version", "descriptor", "lens_type", "focal_length", "camera_height", "angle_degrees", "shot_type", "orientation", "stage_position"],
+  "additionalProperties": false
+}

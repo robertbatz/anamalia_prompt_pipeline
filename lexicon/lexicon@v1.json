@@ -1,0 +1,252 @@
+{
+  "metadata": {
+    "name": "Anamalia Lexicon v1",
+    "version": "v1",
+    "description": "Controlled vocabulary for consistent prompt generation",
+    "created_at": "2025-01-23"
+  },
+  "categories": {
+    "Material": {
+      "felted": {
+        "allowed": true,
+        "synonyms": ["woolen", "fibrous", "handcrafted"],
+        "notes": "Use for body or wardrobe materials"
+      },
+      "woolen": {
+        "allowed": true,
+        "synonyms": ["felted", "fibrous"],
+        "notes": "Natural fiber texture"
+      },
+      "matte": {
+        "allowed": true,
+        "synonyms": ["non-reflective", "dull"],
+        "notes": "Surface finish"
+      },
+      "wool": {
+        "allowed": true,
+        "synonyms": ["felted", "fibrous"],
+        "notes": "Natural fiber"
+      },
+      "texture": {
+        "allowed": true,
+        "synonyms": ["surface", "feel"],
+        "notes": "Material surface quality"
+      },
+      "porcelain": {
+        "allowed": true,
+        "synonyms": ["ceramic", "china"],
+        "notes": "Material type"
+      },
+      "crackle": {
+        "allowed": true,
+        "synonyms": ["cracked", "webbed"],
+        "notes": "Surface pattern"
+      },
+      "glaze": {
+        "allowed": true,
+        "synonyms": ["coating", "finish"],
+        "notes": "Surface treatment"
+      }
+    },
+    "Light": {
+      "warm": {
+        "allowed": true,
+        "synonyms": ["golden", "amber"],
+        "notes": "Light temperature"
+      },
+      "directional": {
+        "allowed": true,
+        "synonyms": ["focused", "key"],
+        "notes": "Light type"
+      },
+      "diffused": {
+        "allowed": true,
+        "synonyms": ["soft", "gentle"],
+        "notes": "Light quality"
+      },
+      "golden-hour": {
+        "allowed": true,
+        "synonyms": ["late-afternoon", "warm-sunlight"],
+        "notes": "Time of day lighting"
+      }
+    },
+    "Color": {
+      "ochre": {
+        "allowed": true,
+        "synonyms": ["warm-yellow", "earth-tone"],
+        "notes": "Warm earth color"
+      },
+      "cream": {
+        "allowed": true,
+        "synonyms": ["off-white", "ivory"],
+        "notes": "Neutral warm color"
+      },
+      "soft-pink": {
+        "allowed": true,
+        "synonyms": ["blush", "gentle-pink"],
+        "notes": "Subtle accent color"
+      },
+      "muted-blue": {
+        "allowed": true,
+        "synonyms": ["dusty-blue", "pale-blue"],
+        "notes": "Cool accent color"
+      }
+    },
+    "Composition": {
+      "miniature": {
+        "allowed": true,
+        "synonyms": ["small-scale", "tiny"],
+        "notes": "Size reference"
+      },
+      "tabletop": {
+        "allowed": true,
+        "synonyms": ["studio", "controlled"],
+        "notes": "Setting type"
+      },
+      "cinematic-depth": {
+        "allowed": true,
+        "synonyms": ["layered", "dimensional"],
+        "notes": "Visual depth"
+      }
+    },
+    "Tone": {
+      "nostalgic": {
+        "allowed": true,
+        "synonyms": ["sentimental", "warm-memory"],
+        "notes": "Emotional quality"
+      },
+      "cheerful": {
+        "allowed": true,
+        "synonyms": ["optimistic", "bright"],
+        "notes": "Mood descriptor"
+      },
+      "gentle": {
+        "allowed": true,
+        "synonyms": ["soft", "tender"],
+        "notes": "Character quality"
+      },
+      "inviting": {
+        "allowed": true,
+        "synonyms": ["welcoming", "approachable"],
+        "notes": "Atmosphere descriptor"
+      },
+      "friendly": {
+        "allowed": true,
+        "synonyms": ["welcoming", "approachable"],
+        "notes": "Character trait"
+      },
+      "optimistic": {
+        "allowed": true,
+        "synonyms": ["positive", "hopeful"],
+        "notes": "Mood descriptor"
+      }
+    },
+    "Common": {
+      "with": {
+        "allowed": true,
+        "synonyms": ["featuring", "including"],
+        "notes": "Common preposition"
+      },
+      "and": {
+        "allowed": true,
+        "synonyms": ["plus", "also"],
+        "notes": "Common conjunction"
+      },
+      "the": {
+        "allowed": true,
+        "synonyms": [],
+        "notes": "Common article"
+      },
+      "a": {
+        "allowed": true,
+        "synonyms": ["an"],
+        "notes": "Common article"
+      },
+      "an": {
+        "allowed": true,
+        "synonyms": ["a"],
+        "notes": "Common article"
+      },
+      "in": {
+        "allowed": true,
+        "synonyms": ["within", "inside"],
+        "notes": "Common preposition"
+      },
+      "for": {
+        "allowed": true,
+        "synonyms": ["to", "toward"],
+        "notes": "Common preposition"
+      },
+      "of": {
+        "allowed": true,
+        "synonyms": ["from", "belonging"],
+        "notes": "Common preposition"
+      },
+      "to": {
+        "allowed": true,
+        "synonyms": ["toward", "for"],
+        "notes": "Common preposition"
+      },
+      "at": {
+        "allowed": true,
+        "synonyms": ["on", "near"],
+        "notes": "Common preposition"
+      },
+      "on": {
+        "allowed": true,
+        "synonyms": ["at", "upon"],
+        "notes": "Common preposition"
+      },
+      "by": {
+        "allowed": true,
+        "synonyms": ["near", "beside"],
+        "notes": "Common preposition"
+      },
+      "from": {
+        "allowed": true,
+        "synonyms": ["of", "out"],
+        "notes": "Common preposition"
+      },
+      "only": {
+        "allowed": true,
+        "synonyms": ["just", "merely"],
+        "notes": "Common adverb"
+      },
+      "use": {
+        "allowed": true,
+        "synonyms": ["utilize", "employ"],
+        "notes": "Common verb"
+      },
+      "scenes": {
+        "allowed": true,
+        "synonyms": ["settings", "environments"],
+        "notes": "Common noun"
+      },
+      "outdoor": {
+        "allowed": true,
+        "synonyms": ["exterior", "outside"],
+        "notes": "Environment type"
+      },
+      "indoor": {
+        "allowed": true,
+        "synonyms": ["interior", "inside"],
+        "notes": "Environment type"
+      },
+      "base": {
+        "allowed": true,
+        "synonyms": ["foundation", "fundamental"],
+        "notes": "Common adjective"
+      },
+      "rendering": {
+        "allowed": true,
+        "synonyms": ["generating", "creating"],
+        "notes": "Process term"
+      },
+      "setup": {
+        "allowed": true,
+        "synonyms": ["configuration", "arrangement"],
+        "notes": "Process term"
+      }
+    }
+  }
+}

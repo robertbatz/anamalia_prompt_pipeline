@@ -1,0 +1,10 @@
+{
+  "id": "golden_hour_v1",
+  "version": "1.0.0",
+  "descriptor": "Warm directional sunlight 45\u00b0 from front-left with soft fill and gentle rim light",
+  "temperature_K": 4800,
+  "key_dir_deg": 45,
+  "fill_logic": "opposite_side_25pct",
+  "rim_logic": "subtle_back_rim_15pct",
+  "notes": ""
+}

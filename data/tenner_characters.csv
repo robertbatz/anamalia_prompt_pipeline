@@ -1,0 +1,11 @@
+id,version,species,name,personality,descriptor,angles,constraints,notes
+ruby_rhino,1.0.0,rhinoceros,Ruby,friendly,"Felted wool rhinoceros with hyper-realistic eyes and expressive posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Friendly and welcoming personality"
+maxine_mouse,1.0.0,mouse,Maxine,curious,"Felted wool mouse with bright eyes and energetic posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Curious and energetic personality"
+sammy_sloth,1.0.0,sloth,Sammy,calm,"Felted wool sloth with gentle eyes and relaxed posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Calm and thoughtful personality"
+bella_bear,1.0.0,bear,Bella,strong,"Felted wool bear with warm eyes and protective posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Strong and protective personality"
+felix_fox,1.0.0,fox,Felix,clever,"Felted wool fox with intelligent eyes and mischievous posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Clever and mischievous personality"
+luna_wolf,1.0.0,wolf,Luna,mysterious,"Felted wool wolf with wise eyes and confident posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Mysterious and wise personality"
+oscar_owl,1.0.0,owl,Oscar,intelligent,"Felted wool owl with observant eyes and thoughtful posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Intelligent and observant personality"
+penny_penguin,1.0.0,penguin,Penny,cheerful,"Felted wool penguin with bright eyes and social posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Cheerful and social personality"
+rex_rabbit,1.0.0,rabbit,Rex,quick,"Felted wool rabbit with alert eyes and agile posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Quick and agile personality"
+zara_zebra,1.0.0,zebra,Zara,elegant,"Felted wool zebra with graceful eyes and refined posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Elegant and graceful personality"

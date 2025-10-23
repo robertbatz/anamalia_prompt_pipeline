@@ -1,0 +1,11 @@
+id,version,category,held_or_grounded,descriptor,notes
+book,1.0.0,literature,held,"Leather-bound book with gold lettering and aged pages","Symbol of knowledge and learning"
+camera,1.0.0,equipment,held,"Vintage camera with leather strap and brass details","Creative and observant tool"
+tool,1.0.0,equipment,held,"Wooden-handled tool with metal head and worn grip","Practical and skilled implement"
+instrument,1.0.0,music,held,"Wooden musical instrument with strings and polished finish","Musical and artistic expression"
+flower,1.0.0,nature,held,"Delicate flower with soft petals and natural colors","Natural and gentle beauty"
+cup,1.0.0,tableware,held,"Porcelain teacup with fine crackle glaze and delicate handle","Social and comforting vessel"
+bag,1.0.0,container,held,"Leather satchel with brass buckles and worn texture","Prepared and organized storage"
+flag,1.0.0,symbol,held,"Colorful flag with fabric texture and pole attachment","Patriotic and proud symbol"
+key,1.0.0,metalwork,held,"Brass key with ornate design and tarnished patina","Access and responsibility token"
+coin,1.0.0,currency,held,"Gold coin with engraved details and smooth edges","Value and trade medium"

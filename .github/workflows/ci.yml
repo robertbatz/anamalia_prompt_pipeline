@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Validate data integrity
+      run: |
+        python scripts/pa.py validate --verbose
+        
+    - name: Convert CSV to JSON assets
+      run: |
+        python scripts/pa.py convert --verbose
+        
+    - name: Test spec composition
+      run: |
+        python scripts/pa.py compose --characters ruby_rhino --poses arms_open_welcome --scenes piazza_v2 --verbose
+        
+    - name: Test assembly from specs
+      run: |
+        python scripts/pa.py assemble --specs specs --verbose
+        
+    - name: Test matrix assembly
+      run: |
+        python scripts/pa.py assemble --matrix characters,poses,scenes --verbose
+        
+    - name: Test Tenner system
+      run: |
+        python scripts/pa.py tenner-chunks --chunks 1 --verbose
+        
+    - name: Test individual Tenners
+      run: |
+        python scripts/pa.py individual-tenners --tenners 1 --verbose
+        
+    - name: Run tests
+      run: |
+        python -m pytest tests/ -v
+        
+    - name: Check for linting errors
+      run: |
+        python -m flake8 scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        python -m flake8 scripts/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
+    - name: Upload logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: logs-${{ matrix.python-version }}
+        path: logs/
+        
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install safety bandit
+        
+    - name: Security check with safety
+      run: |
+        safety check --json --output safety-report.json || true
+        
+    - name: Security check with bandit
+      run: |
+        bandit -r scripts/ -f json -o bandit-report.json || true
+        
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-reports
+        path: |
+          safety-report.json
+          bandit-report.json
