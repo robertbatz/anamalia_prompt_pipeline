@@ -1412,9 +1412,10 @@ class AnamaliaViewer {
             // Load the Tenner summary to get category names
             const summaryResponse = await fetch('data/tenner_32/tenner_summary.json');
             if (!summaryResponse.ok) {
-                console.warn('⚠️ Could not load Tenner summary, using fallback data');
-                console.log('Summary response status:', summaryResponse.status);
-                this.tennerData = this.getFallbackTennerData();
+                console.error('❌ Could not load Tenner summary!');
+                console.error('Summary response status:', summaryResponse.status);
+                console.error('❌ Real Tenner data must be available - no fallback data will be used');
+                this.tennerData = null;
                 return;
             }
             
@@ -1449,9 +1450,24 @@ class AnamaliaViewer {
             }
             
             console.log(`✅ Loaded ${Object.keys(this.tennerData.categories).length} Tenner categories`);
+            
+            // Debug: Check if T2 has the correct data
+            if (this.tennerData.categories['T2']) {
+                const t2Options = this.tennerData.categories['T2'];
+                console.log('🔍 T2 loaded options:', t2Options.length);
+                const option9 = t2Options.find(opt => opt.option_index === 9);
+                if (option9) {
+                    console.log('🔍 T2 option 9 descriptor:', option9.descriptor);
+                } else {
+                    console.warn('⚠️ T2 option 9 not found');
+                }
+            } else {
+                console.warn('⚠️ T2 not found in loaded categories');
+            }
         } catch (error) {
             console.error('❌ Error loading Tenner data:', error);
-            this.tennerData = this.getFallbackTennerData();
+            console.error('❌ Real Tenner data must be available - no fallback data will be used');
+            this.tennerData = null;
         }
     }
     
