@@ -24,7 +24,10 @@ class AnamaliaViewer {
         await this.loadRenders();
         
         // Load Tenner data
+        console.log('🔄 About to load Tenner data...');
         await this.loadTennerData();
+        console.log('🔄 Tenner data loading completed');
+        console.log('🔍 Tenner data after loading:', this.tennerData);
         
         // Set up event listeners
         this.setupEventListeners();
