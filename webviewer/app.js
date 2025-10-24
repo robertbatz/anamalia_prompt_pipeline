@@ -480,28 +480,28 @@ class AnamaliaViewer {
     loadChunkMappings() {
         // Define chunk mappings based on skeleton definitions
         // These correspond to SKELETON_1 through SKELETON_20 in the JSON file
-        // Based on the Tenner system: T1=Characters, T2=Headwear, T3=Garments, etc.
+        // Tenner system uses real data from JSON file
         return {
-            'CHUNK1': ['T1', 'T2', 'T4'],      // Characters + Headwear + Accessories
-            'CHUNK2': ['T1', 'T3', 'T5'],      // Characters + Garments + Props
-            'CHUNK3': ['T6', 'T7'],             // Scenes + Materials (corrected from T1+T6)
-            'CHUNK4': ['T1', 'T6', 'T8'],      // Characters + Scenes + Poses
-            'CHUNK5': ['T2', 'T3', 'T6'],      // Headwear + Garments + Scenes
-            'CHUNK6': ['T1', 'T2', 'T3'],      // Characters + Headwear + Garments
-            'CHUNK7': ['T4', 'T5', 'T6'],      // Accessories + Props + Scenes
-            'CHUNK8': ['T1', 'T4', 'T7'],      // Characters + Accessories + Materials
-            'CHUNK9': ['T2', 'T5', 'T8'],      // Headwear + Props + Poses
-            'CHUNK10': ['T3', 'T6', 'T9'],     // Garments + Scenes + Lighting
-            'CHUNK11': ['T1', 'T5', 'T9'],     // Characters + Props + Lighting
-            'CHUNK12': ['T2', 'T4', 'T8'],     // Headwear + Accessories + Poses
-            'CHUNK13': ['T3', 'T7', 'T10'],    // Garments + Materials + Scents
-            'CHUNK14': ['T1', 'T2', 'T5'],     // Characters + Headwear + Props
-            'CHUNK15': ['T4', 'T6', 'T8'],     // Accessories + Scenes + Poses
-            'CHUNK16': ['T2', 'T3', 'T7'],     // Headwear + Garments + Materials
-            'CHUNK17': ['T1', 'T3', 'T6'],     // Characters + Garments + Scenes
-            'CHUNK18': ['T18'],                // Single Tenner: Seasons
-            'CHUNK19': ['T19'],                // Single Tenner: Colors
-            'CHUNK20': ['T20']                 // Single Tenner: Textures
+            'CHUNK1': ['T1', 'T2', 'T4'],
+            'CHUNK2': ['T1', 'T3', 'T5'],
+            'CHUNK3': ['T6', 'T7'],
+            'CHUNK4': ['T1', 'T6', 'T8'],
+            'CHUNK5': ['T2', 'T3', 'T6'],
+            'CHUNK6': ['T1', 'T2', 'T3'],
+            'CHUNK7': ['T4', 'T5', 'T6'],
+            'CHUNK8': ['T1', 'T4', 'T7'],
+            'CHUNK9': ['T2', 'T5', 'T8'],
+            'CHUNK10': ['T3', 'T6', 'T9'],
+            'CHUNK11': ['T1', 'T5', 'T9'],
+            'CHUNK12': ['T2', 'T4', 'T8'],
+            'CHUNK13': ['T3', 'T7', 'T10'],
+            'CHUNK14': ['T1', 'T2', 'T5'],
+            'CHUNK15': ['T4', 'T6', 'T8'],
+            'CHUNK16': ['T2', 'T3', 'T7'],
+            'CHUNK17': ['T1', 'T3', 'T6'],
+            'CHUNK18': ['T18'],
+            'CHUNK19': ['T19'],
+            'CHUNK20': ['T20']
         };
     }
     
@@ -1190,208 +1190,45 @@ class AnamaliaViewer {
         
         const selectedTenners = [tenner1, tenner2, tenner3].filter(t => t !== '' && t !== 'none');
         
-        // Parse and integrate Tenner selections into the main prompt
+        // Integrate Tenner selections using real data from JSON
         if (selectedTenners.length > 0) {
-            // Define tenner names mapping
-            const tennerNames = {
-                'T1': 'Characters',
-                'T2': 'Headwear', 
-                'T3': 'Garments',
-                'T4': 'Accessories',
-                'T5': 'Props',
-                'T6': 'Scenes',
-                'T7': 'Materials',
-                'T8': 'Poses',
-                'T9': 'Lighting',
-                'T10': 'Scents',
-                'T11': 'Expressions',
-                'T12': 'Gestures',
-                'T13': 'Emotions',
-                'T14': 'Activities',
-                'T15': 'Environments',
-                'T16': 'Weather',
-                'T17': 'Time of Day',
-                'T18': 'Seasons',
-                'T19': 'Colors',
-                'T20': 'Textures',
-                'T21': 'Patterns',
-                'T22': 'Shapes',
-                'T23': 'Sizes',
-                'T24': 'Ages',
-                'T25': 'Professions',
-                'T26': 'Instruments',
-                'T27': 'Tricks',
-                'T28': 'Performances',
-                'T29': 'Lifestyles',
-                'T30': 'Relationships',
-                'T31': 'Mysteries',
-                'T32': 'Messages'
-            };
-            
-            // Parse Tenner specific options and integrate them into the prompt
-            const tennerIntegrations = [];
-            
-            if (mode === 'single') {
-                // In single mode, parse specific selections and integrate them
-                const specific1 = document.getElementById('tenner-1-specific')?.value || '';
-                const specific2 = document.getElementById('tenner-2-specific')?.value || '';
-                const specific3 = document.getElementById('tenner-3-specific')?.value || '';
-                
-                const selectedSpecifics = [specific1, specific2, specific3].filter(s => s !== '');
-                
-                // Parse each specific option and integrate into appropriate prompt section
-                selectedSpecifics.forEach(specific => {
-                    const parsed = this.parseTennerOption(specific, tennerNames);
-                    if (parsed) {
-                        tennerIntegrations.push(parsed);
-                    }
-                });
+            if (!this.tennerData || !this.tennerData.categories) {
+                console.warn('⚠️ No Tenner data available for prompt assembly');
+                return prompt;
             }
             
-            // Apply Tenner integrations to the prompt
-            tennerIntegrations.forEach(integration => {
-                switch (integration.category) {
-                    case 'Characters':
-                        // Replace or enhance character description
-                        if (integration.content) {
-                            prompt = prompt.replace(/A character/, `A ${integration.content}`);
-                        }
-                        break;
-                    case 'Headwear':
-                        // Add to wardrobe section
-                        if (integration.content) {
-                            prompt += ` wearing a ${integration.content}`;
-                        }
-                        break;
-                    case 'Garments':
-                        // Add to wardrobe section
-                        if (integration.content) {
-                            prompt += ` wearing a ${integration.content}`;
-                        }
-                        break;
-                    case 'Accessories':
-                        // Add to props/accessories
-                        if (integration.content) {
-                            prompt += ` with ${integration.content}`;
-                        }
-                        break;
-                    case 'Props':
-                        // Add to props section
-                        if (integration.content) {
-                            prompt += ` holding a ${integration.content}`;
-                        }
-                        break;
-                    case 'Scenes':
-                        // Enhance scene description
-                        if (integration.content) {
-                            prompt += ` at a ${integration.content}`;
-                        }
-                        break;
-                    case 'Materials':
-                        // Add material description
-                        if (integration.content) {
-                            prompt += ` with ${integration.content} materials`;
-                        }
-                        break;
-                    case 'Poses':
-                        // Enhance pose description
-                        if (integration.content) {
-                            prompt = prompt.replace(/in a .*? pose/, `in a ${integration.content} pose`);
-                        }
-                        break;
-                    case 'Lighting':
-                        // Enhance lighting description
-                        if (integration.content) {
-                            prompt += ` with ${integration.content} lighting`;
-                        }
-                        break;
-                    case 'Expressions':
-                        // Add facial expression
-                        if (integration.content) {
-                            prompt += ` with a ${integration.content} expression`;
-                        }
-                        break;
-                    case 'Gestures':
-                        // Add gesture description
-                        if (integration.content) {
-                            prompt += ` making a ${integration.content} gesture`;
-                        }
-                        break;
-                    case 'Emotions':
-                        // Add emotional state
-                        if (integration.content) {
-                            prompt += ` showing ${integration.content} emotion`;
-                        }
-                        break;
-                    case 'Activities':
-                        // Add activity description
-                        if (integration.content) {
-                            prompt += ` while ${integration.content}`;
-                        }
-                        break;
-                    case 'Environments':
-                        // Enhance environment
-                        if (integration.content) {
-                            prompt += ` in a ${integration.content} environment`;
-                        }
-                        break;
-                    case 'Weather':
-                        // Add weather condition
-                        if (integration.content) {
-                            prompt += ` with ${integration.content} weather`;
-                        }
-                        break;
-                    case 'Time of Day':
-                        // Add time reference
-                        if (integration.content) {
-                            prompt += ` during ${integration.content}`;
-                        }
-                        break;
-                    case 'Seasons':
-                        // Add seasonal reference
-                        if (integration.content) {
-                            prompt += ` in ${integration.content}`;
-                        }
-                        break;
-                    case 'Colors':
-                        // Add color description
-                        if (integration.content) {
-                            prompt += ` with ${integration.content} colors`;
-                        }
-                        break;
-                    case 'Textures':
-                        // Add texture description
-                        if (integration.content) {
-                            prompt += ` with ${integration.content} texture`;
-                        }
-                        break;
-                    case 'Messages':
-                        // Add message or text element
-                        if (integration.content) {
-                            prompt += ` with the message "${integration.content}"`;
-                        }
-                        break;
-                }
-            });
-            
-            // Add Tenner system information at the bottom
-            const tennerList = selectedTenners.map(t => tennerNames[t] || t).join(', ');
-            
             if (mode === 'single') {
                 const specific1 = document.getElementById('tenner-1-specific')?.value || '';
                 const specific2 = document.getElementById('tenner-2-specific')?.value || '';
                 const specific3 = document.getElementById('tenner-3-specific')?.value || '';
+                
                 const selectedSpecifics = [specific1, specific2, specific3].filter(s => s !== '');
                 
+                // Parse and integrate each specific option using real data
+                selectedSpecifics.forEach(specific => {
+                    // Parse format: "T1-0: rhino named Ruby"
+                    const match = specific.match(/^(T\d+)-(\d+):\s*(.+)$/);
+                    if (match) {
+                        const tennerKey = match[1];
+                        const optionIndex = parseInt(match[2]);
+                        const descriptor = match[3];
+                        
+                        // Add the descriptor directly to the prompt
+                        if (descriptor) {
+                            prompt += ` ${descriptor}`;
+                        }
+                    }
+                });
+                
                 if (selectedSpecifics.length > 0) {
-                    prompt += `\n\n🎯 Tenner System (Single Mode): ${tennerList} - ${selectedSpecifics.join(', ')}`;
+                    prompt += `\n\n🎯 Tenner System (Single Mode): ${selectedTenners.join(', ')} - ${selectedSpecifics.join(', ')}`;
                 } else {
-                    prompt += `\n\n🎯 Tenner System (Single Mode): ${tennerList} (specific options not selected)`;
+                    prompt += `\n\n🎯 Tenner System (Single Mode): ${selectedTenners.join(', ')} (specific options not selected)`;
                 }
             } else {
                 // In batch mode, show permutation counts
                 const permutationCount = Math.pow(10, selectedTenners.length);
-                prompt += `\n\n🎯 Tenner System (Batch Mode): ${tennerList} (${permutationCount} permutations)`;
+                prompt += `\n\n🎯 Tenner System (Batch Mode): ${selectedTenners.join(', ')} (${permutationCount} permutations)`;
             }
         }
         
@@ -1457,51 +1294,6 @@ class AnamaliaViewer {
     
     // parseCSV() and parseCSVLine() methods removed - no CSV parsing needed
     
-    parseTennerOption(optionText, tennerNames) {
-        // Parse Tenner option text like "T1-0: Ruby (Rhinoceros)" or "T2-3: Top Hat"
-        if (!optionText || !optionText.includes(':')) {
-            return null;
-        }
-        
-        const parts = optionText.split(':');
-        if (parts.length < 2) {
-            return null;
-        }
-        
-        const tennerCode = parts[0].trim(); // e.g., "T1-0"
-        const content = parts[1].trim(); // e.g., "Ruby (Rhinoceros)"
-        
-        // Extract the Tenner category from the code (e.g., "T1" from "T1-0")
-        const tennerCategory = tennerCode.split('-')[0];
-        const categoryName = tennerNames[tennerCategory];
-        
-        if (!categoryName) {
-            return null;
-        }
-        
-        // Clean up the content - remove parentheses and extra formatting
-        let cleanContent = content;
-        
-        // Handle different content types
-        if (categoryName === 'Characters') {
-            // For characters, extract the name before parentheses
-            const match = content.match(/^([^(]+)/);
-            cleanContent = match ? match[1].trim() : content;
-        } else if (categoryName === 'Messages') {
-            // For messages, keep the full text including quotes
-            cleanContent = content.replace(/^["']|["']$/g, '');
-        } else {
-            // For other categories, clean up formatting
-            cleanContent = content.replace(/^["']|["']$/g, '').toLowerCase();
-        }
-        
-        return {
-            category: categoryName,
-            content: cleanContent,
-            originalCode: tennerCode,
-            originalText: optionText
-        };
-    }
 
     showError(message) {
         const container = document.querySelector('.container');
