@@ -281,65 +281,9 @@ class AnamaliaViewer {
     }
     
     updateTennerSpecificOptions() {
-        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'batch';
-        
-        if (mode === 'batch') {
-            // Hide all specific option dropdowns in batch mode
-            ['tenner-1-option', 'tenner-2-option', 'tenner-3-option'].forEach(divId => {
-                const div = document.getElementById(divId);
-                if (div) {
-                    div.style.display = 'none';
-                }
-            });
-            return;
-        }
-        
-        // Check if Tenner data is available (now empty by design)
-        if (!this.tennerData || !this.tennerData.categories) {
-            console.log('📊 No Tenner data available - UI will show empty dropdowns');
-            return; // Exit early if no data
-        }
-        
-        // Use available data (now empty by design)
-        console.log('📊 Using Tenner data:', Object.keys(this.tennerData.categories));
-        
-        // Update each specific option dropdown
-        ['tenner-1', 'tenner-2', 'tenner-3'].forEach((tennerId, index) => {
-            const tennerSelect = document.getElementById(tennerId);
-            const specificSelect = document.getElementById(`${tennerId}-specific`);
-            const optionDiv = document.getElementById(`${tennerId}-option`);
-            
-            if (!tennerSelect || !specificSelect || !optionDiv) return;
-            
-            const selectedTenner = tennerSelect.value;
-            
-            if (mode === 'single' && selectedTenner && selectedTenner !== 'none') {
-                optionDiv.style.display = 'block';
-                
-                // Clear existing options
-                specificSelect.innerHTML = '<option value="">Select specific option...</option>';
-                
-                // Get options from real data
-                const options = this.tennerData.categories[selectedTenner];
-                if (options && options.length > 0) {
-                    console.log(`📋 ${selectedTenner} options:`, options.length);
-                    
-                    // Populate with options for the selected Tenner
-                    options.forEach(option => {
-                        const optionText = `${selectedTenner}-${option.option_index}: ${option.descriptor}`;
-                        const optionElement = document.createElement('option');
-                        optionElement.value = optionText;
-                        optionElement.textContent = optionText;
-                        specificSelect.appendChild(optionElement);
-                    });
-                } else {
-                    console.warn(`⚠️ No options found for ${selectedTenner}`);
-                }
-            } else {
-                optionDiv.style.display = 'none';
-                specificSelect.innerHTML = '<option value="">Select specific option...</option>';
-            }
-        });
+        // Specific option dropdowns have been removed from HTML
+        // This method is now a no-op since there are no specific options to update
+        console.log('📊 Tenner specific options removed - no specific dropdowns to update');
     }    
     updateTennerStatus() {
         const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'batch';
@@ -356,9 +300,10 @@ class AnamaliaViewer {
         
         if (mode === 'single') {
             // In single mode, show specific selections
-            const specific1 = document.getElementById('tenner-1-specific')?.value || '';
-            const specific2 = document.getElementById('tenner-2-specific')?.value || '';
-            const specific3 = document.getElementById('tenner-3-specific')?.value || '';
+            // Specific option elements removed - no specific selections available
+            const specific1 = '';
+            const specific2 = '';
+            const specific3 = '';
             
             const selectedSpecifics = [specific1, specific2, specific3].filter(s => s !== '');
             
@@ -1381,9 +1326,10 @@ class AnamaliaViewer {
             const tennerList = selectedTenners.map(t => tennerNames[t] || t).join(', ');
             
             if (mode === 'single') {
-                const specific1 = document.getElementById('tenner-1-specific')?.value || '';
-                const specific2 = document.getElementById('tenner-2-specific')?.value || '';
-                const specific3 = document.getElementById('tenner-3-specific')?.value || '';
+                // Specific option elements removed - no specific selections available
+                const specific1 = '';
+                const specific2 = '';
+                const specific3 = '';
                 const selectedSpecifics = [specific1, specific2, specific3].filter(s => s !== '');
                 
                 if (selectedSpecifics.length > 0) {
