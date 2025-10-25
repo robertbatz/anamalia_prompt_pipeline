@@ -1089,6 +1089,14 @@ class AnamaliaViewer {
         const wardrobe = document.getElementById('assemble-wardrobe').value;
         const props = document.getElementById('assemble-props').value;
         
+        // Output parameters
+        const outputWidth = document.getElementById('output-width').value;
+        const outputHeight = document.getElementById('output-height').value;
+        const outputAspectRatio = document.getElementById('output-aspect-ratio').value;
+        const outputQuality = document.getElementById('output-quality').value;
+        const outputFormat = document.getElementById('output-format').value;
+        const outputColorSpace = document.getElementById('output-color-space').value;
+        
         // Generate preview prompt
         let prompt;
         if (pose) {
@@ -1251,6 +1259,27 @@ class AnamaliaViewer {
                 const permutationCount = Math.pow(10, selectedTenners.length);
                 prompt += `\n\n🎯 Tenner System (Batch Mode): ${selectedTenners.join(', ')} (${permutationCount} permutations)`;
             }
+        }
+        
+        // Add output parameters
+        if (outputWidth !== 'custom' && outputHeight !== 'custom') {
+            prompt += `, ${outputWidth}x${outputHeight} pixels`;
+        }
+        
+        if (outputAspectRatio !== 'custom') {
+            prompt += `, ${outputAspectRatio} aspect ratio`;
+        }
+        
+        if (outputQuality !== 'standard') {
+            prompt += `, ${outputQuality} quality`;
+        }
+        
+        if (outputFormat !== 'png') {
+            prompt += `, ${outputFormat.toUpperCase()} format`;
+        }
+        
+        if (outputColorSpace !== 'sRGB') {
+            prompt += `, ${outputColorSpace} color space`;
         }
         
         prompt += `, 3D stop-motion style, high quality, detailed`;
@@ -2117,6 +2146,108 @@ class AnamaliaViewer {
                     </ul>
                     <div class="highlight">
                         <p><strong>🎬 Style Choice:</strong> Stop motion feels authentic and handmade, while claymation adds playful charm and organic texture.</p>
+                    </div>
+                `
+            },
+            'output-width': {
+                title: 'Output Width',
+                content: `
+                    <h4>Image Width in Pixels</h4>
+                    <p>Set the horizontal resolution of your generated images. Higher values create more detailed images but require more processing time.</p>
+                    <ul>
+                        <li><strong>512px:</strong> Small, fast generation, good for thumbnails</li>
+                        <li><strong>768px:</strong> Medium size, balanced quality and speed</li>
+                        <li><strong>1024px:</strong> Standard high quality (recommended)</li>
+                        <li><strong>1280px:</strong> Large format, detailed images</li>
+                        <li><strong>1536px:</strong> Very large, maximum detail</li>
+                        <li><strong>2048px:</strong> Ultra high resolution, professional quality</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>💡 Tip:</strong> Use 1024px for most applications. Higher resolutions are best for print or large displays.</p>
+                    </div>
+                `
+            },
+            'output-height': {
+                title: 'Output Height',
+                content: `
+                    <h4>Image Height in Pixels</h4>
+                    <p>Set the vertical resolution of your generated images. Should match your width for proper aspect ratios.</p>
+                    <ul>
+                        <li><strong>512px:</strong> Small, fast generation</li>
+                        <li><strong>768px:</strong> Medium size, balanced quality</li>
+                        <li><strong>1024px:</strong> Standard high quality (recommended)</li>
+                        <li><strong>1280px:</strong> Large format, detailed images</li>
+                        <li><strong>1536px:</strong> Very large, maximum detail</li>
+                        <li><strong>2048px:</strong> Ultra high resolution</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>📐 Note:</strong> Height should complement your width choice for the desired aspect ratio.</p>
+                    </div>
+                `
+            },
+            'output-aspect-ratio': {
+                title: 'Aspect Ratio',
+                content: `
+                    <h4>Image Aspect Ratio</h4>
+                    <p>Choose the proportional relationship between width and height. Different ratios suit different purposes.</p>
+                    <ul>
+                        <li><strong>Square (1:1):</strong> Perfect for social media, profile pictures</li>
+                        <li><strong>Standard (4:3):</strong> Classic photography, traditional displays</li>
+                        <li><strong>Widescreen (16:9):</strong> Modern displays, video content</li>
+                        <li><strong>Classic (3:2):</strong> Traditional photography, print media</li>
+                        <li><strong>Ultrawide (21:9):</strong> Cinematic, panoramic views</li>
+                        <li><strong>Portrait (9:16):</strong> Mobile displays, vertical content</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>🎬 Tip:</strong> 16:9 is ideal for most modern displays, while 1:1 works great for social media.</p>
+                    </div>
+                `
+            },
+            'output-quality': {
+                title: 'Output Quality',
+                content: `
+                    <h4>Image Quality Settings</h4>
+                    <p>Control the level of detail and processing quality for your generated images.</p>
+                    <ul>
+                        <li><strong>Standard:</strong> Good quality, fast generation</li>
+                        <li><strong>High:</strong> Excellent quality, balanced processing (recommended)</li>
+                        <li><strong>Ultra:</strong> Maximum quality, longer processing time</li>
+                        <li><strong>Lossless:</strong> Perfect quality, very slow generation</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>⚡ Performance:</strong> Higher quality settings require more processing time but produce better results.</p>
+                    </div>
+                `
+            },
+            'output-format': {
+                title: 'Output Format',
+                content: `
+                    <h4>Image File Format</h4>
+                    <p>Choose the file format for your generated images. Each format has different characteristics and use cases.</p>
+                    <ul>
+                        <li><strong>PNG:</strong> Lossless compression, supports transparency, best for graphics</li>
+                        <li><strong>JPEG:</strong> Lossy compression, smaller file sizes, best for photos</li>
+                        <li><strong>WebP:</strong> Modern format, excellent compression, web-optimized</li>
+                        <li><strong>TIFF:</strong> Professional format, lossless, large file sizes</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>💾 Recommendation:</strong> PNG for graphics and transparency, JPEG for photos and web use.</p>
+                    </div>
+                `
+            },
+            'output-color-space': {
+                title: 'Color Space',
+                content: `
+                    <h4>Color Space Selection</h4>
+                    <p>Choose the color space that defines the range of colors available in your images.</p>
+                    <ul>
+                        <li><strong>sRGB:</strong> Standard web color space, most compatible</li>
+                        <li><strong>Adobe RGB:</strong> Wider color gamut, professional photography</li>
+                        <li><strong>P3:</strong> Apple's wide color space, modern displays</li>
+                        <li><strong>Rec. 2020:</strong> Ultra-wide color space, HDR content</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>🌈 Note:</strong> sRGB is recommended for web use, while Adobe RGB is better for print.</p>
                     </div>
                 `
             }
