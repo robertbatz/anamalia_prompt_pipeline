@@ -1291,6 +1291,8 @@ class AnamaliaViewer {
             }
             
             console.log(`✅ Loaded ${Object.keys(this.tennerData.categories).length} Tenner categories with options`);
+            console.log('📊 T1 data:', this.tennerData.categories['T1']);
+            console.log('📊 Available categories:', Object.keys(this.tennerData.categories));
             
         } catch (error) {
             console.error('❌ Error loading Tenner data:', error);
