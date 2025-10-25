@@ -31,6 +31,7 @@ class AnamaliaViewer {
         this.setupTennerListeners();
         this.setupInfoModalListeners();
         this.setupDocModalListeners();
+        this.initOutputParameterSync();
         
         // Initial render
         this.render();
@@ -1273,13 +1274,23 @@ class AnamaliaViewer {
             }
         }
         
-        // Add output parameters
+        // Add output parameters with conflict resolution
         if (outputWidth !== 'custom' && outputHeight !== 'custom') {
             prompt += `, ${outputWidth}x${outputHeight} pixels`;
         }
         
+        // Only add aspect ratio if it matches the actual dimensions
         if (outputAspectRatio !== 'custom') {
-            prompt += `, ${outputAspectRatio} aspect ratio`;
+            const width = parseInt(outputWidth);
+            const height = parseInt(outputHeight);
+            const [ratioW, ratioH] = outputAspectRatio.split(':').map(Number);
+            const actualRatio = width / height;
+            const expectedRatio = ratioW / ratioH;
+            
+            // Only add aspect ratio if it matches (within 0.01 tolerance)
+            if (Math.abs(actualRatio - expectedRatio) < 0.01) {
+                prompt += `, ${outputAspectRatio} aspect ratio`;
+            }
         }
         
         if (outputQuality !== 'standard') {
@@ -1298,6 +1309,82 @@ class AnamaliaViewer {
         
         // Show preview in alert or modal
         alert(`Preview Prompt:\n\n${prompt}`);
+    }
+    
+    initOutputParameterSync() {
+        const widthSelect = document.getElementById('output-width');
+        const heightSelect = document.getElementById('output-height');
+        const aspectRatioSelect = document.getElementById('output-aspect-ratio');
+        
+        if (!widthSelect || !heightSelect || !aspectRatioSelect) return;
+        
+        // Sync when aspect ratio changes
+        aspectRatioSelect.addEventListener('change', () => {
+            this.syncDimensionsToAspectRatio();
+        });
+        
+        // Sync when width/height changes
+        widthSelect.addEventListener('change', () => {
+            this.syncAspectRatioToDimensions();
+        });
+        
+        heightSelect.addEventListener('change', () => {
+            this.syncAspectRatioToDimensions();
+        });
+    }
+    
+    syncDimensionsToAspectRatio() {
+        const aspectRatio = document.getElementById('output-aspect-ratio').value;
+        const widthSelect = document.getElementById('output-width');
+        const heightSelect = document.getElementById('output-height');
+        
+        if (aspectRatio === 'custom') return;
+        
+        const currentWidth = parseInt(widthSelect.value) || 1024;
+        const [ratioW, ratioH] = aspectRatio.split(':').map(Number);
+        
+        // Calculate new height based on aspect ratio
+        const newHeight = Math.round((currentWidth * ratioH) / ratioW);
+        
+        // Find closest available height option
+        const heightOptions = Array.from(heightSelect.options).map(opt => parseInt(opt.value)).filter(val => !isNaN(val));
+        const closestHeight = heightOptions.reduce((prev, curr) => 
+            Math.abs(curr - newHeight) < Math.abs(prev - newHeight) ? curr : prev
+        );
+        
+        heightSelect.value = closestHeight.toString();
+    }
+    
+    syncAspectRatioToDimensions() {
+        const width = parseInt(document.getElementById('output-width').value);
+        const height = parseInt(document.getElementById('output-height').value);
+        const aspectRatioSelect = document.getElementById('output-aspect-ratio');
+        
+        if (isNaN(width) || isNaN(height)) return;
+        
+        const ratio = width / height;
+        let closestRatio = '16:9'; // default
+        
+        // Find closest aspect ratio
+        const ratios = {
+            '1:1': 1.0,
+            '4:3': 4/3,
+            '16:9': 16/9,
+            '3:2': 3/2,
+            '21:9': 21/9,
+            '9:16': 9/16
+        };
+        
+        let minDiff = Infinity;
+        for (const [ratioStr, ratioVal] of Object.entries(ratios)) {
+            const diff = Math.abs(ratio - ratioVal);
+            if (diff < minDiff) {
+                minDiff = diff;
+                closestRatio = ratioStr;
+            }
+        }
+        
+        aspectRatioSelect.value = closestRatio;
     }
     
     async loadTennerData() {
