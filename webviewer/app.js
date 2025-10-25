@@ -1057,18 +1057,26 @@ class AnamaliaViewer {
     }
     
     previewPrompt() {
-        // Check for Tenner pose first, then fall back to assemble pose
-        const tennerPose = document.getElementById('tenner-pose')?.value || '';
-        const assemblePose = document.getElementById('assemble-pose')?.value || '';
-        let pose = tennerPose || assemblePose;
+        // Only process pose if pose fields are visible
+        let pose = '';
+        const tennerPoseElement = document.getElementById('tenner-pose');
+        const assemblePoseElement = document.getElementById('assemble-pose');
         
-        // Handle custom pose input
-        if (tennerPose === 'custom') {
-            const customPoseText = document.getElementById('custom-pose-text')?.value || '';
-            if (customPoseText.trim()) {
-                pose = customPoseText.trim();
-            } else {
-                pose = 'custom pose';
+        // Check if pose fields are visible and have values
+        if (tennerPoseElement && tennerPoseElement.offsetParent !== null) {
+            const tennerPose = tennerPoseElement.value || '';
+            if (tennerPose) {
+                if (tennerPose === 'custom') {
+                    const customPoseText = document.getElementById('custom-pose-text')?.value || '';
+                    pose = customPoseText.trim() || 'custom pose';
+                } else {
+                    pose = tennerPose;
+                }
+            }
+        } else if (assemblePoseElement && assemblePoseElement.offsetParent !== null) {
+            const assemblePose = assemblePoseElement.value || '';
+            if (assemblePose) {
+                pose = assemblePose;
             }
         }
         
@@ -1082,14 +1090,21 @@ class AnamaliaViewer {
         const props = document.getElementById('assemble-props').value;
         
         // Generate preview prompt
-        
         let prompt;
-        if (tennerPose === 'custom') {
-            // For custom poses, use the text directly
-            prompt = `A character ${pose}`;
+        if (pose) {
+            // Check if it's a custom pose (from custom text input)
+            const customPoseText = document.getElementById('custom-pose-text')?.value || '';
+            if (tennerPoseElement && tennerPoseElement.offsetParent !== null && 
+                tennerPoseElement.value === 'custom' && customPoseText.trim()) {
+                // For custom poses, use the text directly
+                prompt = `A character ${pose}`;
+            } else {
+                // For predefined poses, add "in a [pose] pose"
+                prompt = `A character in a ${pose.replace('_', ' ')} pose`;
+            }
         } else {
-            // For predefined poses, add "in a [pose] pose"
-            prompt = `A character in a ${pose.replace('_', ' ')} pose`;
+            // No pose specified, use generic character
+            prompt = `A character`;
         }
         
         if (scene !== 'all') {
