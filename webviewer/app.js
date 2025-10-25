@@ -1331,6 +1331,9 @@ class AnamaliaViewer {
         heightSelect.addEventListener('change', () => {
             this.syncAspectRatioToDimensions();
         });
+        
+        // Set up film stock and camera validation
+        this.initFilmCameraValidation();
     }
     
     syncDimensionsToAspectRatio() {
@@ -2564,6 +2567,291 @@ class AnamaliaViewer {
         };
         
         return placeholders[docType] || '<p>Documentation not available.</p>';
+    }
+    
+    initFilmCameraValidation() {
+        const filmStockSelect = document.getElementById('assemble-film-stock');
+        const cameraSelect = document.getElementById('assemble-camera');
+        
+        if (!filmStockSelect || !cameraSelect) return;
+        
+        // Add event listeners for validation
+        filmStockSelect.addEventListener('change', () => {
+            this.validateFilmCameraCompatibility();
+            this.suggestCompatibleCamera();
+        });
+        
+        cameraSelect.addEventListener('change', () => {
+            this.validateFilmCameraCompatibility();
+            this.suggestCompatibleFilmStock();
+        });
+    }
+    
+    validateFilmCameraCompatibility() {
+        const filmStock = document.getElementById('assemble-film-stock')?.value;
+        const camera = document.getElementById('assemble-camera')?.value;
+        
+        if (!filmStock || !camera || filmStock === 'all' || camera === 'all') return;
+        
+        const conflicts = this.getFilmCameraConflicts(filmStock, camera);
+        
+        if (conflicts.length > 0) {
+            this.showCompatibilityWarning(conflicts);
+        } else {
+            this.hideCompatibilityWarning();
+        }
+    }
+    
+    getFilmCameraConflicts(filmStock, camera) {
+        const conflicts = [];
+        
+        // Black & white film conflicts
+        const bwFilms = ['ilford_hp5_400', 'kodak_tmax_100'];
+        if (bwFilms.includes(filmStock)) {
+            // Check if camera description mentions color
+            const cameraDescriptions = this.getCameraDescriptions();
+            const cameraDesc = cameraDescriptions[camera] || '';
+            
+            if (cameraDesc.includes('color') || cameraDesc.includes('warm') || cameraDesc.includes('saturated')) {
+                conflicts.push({
+                    type: 'bw_color_mismatch',
+                    message: `Black & white film (${filmStock.replace('_', ' ')}) selected with camera that may emphasize color characteristics`,
+                    severity: 'warning'
+                });
+            }
+        }
+        
+        // Film speed vs lighting conflicts
+        const slowFilms = ['fuji_velvia_50', 'kodak_tmax_100']; // ISO 50-100
+        const fastFilms = ['cinestill_800t']; // ISO 800+
+        
+        if (slowFilms.includes(filmStock)) {
+            // Check for low-light camera angles
+            const lowLightAngles = ['camera_003', 'camera_004']; // Low angle, high angle
+            if (lowLightAngles.includes(camera)) {
+                conflicts.push({
+                    type: 'speed_lighting_mismatch',
+                    message: `Slow film (${filmStock.replace('_', ' ')}) may not perform well with dramatic lighting angles`,
+                    severity: 'info'
+                });
+            }
+        }
+        
+        if (fastFilms.includes(filmStock)) {
+            // Check for bright lighting scenarios
+            const brightLightAngles = ['camera_001', 'camera_002']; // Standard, 3/4 height
+            if (brightLightAngles.includes(camera)) {
+                conflicts.push({
+                    type: 'speed_lighting_mismatch',
+                    message: `Fast film (${filmStock.replace('_', ' ')}) may be overkill for standard lighting conditions`,
+                    severity: 'info'
+                });
+            }
+        }
+        
+        // Color temperature conflicts
+        const tungstenFilms = ['cinestill_800t'];
+        const coolFilms = ['fuji_superia_400'];
+        
+        if (tungstenFilms.includes(filmStock)) {
+            // Tungsten film works best with warm lighting
+            const coolLightingCameras = ['camera_003', 'camera_004']; // May suggest cooler lighting
+            if (coolLightingCameras.includes(camera)) {
+                conflicts.push({
+                    type: 'color_temp_mismatch',
+                    message: `Tungsten-balanced film (${filmStock.replace('_', ' ')}) works best with warm lighting conditions`,
+                    severity: 'warning'
+                });
+            }
+        }
+        
+        return conflicts;
+    }
+    
+    suggestCompatibleCamera() {
+        const filmStock = document.getElementById('assemble-film-stock')?.value;
+        if (!filmStock || filmStock === 'all') return;
+        
+        const suggestions = this.getCompatibleCameras(filmStock);
+        if (suggestions.length > 0) {
+            this.showCompatibilitySuggestion('camera', suggestions);
+        }
+    }
+    
+    suggestCompatibleFilmStock() {
+        const camera = document.getElementById('assemble-camera')?.value;
+        if (!camera || camera === 'all') return;
+        
+        const suggestions = this.getCompatibleFilmStocks(camera);
+        if (suggestions.length > 0) {
+            this.showCompatibilitySuggestion('film', suggestions);
+        }
+    }
+    
+    getCompatibleCameras(filmStock) {
+        const compatibility = {
+            'kodak_portra_400': ['camera_001', 'camera_002', 'camera_009'], // Standard, portrait-friendly
+            'kodak_ultramax_400': ['camera_001', 'camera_002', 'camera_005', 'camera_006'], // Good for vibrant colors
+            'fuji_superia_400': ['camera_001', 'camera_002', 'camera_003'], // Cool tones work well
+            'ilford_hp5_400': ['camera_001', 'camera_002', 'camera_007', 'camera_008'], // B&W classic angles
+            'kodak_gold_200': ['camera_001', 'camera_002', 'camera_009'], // Warm, portrait-friendly
+            'fuji_velvia_50': ['camera_001', 'camera_002', 'camera_010'], // Ultra-saturated, wide angle
+            'kodak_tmax_100': ['camera_001', 'camera_002', 'camera_007', 'camera_008'], // B&W fine grain
+            'agfa_vista_200': ['camera_001', 'camera_002', 'camera_009'], // Natural colors
+            'lomography_color_400': ['camera_003', 'camera_004', 'camera_005', 'camera_006'], // Vintage, creative angles
+            'cinestill_800t': ['camera_001', 'camera_002', 'camera_003', 'camera_004'] // Tungsten, dramatic lighting
+        };
+        
+        return compatibility[filmStock] || [];
+    }
+    
+    getCompatibleFilmStocks(camera) {
+        const compatibility = {
+            'camera_001': ['kodak_portra_400', 'kodak_gold_200', 'agfa_vista_200'], // Standard - versatile films
+            'camera_002': ['kodak_portra_400', 'kodak_gold_200', 'agfa_vista_200'], // 3/4 height - versatile
+            'camera_003': ['fuji_superia_400', 'lomography_color_400', 'cinestill_800t'], // Low angle - dramatic
+            'camera_004': ['fuji_superia_400', 'lomography_color_400', 'cinestill_800t'], // High angle - dramatic
+            'camera_005': ['kodak_ultramax_400', 'lomography_color_400'], // 3/4 left - creative
+            'camera_006': ['kodak_ultramax_400', 'lomography_color_400'], // 3/4 right - creative
+            'camera_007': ['ilford_hp5_400', 'kodak_tmax_100'], // Profile - B&W classic
+            'camera_008': ['ilford_hp5_400', 'kodak_tmax_100'], // Back 3/4 - B&W classic
+            'camera_009': ['kodak_portra_400', 'kodak_gold_200', 'agfa_vista_200'], // 50mm portrait
+            'camera_010': ['fuji_velvia_50', 'kodak_ultramax_400'] // 24mm wide - landscape/wide
+        };
+        
+        return compatibility[camera] || [];
+    }
+    
+    showCompatibilityWarning(conflicts) {
+        // Remove existing warning
+        this.hideCompatibilityWarning();
+        
+        const warningDiv = document.createElement('div');
+        warningDiv.id = 'film-camera-warning';
+        warningDiv.className = 'compatibility-warning';
+        warningDiv.innerHTML = `
+            <div class="warning-header">
+                <span class="warning-icon">⚠️</span>
+                <strong>Film/Camera Compatibility Warning</strong>
+            </div>
+            <div class="warning-content">
+                ${conflicts.map(conflict => `
+                    <div class="conflict-item ${conflict.severity}">
+                        <span class="conflict-icon">${conflict.severity === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                        ${conflict.message}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        // Insert after the camera section
+        const cameraSection = document.querySelector('#assemble-camera').closest('.filter-group');
+        if (cameraSection) {
+            cameraSection.insertAdjacentElement('afterend', warningDiv);
+        }
+    }
+    
+    hideCompatibilityWarning() {
+        const existingWarning = document.getElementById('film-camera-warning');
+        if (existingWarning) {
+            existingWarning.remove();
+        }
+    }
+    
+    showCompatibilitySuggestion(type, suggestions) {
+        // Remove existing suggestion
+        this.hideCompatibilitySuggestion();
+        
+        const suggestionDiv = document.createElement('div');
+        suggestionDiv.id = 'film-camera-suggestion';
+        suggestionDiv.className = 'compatibility-suggestion';
+        
+        const currentValue = type === 'camera' ? 
+            document.getElementById('assemble-camera')?.value : 
+            document.getElementById('assemble-film-stock')?.value;
+        
+        if (suggestions.includes(currentValue)) {
+            // Current selection is already compatible
+            return;
+        }
+        
+        const suggestionText = type === 'camera' ? 'camera' : 'film stock';
+        const options = type === 'camera' ? this.getCameraOptions() : this.getFilmStockOptions();
+        
+        suggestionDiv.innerHTML = `
+            <div class="suggestion-header">
+                <span class="suggestion-icon">💡</span>
+                <strong>Compatible ${type === 'camera' ? 'Camera' : 'Film Stock'} Suggestions</strong>
+            </div>
+            <div class="suggestion-content">
+                <p>For better compatibility, consider these ${suggestionText} options:</p>
+                <ul>
+                    ${suggestions.map(suggestion => `
+                        <li>${options[suggestion] || suggestion}</li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+        
+        // Insert after the warning (if it exists) or after the camera section
+        const warningDiv = document.getElementById('film-camera-warning');
+        const insertAfter = warningDiv || document.querySelector('#assemble-camera').closest('.filter-group');
+        
+        if (insertAfter) {
+            insertAfter.insertAdjacentElement('afterend', suggestionDiv);
+        }
+    }
+    
+    hideCompatibilitySuggestion() {
+        const existingSuggestion = document.getElementById('film-camera-suggestion');
+        if (existingSuggestion) {
+            existingSuggestion.remove();
+        }
+    }
+    
+    getCameraOptions() {
+        return {
+            'camera_001': '35mm Eye-level (Canonical)',
+            'camera_002': '35mm 3/4 Height',
+            'camera_003': '35mm Low Angle',
+            'camera_004': '35mm High Angle',
+            'camera_005': '35mm 3/4 Left',
+            'camera_006': '35mm 3/4 Right',
+            'camera_007': '35mm Profile',
+            'camera_008': '35mm Back 3/4',
+            'camera_009': '50mm Portrait',
+            'camera_010': '24mm Wide'
+        };
+    }
+    
+    getFilmStockOptions() {
+        return {
+            'kodak_portra_400': 'Kodak Portra 400',
+            'kodak_ultramax_400': 'Kodak Ultramax 400',
+            'fuji_superia_400': 'Fuji Superia 400',
+            'ilford_hp5_400': 'Ilford HP5 400',
+            'kodak_gold_200': 'Kodak Gold 200',
+            'fuji_velvia_50': 'Fuji Velvia 50',
+            'kodak_tmax_100': 'Kodak T-Max 100',
+            'agfa_vista_200': 'Agfa Vista 200',
+            'lomography_color_400': 'Lomography Color 400',
+            'cinestill_800t': 'Cinestill 800T'
+        };
+    }
+    
+    getCameraDescriptions() {
+        return {
+            'camera_001': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center',
+            'camera_002': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 0.75 meters, angled 5° downward, positioned at stage center',
+            'camera_003': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 0.5 meters, angled 10° upward, positioned at stage center',
+            'camera_004': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1.5 meters, angled 5° downward, positioned at stage center',
+            'camera_005': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 45° left',
+            'camera_006': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 45° right',
+            'camera_007': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 90° left',
+            'camera_008': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 135° left',
+            'camera_009': 'Captured on a miniature stop-motion stage using a fixed camera at 50mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center',
+            'camera_010': 'Captured on a miniature stop-motion stage using a fixed camera at 24mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center'
+        };
     }
 }
 

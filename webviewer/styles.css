@@ -1442,3 +1442,134 @@ html {
         border-bottom-color: #404040;
     }
 }
+
+/* Film/Camera Compatibility Styles */
+.compatibility-warning {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    border-left: 4px solid #f39c12;
+    animation: slideIn 0.3s ease-out;
+}
+
+.compatibility-warning .warning-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #856404;
+}
+
+.compatibility-warning .warning-icon {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.compatibility-warning .warning-content {
+    margin-left: 1.5rem;
+}
+
+.compatibility-warning .conflict-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.compatibility-warning .conflict-item:last-child {
+    margin-bottom: 0;
+}
+
+.compatibility-warning .conflict-item.warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-left: 3px solid #ffc107;
+}
+
+.compatibility-warning .conflict-item.info {
+    background: rgba(13, 202, 240, 0.1);
+    border-left: 3px solid #0dcaf0;
+}
+
+.compatibility-warning .conflict-icon {
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+    margin-top: 0.1rem;
+}
+
+.compatibility-suggestion {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #d1ecf1;
+    border: 1px solid #bee5eb;
+    border-radius: 8px;
+    border-left: 4px solid #17a2b8;
+    animation: slideIn 0.3s ease-out;
+}
+
+.compatibility-suggestion .suggestion-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #0c5460;
+}
+
+.compatibility-suggestion .suggestion-icon {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.compatibility-suggestion .suggestion-content {
+    margin-left: 1.5rem;
+}
+
+.compatibility-suggestion .suggestion-content p {
+    margin: 0 0 0.5rem 0;
+    color: #0c5460;
+    font-weight: 500;
+}
+
+.compatibility-suggestion .suggestion-content ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #0c5460;
+}
+
+.compatibility-suggestion .suggestion-content li {
+    margin: 0.25rem 0;
+    font-weight: 500;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments for compatibility messages */
+@media (max-width: 768px) {
+    .compatibility-warning,
+    .compatibility-suggestion {
+        margin: 0.75rem 0;
+        padding: 0.75rem;
+    }
+    
+    .compatibility-warning .warning-content,
+    .compatibility-suggestion .suggestion-content {
+        margin-left: 1rem;
+    }
+    
+    .compatibility-warning .conflict-item,
+    .compatibility-suggestion .suggestion-content ul {
+        font-size: 0.9rem;
+    }
+}
