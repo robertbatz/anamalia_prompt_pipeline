@@ -297,8 +297,11 @@ class AnamaliaViewer {
         // Check if Tenner data is available
         if (!this.tennerData || !this.tennerData.categories) {
             console.log('📊 No Tenner data available - UI will show empty dropdowns');
+            console.log('📊 this.tennerData:', this.tennerData);
             return;
         }
+        
+        console.log('📊 Tenner data available:', Object.keys(this.tennerData.categories).length, 'categories');
         
         // Update each specific option dropdown
         ['tenner-1', 'tenner-2', 'tenner-3'].forEach((tennerId, index) => {
@@ -309,6 +312,7 @@ class AnamaliaViewer {
             if (!tennerSelect || !specificSelect || !optionDiv) return;
             
             const selectedTenner = tennerSelect.value;
+            console.log(`📊 Processing ${tennerId}: selectedTenner="${selectedTenner}", mode="${mode}"`);
             
             if (mode === 'single' && selectedTenner && selectedTenner !== 'none') {
                 optionDiv.style.display = 'block';
@@ -318,6 +322,8 @@ class AnamaliaViewer {
                 
                 // Get options from real data
                 const options = this.tennerData.categories[selectedTenner];
+                console.log(`📊 ${selectedTenner} data:`, options);
+                
                 if (options && options.length > 0) {
                     console.log(`📋 ${selectedTenner} options:`, options.length);
                     
@@ -331,6 +337,7 @@ class AnamaliaViewer {
                     });
                 } else {
                     console.warn(`⚠️ No options found for ${selectedTenner}`);
+                    console.log(`📊 Available categories:`, Object.keys(this.tennerData.categories));
                 }
             } else {
                 optionDiv.style.display = 'none';
