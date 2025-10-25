@@ -176,6 +176,9 @@ class AnamaliaViewer {
             });
         });
         
+        // Lighting codified scheme display
+        this.setupLightingCodifiedDisplay();
+        
         // Comparison mode
         const compareBtn = document.getElementById('compare-btn');
         if (compareBtn) {
@@ -225,6 +228,55 @@ class AnamaliaViewer {
         
         if (previewPromptBtn) {
             previewPromptBtn.addEventListener('click', () => this.previewPrompt());
+        }
+    }
+    
+    setupLightingCodifiedDisplay() {
+        // Lighting filter (browse mode)
+        const lightingFilter = document.getElementById('lighting-filter');
+        if (lightingFilter) {
+            lightingFilter.addEventListener('change', (e) => {
+                this.updateLightingCodifiedDisplay('lighting-filter', 'lighting-codified-display', 'lighting-codified-text');
+            });
+        }
+        
+        // Assemble lighting (assemble mode)
+        const assembleLighting = document.getElementById('assemble-lighting');
+        if (assembleLighting) {
+            assembleLighting.addEventListener('change', (e) => {
+                this.updateLightingCodifiedDisplay('assemble-lighting', 'assemble-lighting-codified-display', 'assemble-lighting-codified-text');
+            });
+        }
+    }
+    
+    updateLightingCodifiedDisplay(selectId, displayId, textId) {
+        const select = document.getElementById(selectId);
+        const display = document.getElementById(displayId);
+        const textElement = document.getElementById(textId);
+        
+        if (!select || !display || !textElement) return;
+        
+        const selectedValue = select.value;
+        
+        // Lighting phrases mapping
+        const lightingPhrases = {
+            'lighting_001': 'Warm, directional late-afternoon sunlight from front-left at 45°, soft fill light from right, subtle floor shadow, gently contrasted stop-motion studio lighting.',
+            'lighting_002': 'Soft, even overhead lighting with 360° ambient fill, minimal shadows, warm tungsten tone, cozy stop-motion studio atmosphere.',
+            'lighting_003': 'Sharp, dramatic lighting from front-left at 30°, minimal back fill, defined shadows with high contrast, cinematic stop-motion studio lighting.',
+            'lighting_004': 'Clean, even overhead lighting with 360° fill, soft even shadows, neutral color temperature, professional stop-motion studio lighting.',
+            'lighting_005': 'Warm sunset backlight from back-right at 60°, soft warm fill from front, elongated soft shadows, golden hour stop-motion studio lighting.',
+            'lighting_006': 'Cool moonlight from front-left at 15°, minimal cool fill, soft defined shadows, blue-tinted stop-motion studio lighting.',
+            'lighting_007': 'Warm candlelight from front-left at 45°, soft warm ambient from below, flickering soft shadows, intimate stop-motion studio lighting.',
+            'lighting_008': 'Bright daylight from front-left at 30°, strong fill from right, moderate shadows, natural stop-motion studio lighting.',
+            'lighting_009': 'Diffused overcast lighting from overhead, 360° soft fill, minimal contrast, natural stop-motion studio lighting.',
+            'lighting_010': 'Warm firelight from front-left at 30°, soft warm ambient from below, dancing soft shadows, cozy stop-motion studio lighting.'
+        };
+        
+        if (selectedValue === 'all' || !lightingPhrases[selectedValue]) {
+            display.style.display = 'none';
+        } else {
+            textElement.textContent = lightingPhrases[selectedValue];
+            display.style.display = 'block';
         }
     }
     

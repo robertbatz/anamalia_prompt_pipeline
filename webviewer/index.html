@@ -109,25 +109,6 @@
                         </select>
                     </div>
                     
-                    <div>
-                        <label for="film-stock-filter" class="field-label">
-                            Film Stock
-                            <span class="info-icon" data-field="film-stock-filter" title="Click for help">?</span>
-                        </label>
-                        <select id="film-stock-filter">
-                            <option value="all">All Film Stocks</option>
-                            <option value="kodak_portra_400">Kodak Portra 400</option>
-                            <option value="kodak_ultramax_400">Kodak Ultramax 400</option>
-                            <option value="fuji_superia_400">Fuji Superia 400</option>
-                            <option value="ilford_hp5_400">Ilford HP5 400</option>
-                            <option value="kodak_gold_200">Kodak Gold 200</option>
-                            <option value="fuji_velvia_50">Fuji Velvia 50</option>
-                            <option value="kodak_tmax_100">Kodak T-Max 100</option>
-                            <option value="agfa_vista_200">Agfa Vista 200</option>
-                            <option value="lomography_color_400">Lomography Color 400</option>
-                            <option value="cinestill_800t">Cinestill 800T</option>
-                        </select>
-                    </div>
                     
                     <!-- Commented out Versioned Lexicons - can be added back later -->
                     <!--
@@ -243,26 +224,6 @@
                     </div>
                     
                     <div>
-                        <label for="camera-filter" class="field-label">
-                            Camera
-                            <span class="info-icon" data-field="camera-filter" title="Click for help">?</span>
-                        </label>
-                        <select id="camera-filter">
-                            <option value="all">All Cameras</option>
-                            <option value="camera_001">35mm Eye-level</option>
-                            <option value="camera_002">35mm 3/4 Height</option>
-                            <option value="camera_003">35mm Low Angle</option>
-                            <option value="camera_004">35mm High Angle</option>
-                            <option value="camera_005">35mm 3/4 Left</option>
-                            <option value="camera_006">35mm 3/4 Right</option>
-                            <option value="camera_007">35mm Profile</option>
-                            <option value="camera_008">35mm Back 3/4</option>
-                            <option value="camera_009">50mm Portrait</option>
-                            <option value="camera_010">24mm Wide</option>
-                        </select>
-                    </div>
-                    
-                    <div>
                         <label for="props-filter" class="field-label">
                             Props
                             <span class="info-icon" data-field="props-filter" title="Click for help">?</span>
@@ -320,6 +281,14 @@
                             <option value="lighting_009">Moody Overcast</option>
                             <option value="lighting_010">Warm Firelight</option>
                         </select>
+                        <div id="lighting-codified-display" class="codified-scheme-display" style="display: none;">
+                            <div class="codified-scheme-header">
+                                <strong>📝 Codified Scheme:</strong>
+                            </div>
+                            <div id="lighting-codified-text" class="codified-scheme-text">
+                                <!-- Codified scheme text will be displayed here -->
+                            </div>
+                        </div>
                     </div>
                     
                     <div>
@@ -335,6 +304,46 @@
                             <option value="miniature">Miniature</option>
                             <option value="diorama">Diorama</option>
                             <option value="tilt_shift">Tilt Shift</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="film-stock-filter" class="field-label">
+                            Film Stock
+                            <span class="info-icon" data-field="film-stock-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="film-stock-filter">
+                            <option value="all">All Film Stocks</option>
+                            <option value="kodak_portra_400">Kodak Portra 400</option>
+                            <option value="kodak_ultramax_400">Kodak Ultramax 400</option>
+                            <option value="fuji_superia_400">Fuji Superia 400</option>
+                            <option value="ilford_hp5_400">Ilford HP5 400</option>
+                            <option value="kodak_gold_200">Kodak Gold 200</option>
+                            <option value="fuji_velvia_50">Fuji Velvia 50</option>
+                            <option value="kodak_tmax_100">Kodak T-Max 100</option>
+                            <option value="agfa_vista_200">Agfa Vista 200</option>
+                            <option value="lomography_color_400">Lomography Color 400</option>
+                            <option value="cinestill_800t">Cinestill 800T</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="camera-filter" class="field-label">
+                            Camera
+                            <span class="info-icon" data-field="camera-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="camera-filter">
+                            <option value="all">All Cameras</option>
+                            <option value="camera_001">35mm Eye-level</option>
+                            <option value="camera_002">35mm 3/4 Height</option>
+                            <option value="camera_003">35mm Low Angle</option>
+                            <option value="camera_004">35mm High Angle</option>
+                            <option value="camera_005">35mm 3/4 Left</option>
+                            <option value="camera_006">35mm 3/4 Right</option>
+                            <option value="camera_007">35mm Profile</option>
+                            <option value="camera_008">35mm Back 3/4</option>
+                            <option value="camera_009">50mm Portrait</option>
+                            <option value="camera_010">24mm Wide</option>
                         </select>
                     </div>
                     
@@ -785,24 +794,6 @@
                         </select>
                     </div>
                     
-                    <div>
-                        <label for="assemble-film-stock" class="field-label">
-                            Film Stock
-                            <span class="info-icon" data-field="assemble-film-stock" title="Click for help">?</span>
-                        </label>
-                        <select id="assemble-film-stock">
-                            <option value="kodak_portra_400">Kodak Portra 400</option>
-                            <option value="kodak_ultramax_400">Kodak Ultramax 400</option>
-                            <option value="fuji_superia_400">Fuji Superia 400</option>
-                            <option value="ilford_hp5_400">Ilford HP5 400</option>
-                            <option value="kodak_gold_200">Kodak Gold 200</option>
-                            <option value="fuji_velvia_50">Fuji Velvia 50</option>
-                            <option value="kodak_tmax_100">Kodak T-Max 100</option>
-                            <option value="agfa_vista_200">Agfa Vista 200</option>
-                            <option value="lomography_color_400">Lomography Color 400</option>
-                            <option value="cinestill_800t">Cinestill 800T</option>
-                        </select>
-                    </div>
                     
                     <!-- Commented out Versioned Lexicons for assembly - can be added back later -->
                     <!--
@@ -838,19 +829,6 @@
                         </select>
                     </div>
                     
-                    <div>
-                        <label for="assemble-light" class="field-label">
-                            Light
-                            <span class="info-icon" data-field="assemble-light" title="Click for help">?</span>
-                        </label>
-                        <select id="assemble-light">
-                            <option value="all">All Lighting</option>
-                            <option value="warm">Warm</option>
-                            <option value="directional">Directional</option>
-                            <option value="diffused">Diffused</option>
-                            <option value="golden-hour">Golden Hour</option>
-                        </select>
-                    </div>
                     
                     <div>
                         <label for="assemble-color" class="field-label">
@@ -916,24 +894,6 @@
                         </select>
                     </div>
                     
-                    <div>
-                        <label for="assemble-camera" class="field-label">
-                            Camera
-                            <span class="info-icon" data-field="assemble-camera" title="Click for help">?</span>
-                        </label>
-                        <select id="assemble-camera">
-                            <option value="camera_001">35mm Eye-level (Canonical)</option>
-                            <option value="camera_002">35mm 3/4 Height</option>
-                            <option value="camera_003">35mm Low Angle</option>
-                            <option value="camera_004">35mm High Angle</option>
-                            <option value="camera_005">35mm 3/4 Left</option>
-                            <option value="camera_006">35mm 3/4 Right</option>
-                            <option value="camera_007">35mm Profile</option>
-                            <option value="camera_008">35mm Back 3/4</option>
-                            <option value="camera_009">50mm Portrait</option>
-                            <option value="camera_010">24mm Wide</option>
-                        </select>
-                    </div>
                 </div>
             </div>
 
@@ -990,6 +950,14 @@
                             <option value="lighting_009">Moody Overcast</option>
                             <option value="lighting_010">Warm Firelight</option>
                         </select>
+                        <div id="assemble-lighting-codified-display" class="codified-scheme-display" style="display: none;">
+                            <div class="codified-scheme-header">
+                                <strong>📝 Codified Scheme:</strong>
+                            </div>
+                            <div id="assemble-lighting-codified-text" class="codified-scheme-text">
+                                <!-- Codified scheme text will be displayed here -->
+                            </div>
+                        </div>
                     </div>
                     
                     <div>
@@ -1005,6 +973,44 @@
                             <option value="miniature">Miniature</option>
                             <option value="diorama">Diorama</option>
                             <option value="tilt_shift">Tilt Shift</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="assemble-film-stock" class="field-label">
+                            Film Stock
+                            <span class="info-icon" data-field="assemble-film-stock" title="Click for help">?</span>
+                        </label>
+                        <select id="assemble-film-stock">
+                            <option value="kodak_portra_400">Kodak Portra 400</option>
+                            <option value="kodak_ultramax_400">Kodak Ultramax 400</option>
+                            <option value="fuji_superia_400">Fuji Superia 400</option>
+                            <option value="ilford_hp5_400">Ilford HP5 400</option>
+                            <option value="kodak_gold_200">Kodak Gold 200</option>
+                            <option value="fuji_velvia_50">Fuji Velvia 50</option>
+                            <option value="kodak_tmax_100">Kodak T-Max 100</option>
+                            <option value="agfa_vista_200">Agfa Vista 200</option>
+                            <option value="lomography_color_400">Lomography Color 400</option>
+                            <option value="cinestill_800t">Cinestill 800T</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="assemble-camera" class="field-label">
+                            Camera
+                            <span class="info-icon" data-field="assemble-camera" title="Click for help">?</span>
+                        </label>
+                        <select id="assemble-camera">
+                            <option value="camera_001">35mm Eye-level (Canonical)</option>
+                            <option value="camera_002">35mm 3/4 Height</option>
+                            <option value="camera_003">35mm Low Angle</option>
+                            <option value="camera_004">35mm High Angle</option>
+                            <option value="camera_005">35mm 3/4 Left</option>
+                            <option value="camera_006">35mm 3/4 Right</option>
+                            <option value="camera_007">35mm Profile</option>
+                            <option value="camera_008">35mm Back 3/4</option>
+                            <option value="camera_009">50mm Portrait</option>
+                            <option value="camera_010">24mm Wide</option>
                         </select>
                     </div>
                 </div>
