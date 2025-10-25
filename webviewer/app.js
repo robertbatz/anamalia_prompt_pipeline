@@ -1099,20 +1099,32 @@ class AnamaliaViewer {
         
         // Generate preview prompt
         let prompt;
+        
+        // Check for T1 character selection first
+        let characterName = 'A character';
+        const tenner1Specific = document.getElementById('tenner-1-specific')?.value || '';
+        if (tenner1Specific) {
+            // Parse T1 selection: "T1-0: rhino named Ruby"
+            const match = tenner1Specific.match(/^T1-\d+:\s*(.+)$/);
+            if (match) {
+                characterName = match[1]; // Use the actual character name
+            }
+        }
+        
         if (pose) {
             // Check if it's a custom pose (from custom text input)
             const customPoseText = document.getElementById('custom-pose-text')?.value || '';
             if (tennerPoseElement && tennerPoseElement.offsetParent !== null && 
                 tennerPoseElement.value === 'custom' && customPoseText.trim()) {
                 // For custom poses, use the text directly
-                prompt = `A character ${pose}`;
+                prompt = `${characterName} ${pose}`;
             } else {
                 // For predefined poses, add "in a [pose] pose"
-                prompt = `A character in a ${pose.replace('_', ' ')} pose`;
+                prompt = `${characterName} in a ${pose.replace('_', ' ')} pose`;
             }
         } else {
-            // No pose specified, use generic character
-            prompt = `A character`;
+            // No pose specified, use character name
+            prompt = characterName;
         }
         
         if (scene !== 'all') {
