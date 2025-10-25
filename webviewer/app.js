@@ -277,7 +277,6 @@ class AnamaliaViewer {
         this.updateTennerStatus();
         this.updateTennerOptions();
         this.updateTennerSpecificOptions();
-        this.updateCharacterCategoryState();
     }
     
     updateTennerSpecificOptions() {
@@ -1249,7 +1248,7 @@ class AnamaliaViewer {
         try {
             console.log('📊 Loading Tenner data from JSON...');
             
-            const response = await fetch('data/new tenner options.json');
+            const response = await fetch('data/new_tenner_options.json');
             if (!response.ok) {
                 console.error('❌ Could not load Tenner options JSON!');
                 this.tennerData = { categories: {}, summary: { total_tenners: 32 } };
