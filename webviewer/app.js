@@ -1363,7 +1363,8 @@ class AnamaliaViewer {
         if (isNaN(width) || isNaN(height)) return;
         
         const ratio = width / height;
-        let closestRatio = '16:9'; // default
+        let closestRatio = 'custom'; // default to custom
+        let minDiff = Infinity;
         
         // Find closest aspect ratio
         const ratios = {
@@ -1375,13 +1376,17 @@ class AnamaliaViewer {
             '9:16': 9/16
         };
         
-        let minDiff = Infinity;
         for (const [ratioStr, ratioVal] of Object.entries(ratios)) {
             const diff = Math.abs(ratio - ratioVal);
             if (diff < minDiff) {
                 minDiff = diff;
                 closestRatio = ratioStr;
             }
+        }
+        
+        // If the closest match is still too far off (more than 0.05 difference), use custom
+        if (minDiff > 0.05) {
+            closestRatio = 'custom';
         }
         
         aspectRatioSelect.value = closestRatio;
