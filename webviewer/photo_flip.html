@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Flip Tool - Anamalia Prompt Assembler</title>
+    <link rel="stylesheet" href="styles.css?v=202501241045">
+    <style>
+        .photo-flip-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #e3f2fd;
+        }
+        
+        .preview-container {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .image-preview {
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            background: white;
+        }
+        
+        .image-preview img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 4px;
+        }
+        
+        .image-preview h4 {
+            margin: 0.5rem 0;
+            color: #333;
+        }
+        
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .download-btn:hover {
+            background: #218838;
+        }
+        
+        .download-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🖼️ Photo Flip Tool</h1>
+        <p>Upload a photo and automatically flip it horizontally for download</p>
+        <a href="index.html" class="back-link">← Back to Main</a>
+        <div class="floating-tools">
+            <button id="tools-toggle" class="tools-toggle-btn" title="Tools Menu">
+                🛠️
+            </button>
+            <div id="tools-menu" class="tools-menu">
+                <div class="tools-menu-header">
+                    <h3>🛠️ Tools</h3>
+                    <button id="tools-close" class="tools-close-btn" title="Close Menu">×</button>
+                </div>
+                <div class="tools-menu-content">
+                    <a href="photo_flip.html" class="tool-menu-item">
+                        <div class="tool-menu-icon">🖼️</div>
+                        <div class="tool-menu-info">
+                            <div class="tool-menu-title">Photo Flip</div>
+                            <div class="tool-menu-desc">Upload and flip images horizontally</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="photo-flip-container">
+        <div class="upload-area" id="uploadArea">
+            <div>
+                <h3>📁 Drop your photo here or click to browse</h3>
+                <p>Supports JPG, PNG, GIF, WebP, and other common formats</p>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+        </div>
+
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="preview-container" id="previewContainer" style="display: none;">
+            <div class="image-preview">
+                <h4>Original</h4>
+                <img id="originalPreview" alt="Original image">
+            </div>
+            <div class="image-preview">
+                <h4>Flipped</h4>
+                <img id="flippedPreview" alt="Flipped image">
+                <br>
+                <button class="download-btn" id="downloadBtn" disabled>📥 Download Flipped Image</button>
+            </div>
+        </div>
+
+        <div id="errorMessage" style="display: none; color: #dc3545; margin: 1rem 0; padding: 1rem; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;"></div>
+    </div>
+
+    <script>
+        class PhotoFlipTool {
+            constructor() {
+                this.uploadArea = document.getElementById('uploadArea');
+                this.fileInput = document.getElementById('fileInput');
+                this.previewContainer = document.getElementById('previewContainer');
+                this.originalPreview = document.getElementById('originalPreview');
+                this.flippedPreview = document.getElementById('flippedPreview');
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.progressBar = document.getElementById('progressBar');
+                this.progressFill = document.getElementById('progressFill');
+                this.errorMessage = document.getElementById('errorMessage');
+                
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                // Click to upload
+                this.uploadArea.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+                
+                // File input change
+                this.fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleFile(e.target.files[0]);
+                    }
+                });
+                
+                // Drag and drop
+                this.uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.add('dragover');
+                });
+                
+                this.uploadArea.addEventListener('dragleave', () => {
+                    this.uploadArea.classList.remove('dragover');
+                });
+                
+                this.uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.remove('dragover');
+                    
+                    if (e.dataTransfer.files.length > 0) {
+                        this.handleFile(e.dataTransfer.files[0]);
+                    }
+                });
+                
+                // Download button
+                this.downloadBtn.addEventListener('click', () => {
+                    this.downloadFlippedImage();
+                });
+            }
+            
+            async handleFile(file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    this.showError('Please select a valid image file.');
+                    return;
+                }
+                
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    this.showError('File size too large. Please select an image smaller than 10MB.');
+                    return;
+                }
+                
+                this.hideError();
+                this.showProgress();
+                
+                try {
+                    // Create canvas for image processing
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Load original image
+                    const originalImg = new Image();
+                    originalImg.onload = () => {
+                        // Set canvas size
+                        canvas.width = originalImg.width;
+                        canvas.height = originalImg.height;
+                        
+                        // Draw original image
+                        ctx.drawImage(originalImg, 0, 0);
+                        
+                        // Create flipped image
+                        const flippedCanvas = document.createElement('canvas');
+                        const flippedCtx = flippedCanvas.getContext('2d');
+                        flippedCanvas.width = originalImg.width;
+                        flippedCanvas.height = originalImg.height;
+                        
+                        // Flip horizontally
+                        flippedCtx.scale(-1, 1);
+                        flippedCtx.drawImage(originalImg, -originalImg.width, 0);
+                        
+                        // Update previews
+                        this.originalPreview.src = canvas.toDataURL('image/jpeg', 0.9);
+                        this.flippedPreview.src = flippedCanvas.toDataURL('image/jpeg', 0.9);
+                        
+                        // Store flipped image data for download
+                        this.flippedImageData = flippedCanvas.toDataURL('image/jpeg', 0.9);
+                        this.originalFileName = file.name;
+                        
+                        // Show preview and enable download
+                        this.previewContainer.style.display = 'flex';
+                        this.downloadBtn.disabled = false;
+                        this.hideProgress();
+                        
+                        console.log('✅ Image processed successfully');
+                    };
+                    
+                    originalImg.src = URL.createObjectURL(file);
+                    
+                } catch (error) {
+                    console.error('Error processing image:', error);
+                    this.showError('Error processing image. Please try again.');
+                    this.hideProgress();
+                }
+            }
+            
+            downloadFlippedImage() {
+                if (!this.flippedImageData) return;
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.download = this.getFlippedFileName();
+                link.href = this.flippedImageData;
+                
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                console.log('📥 Download started');
+            }
+            
+            getFlippedFileName() {
+                if (!this.originalFileName) return 'flipped_image.jpg';
+                
+                const lastDotIndex = this.originalFileName.lastIndexOf('.');
+                if (lastDotIndex === -1) {
+                    return this.originalFileName + '_flipped.jpg';
+                }
+                
+                const name = this.originalFileName.substring(0, lastDotIndex);
+                const extension = this.originalFileName.substring(lastDotIndex);
+                return name + '_flipped' + extension;
+            }
+            
+            showProgress() {
+                this.progressBar.style.display = 'block';
+                this.progressFill.style.width = '100%';
+            }
+            
+            hideProgress() {
+                this.progressBar.style.display = 'none';
+                this.progressFill.style.width = '0%';
+            }
+            
+            showError(message) {
+                this.errorMessage.textContent = message;
+                this.errorMessage.style.display = 'block';
+            }
+            
+            hideError() {
+                this.errorMessage.style.display = 'none';
+            }
+        }
+        
+        // Initialize the tool when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new PhotoFlipTool();
+            new FloatingToolsManager();
+        });
+        
+        // Floating Tools Manager for photo flip page
+        class FloatingToolsManager {
+            constructor() {
+                this.setupFloatingToolsListeners();
+            }
+            
+            setupFloatingToolsListeners() {
+                // Floating Tools menu toggle
+                const toolsToggle = document.getElementById('tools-toggle');
+                const toolsMenu = document.getElementById('tools-menu');
+                const toolsClose = document.getElementById('tools-close');
+                
+                if (toolsToggle && toolsMenu) {
+                    toolsToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggleToolsMenu();
+                    });
+                }
+                
+                if (toolsClose && toolsMenu) {
+                    toolsClose.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.closeToolsMenu();
+                    });
+                }
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (toolsMenu && toolsMenu.classList.contains('show') && 
+                        !toolsMenu.contains(e.target) && 
+                        !toolsToggle.contains(e.target)) {
+                        this.closeToolsMenu();
+                    }
+                });
+                
+                // Close menu on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && toolsMenu && toolsMenu.classList.contains('show')) {
+                        this.closeToolsMenu();
+                    }
+                });
+            }
+            
+            toggleToolsMenu() {
+                const toolsMenu = document.getElementById('tools-menu');
+                if (toolsMenu) {
+                    toolsMenu.classList.toggle('show');
+                }
+            }
+            
+            closeToolsMenu() {
+                const toolsMenu = document.getElementById('tools-menu');
+                if (toolsMenu) {
+                    toolsMenu.classList.remove('show');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

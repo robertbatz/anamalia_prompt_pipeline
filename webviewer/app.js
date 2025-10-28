@@ -36,6 +36,7 @@ class AnamaliaViewer {
         this.setupInfoModalListeners();
         this.setupDocModalListeners();
         this.setupCompositeModalListeners();
+        this.setupFloatingToolsListeners();
         this.initPromptPreviewModal();
         this.initOutputParameterSync();
         
@@ -328,6 +329,57 @@ class AnamaliaViewer {
         
         // Project management event listeners
         this.setupProjectManagementListeners();
+    }
+    
+    setupFloatingToolsListeners() {
+        // Floating Tools menu toggle
+        const toolsToggle = document.getElementById('tools-toggle');
+        const toolsMenu = document.getElementById('tools-menu');
+        const toolsClose = document.getElementById('tools-close');
+        
+        if (toolsToggle && toolsMenu) {
+            toolsToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleToolsMenu();
+            });
+        }
+        
+        if (toolsClose && toolsMenu) {
+            toolsClose.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.closeToolsMenu();
+            });
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (toolsMenu && toolsMenu.classList.contains('show') && 
+                !toolsMenu.contains(e.target) && 
+                !toolsToggle.contains(e.target)) {
+                this.closeToolsMenu();
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && toolsMenu && toolsMenu.classList.contains('show')) {
+                this.closeToolsMenu();
+            }
+        });
+    }
+    
+    toggleToolsMenu() {
+        const toolsMenu = document.getElementById('tools-menu');
+        if (toolsMenu) {
+            toolsMenu.classList.toggle('show');
+        }
+    }
+    
+    closeToolsMenu() {
+        const toolsMenu = document.getElementById('tools-menu');
+        if (toolsMenu) {
+            toolsMenu.classList.remove('show');
+        }
     }
     
     setupProjectManagementListeners() {

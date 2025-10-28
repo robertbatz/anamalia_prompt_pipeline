@@ -35,6 +35,7 @@ def serve(port=8080, host='localhost'):
         print(f"🔗 Web viewer: http://{host}:{port}/webviewer/")
         print(f"📦 Bundles: http://{host}:{port}/bundles/")
         print(f"🎨 Renders: http://{host}:{port}/renders/")
+        print(f"🖼️  Photo Flip Tool: http://{host}:{port}/webviewer/photo_flip.html")
         print(f"⏹️  Press Ctrl+C to stop")
         
         try:
