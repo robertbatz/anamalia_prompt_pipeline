@@ -415,6 +415,25 @@
                             </select>
                         </div>
                         
+                        <div>
+                            <label for="tenner-orientation" class="field-label">
+                                Orientation
+                                <span class="info-icon" data-field="tenner-orientation" title="Click for help">?</span>
+                            </label>
+                            <select id="tenner-orientation">
+                                <option value="default">Default (Three Quarter Left)</option>
+                                <option value="three_quarter_left">Three Quarter Left</option>
+                                <option value="three_quarter_right">Three Quarter Right</option>
+                                <option value="front">Front</option>
+                                <option value="profile_left">Profile Left</option>
+                                <option value="profile_right">Profile Right</option>
+                                <option value="back_three_quarter_left">Back Three Quarter Left</option>
+                                <option value="back_three_quarter_right">Back Three Quarter Right</option>
+                                <option value="back">Back</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        
                         <!-- Custom Pose Input (only visible when Custom is selected) -->
                         <div id="custom-pose-input" style="display: none;">
                             <label for="custom-pose-text" class="field-label">
@@ -422,6 +441,15 @@
                                 <span class="info-icon" data-field="custom-pose-text" title="Click for help">?</span>
                             </label>
                             <input type="text" id="custom-pose-text" placeholder="Enter custom pose description (e.g., 'sitting on a chair reading a book')" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        
+                        <!-- Custom Orientation Input (only visible when Custom is selected) -->
+                        <div id="custom-orientation-input" style="display: none;">
+                            <label for="custom-orientation-text" class="field-label">
+                                Custom Orientation Description
+                                <span class="info-icon" data-field="custom-orientation-text" title="Click for help">?</span>
+                            </label>
+                            <input type="text" id="custom-orientation-text" placeholder="Enter custom orientation description (e.g., 'slight left turn, looking up')" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
                         </div>
                     </div>
                 </div>

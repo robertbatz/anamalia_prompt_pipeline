@@ -243,6 +243,7 @@ def convert(data_dir, assets_dir, schema_dir, verbose):
     csv_config = {
         'characters.csv': {'schema': 'character', 'asset_type': 'characters'},
         'poses.csv': {'schema': 'pose', 'asset_type': 'poses'},
+        'orientations.csv': {'schema': 'orientation', 'asset_type': 'orientations'},
         'wardrobe.csv': {'schema': 'wardrobe', 'asset_type': 'wardrobe'},
         'props.csv': {'schema': 'props', 'asset_type': 'props'},
         'scenes.csv': {'schema': 'scene', 'asset_type': 'scenes'},
@@ -359,6 +360,7 @@ def create_bundle_from_spec(spec: Dict[str, Any], data_path: Path, project_root:
     # Load asset data
     characters_data = load_csv_data(data_path / 'characters.csv')
     poses_data = load_csv_data(data_path / 'poses.csv')
+    orientations_data = load_csv_data(data_path / 'orientations.csv')
     scenes_data = load_csv_data(data_path / 'scenes.csv')
     wardrobe_data = load_csv_data(data_path / 'wardrobe.csv')
     lighting_data = load_csv_data(data_path / 'lighting_profiles.csv')
@@ -367,6 +369,7 @@ def create_bundle_from_spec(spec: Dict[str, Any], data_path: Path, project_root:
     # Find specific assets by ID
     character = next((item for item in characters_data if item.get('id') == spec_data.get('character')), None)
     pose = next((item for item in poses_data if item.get('id') == spec_data.get('pose')), None)
+    orientation = next((item for item in orientations_data if item.get('id') == spec_data.get('orientation')), None)
     scene = next((item for item in scenes_data if item.get('id') == spec_data.get('scene')), None)
     lighting = next((item for item in lighting_data if item.get('id') == spec_data.get('lighting')), None)
     model = next((item for item in model_data if item.get('id') == spec_data.get('model')), None)
@@ -376,6 +379,8 @@ def create_bundle_from_spec(spec: Dict[str, Any], data_path: Path, project_root:
         raise ValueError(f"Character '{spec_data.get('character')}' not found")
     if not pose:
         raise ValueError(f"Pose '{spec_data.get('pose')}' not found")
+    if not orientation:
+        raise ValueError(f"Orientation '{spec_data.get('orientation')}' not found")
     if not scene:
         raise ValueError(f"Scene '{spec_data.get('scene')}' not found")
     if not lighting:
@@ -400,7 +405,7 @@ def create_bundle_from_spec(spec: Dict[str, Any], data_path: Path, project_root:
     
     # Create bundle using existing function
     return create_prompt_bundle(
-        character, pose, scene, wardrobe_items, lighting, model, film_bible_text
+        character, pose, orientation, scene, wardrobe_items, lighting, model, film_bible_text
     )
 
 @cli.command()
@@ -630,12 +635,12 @@ def assemble(characters, poses, scenes, wardrobe, specs, matrix, output_dir, ver
     
     click.echo(f"✅ Assembly complete - {bundle_count} bundles created")
 
-def create_prompt_bundle(character: Dict, pose: Dict, scene: Dict, wardrobe: List[Dict], 
+def create_prompt_bundle(character: Dict, pose: Dict, orientation: Dict, scene: Dict, wardrobe: List[Dict], 
                         lighting: Optional[Dict], model: Optional[Dict], film_bible: str) -> Dict[str, Any]:
     """Create a prompt bundle from asset components."""
     
     # Generate unique bundle ID
-    components = [character.get('id', ''), pose.get('id', ''), scene.get('id', '')]
+    components = [character.get('id', ''), pose.get('id', ''), orientation.get('id', ''), scene.get('id', '')]
     if wardrobe:
         components.extend([w.get('id', '') for w in wardrobe])
     bundle_id = f"{'_'.join(components)}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -660,6 +665,13 @@ def create_prompt_bundle(character: Dict, pose: Dict, scene: Dict, wardrobe: Lis
         if isinstance(pose_desc, list):
             pose_desc = ' '.join(pose_desc)
         prompt_parts.append(pose_desc)
+    
+    # Orientation descriptor
+    if orientation.get('descriptor'):
+        orient_desc = orientation['descriptor']
+        if isinstance(orient_desc, list):
+            orient_desc = ' '.join(orient_desc)
+        prompt_parts.append(orient_desc)
     
     # Wardrobe descriptors
     for w in wardrobe:
@@ -700,6 +712,7 @@ def create_prompt_bundle(character: Dict, pose: Dict, scene: Dict, wardrobe: Lis
         "film_bible": "film_bible@1.0.0",
         "character": f"{character.get('id', 'unknown')}@{character.get('version', '1.0.0')}",
         "pose": f"{pose.get('id', 'unknown')}@{pose.get('version', '1.0.0')}",
+        "orientation": f"{orientation.get('id', 'unknown')}@{orientation.get('version', '1.0.0')}",
         "wardrobe": [f"{w.get('id', 'unknown')}@{w.get('version', '1.0.0')}" for w in wardrobe],
         "props": [],
         "scene": f"{scene.get('id', 'unknown')}@{scene.get('version', '1.0.0')}",
@@ -719,8 +732,8 @@ def create_prompt_bundle(character: Dict, pose: Dict, scene: Dict, wardrobe: Lis
         "vocabulary_version": "lexicon@v1",
         "inputs_checksum": generate_checksum(json.dumps(spec, sort_keys=True)),
         "metadata": {
-            "description": f"Bundle for {character.get('id', 'character')} in {pose.get('id', 'pose')} pose",
-            "tags": [character.get('id', ''), pose.get('id', ''), scene.get('id', '')],
+            "description": f"Bundle for {character.get('id', 'character')} in {pose.get('id', 'pose')} pose, {orientation.get('id', 'orientation')} orientation",
+            "tags": [character.get('id', ''), pose.get('id', ''), orientation.get('id', ''), scene.get('id', '')],
             "status": "pending",
             "approved": False,
             "notes": "Generated by Anamalia Prompt Assembler"
@@ -732,17 +745,18 @@ def create_prompt_bundle(character: Dict, pose: Dict, scene: Dict, wardrobe: Lis
 @cli.command()
 @click.option('--characters', default='all', help='Character filter (all, none, or comma-separated list)')
 @click.option('--poses', default='all', help='Pose filter (all, none, or comma-separated list)')
+@click.option('--orientations', default='all', help='Orientation filter (all, none, or comma-separated list)')
 @click.option('--scenes', default='all', help='Scene filter (all, none, or comma-separated list)')
 @click.option('--wardrobe', default='none', help='Wardrobe filter (none, all, or comma-separated list)')
 @click.option('--lighting', default='all', help='Lighting filter (all, none, or comma-separated list)')
 @click.option('--models', default='all', help='Model filter (all, none, or comma-separated list)')
 @click.option('--output-dir', default='specs', help='Output directory for spec files')
 @click.option('--verbose', '-v', is_flag=True, help='Verbose output')
-def compose(characters, poses, scenes, wardrobe, lighting, models, output_dir, verbose):
+def compose(characters, poses, orientations, scenes, wardrobe, lighting, models, output_dir, verbose):
     """Generate spec stub files based on filters."""
     logger = get_logger()
     log_command_start("compose", {
-        "characters": characters, "poses": poses, "scenes": scenes,
+        "characters": characters, "poses": poses, "orientations": orientations, "scenes": scenes,
         "wardrobe": wardrobe, "lighting": lighting, "models": models,
         "output_dir": output_dir, "verbose": verbose
     })
@@ -757,6 +771,7 @@ def compose(characters, poses, scenes, wardrobe, lighting, models, output_dir, v
     # Load asset data
     characters_data = load_csv_data(data_path / 'characters.csv')
     poses_data = load_csv_data(data_path / 'poses.csv')
+    orientations_data = load_csv_data(data_path / 'orientations.csv')
     scenes_data = load_csv_data(data_path / 'scenes.csv')
     wardrobe_data = load_csv_data(data_path / 'wardrobe.csv')
     lighting_data = load_csv_data(data_path / 'lighting_profiles.csv')
@@ -775,6 +790,7 @@ def compose(characters, poses, scenes, wardrobe, lighting, models, output_dir, v
     
     filtered_characters = filter_assets(characters_data, characters, 'characters')
     filtered_poses = filter_assets(poses_data, poses, 'poses')
+    filtered_orientations = filter_assets(orientations_data, orientations, 'orientations')
     filtered_scenes = filter_assets(scenes_data, scenes, 'scenes')
     filtered_wardrobe = filter_assets(wardrobe_data, wardrobe, 'wardrobe')
     filtered_lighting = filter_assets(lighting_data, lighting, 'lighting')
@@ -784,6 +800,7 @@ def compose(characters, poses, scenes, wardrobe, lighting, models, output_dir, v
         click.echo(f"  📊 Filtered assets:")
         click.echo(f"    Characters: {len(filtered_characters)}")
         click.echo(f"    Poses: {len(filtered_poses)}")
+        click.echo(f"    Orientations: {len(filtered_orientations)}")
         click.echo(f"    Scenes: {len(filtered_scenes)}")
         click.echo(f"    Wardrobe: {len(filtered_wardrobe)}")
         click.echo(f"    Lighting: {len(filtered_lighting)}")
@@ -796,21 +813,23 @@ def compose(characters, poses, scenes, wardrobe, lighting, models, output_dir, v
     combinations = []
     for character in filtered_characters:
         for pose in filtered_poses:
-            for scene in filtered_scenes:
-                for lighting_item in filtered_lighting:
-                    for model in filtered_models:
-                        # Create spec for this combination
-                        spec = {
-                            "character": character['id'],
-                            "pose": pose['id'],
-                            "scene": scene['id'],
-                            "lighting": lighting_item['id'],
-                            "model": model['id'],
-                            "wardrobe": [w['id'] for w in filtered_wardrobe] if filtered_wardrobe else [],
-                            "props": [],  # Default empty props
-                            "camera_override": None
-                        }
-                        combinations.append(spec)
+            for orientation in filtered_orientations:
+                for scene in filtered_scenes:
+                    for lighting_item in filtered_lighting:
+                        for model in filtered_models:
+                            # Create spec for this combination
+                            spec = {
+                                "character": character['id'],
+                                "pose": pose['id'],
+                                "orientation": orientation['id'],
+                                "scene": scene['id'],
+                                "lighting": lighting_item['id'],
+                                "model": model['id'],
+                                "wardrobe": [w['id'] for w in filtered_wardrobe] if filtered_wardrobe else [],
+                                "props": [],  # Default empty props
+                                "camera_override": None
+                            }
+                            combinations.append(spec)
     
     click.echo(f"📊 Generating {len(combinations)} spec combinations...")
     logger.info(f"Generating {len(combinations)} spec combinations")
@@ -819,7 +838,7 @@ def compose(characters, poses, scenes, wardrobe, lighting, models, output_dir, v
     for i, spec in enumerate(combinations):
         try:
             # Create spec filename
-            spec_filename = f"spec_{i:04d}_{spec['character']}_{spec['pose']}_{spec['scene']}.json"
+            spec_filename = f"spec_{i:04d}_{spec['character']}_{spec['pose']}_{spec['orientation']}_{spec['scene']}.json"
             spec_path = output_path / spec_filename
             
             # Add metadata to spec

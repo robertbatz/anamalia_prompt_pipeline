@@ -1,0 +1,11 @@
+{
+  "spec": {
+    "character": "ruby_rhino",
+    "pose": "arms_open_welcome",
+    "orientation": "three_quarter_left",
+    "scene": "piazza_v2",
+    "lighting": "lighting_001",
+    "wardrobe": [],
+    "model": "t2i_model_x@0.9"
+  }
+}

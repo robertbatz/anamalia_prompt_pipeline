@@ -588,6 +588,14 @@ class AnamaliaViewer {
                 this.updateCustomPoseVisibility();
             });
         }
+        
+        // Tenner orientation selection listener
+        const tennerOrientationSelect = document.getElementById('tenner-orientation');
+        if (tennerOrientationSelect) {
+            tennerOrientationSelect.addEventListener('change', () => {
+                this.updateCustomOrientationVisibility();
+            });
+        }
     }
     
     setupPaletteListeners() {
@@ -1249,6 +1257,21 @@ class AnamaliaViewer {
         }
     }
     
+    updateCustomOrientationVisibility() {
+        const tennerOrientation = document.getElementById('tenner-orientation')?.value || '';
+        const customOrientationInput = document.getElementById('custom-orientation-input');
+        
+        if (!customOrientationInput) return;
+        
+        if (tennerOrientation === 'custom') {
+            // Show custom orientation input
+            customOrientationInput.style.display = 'block';
+        } else {
+            // Hide custom orientation input
+            customOrientationInput.style.display = 'none';
+        }
+    }
+    
     
     filterRenders() {
         const searchTerm = document.getElementById('search')?.value.toLowerCase() || '';
@@ -1839,7 +1862,9 @@ class AnamaliaViewer {
     previewPrompt() {
         // Only process pose if pose fields are visible
         let pose = '';
+        let orientation = '';
         const tennerPoseElement = document.getElementById('tenner-pose');
+        const tennerOrientationElement = document.getElementById('tenner-orientation');
         const assemblePoseElement = document.getElementById('assemble-pose');
         
         // Check if pose fields are visible and have values
@@ -1851,6 +1876,19 @@ class AnamaliaViewer {
                     pose = customPoseText.trim() || 'custom pose';
                 } else {
                     pose = tennerPose;
+                }
+            }
+            
+            // Handle orientation
+            if (tennerOrientationElement && tennerOrientationElement.offsetParent !== null) {
+                const tennerOrientation = tennerOrientationElement.value || '';
+                if (tennerOrientation) {
+                    if (tennerOrientation === 'custom') {
+                        const customOrientationText = document.getElementById('custom-orientation-text')?.value || '';
+                        orientation = customOrientationText.trim() || 'custom orientation';
+                    } else {
+                        orientation = tennerOrientation;
+                    }
                 }
             }
         } else if (assemblePoseElement && assemblePoseElement.offsetParent !== null) {
@@ -1908,6 +1946,20 @@ class AnamaliaViewer {
         } else {
             // No pose specified, use character name
             prompt = characterName;
+        }
+        
+        // Add orientation if specified
+        if (orientation) {
+            // Check if it's a custom orientation (from custom text input)
+            const customOrientationText = document.getElementById('custom-orientation-text')?.value || '';
+            if (tennerOrientationElement && tennerOrientationElement.offsetParent !== null && 
+                tennerOrientationElement.value === 'custom' && customOrientationText.trim()) {
+                // For custom orientations, use the text directly
+                prompt += `, ${orientation}`;
+            } else {
+                // For predefined orientations, add orientation description
+                prompt += `, ${orientation.replace('_', ' ')} orientation`;
+            }
         }
         
         if (scene !== 'all') {
@@ -2973,6 +3025,35 @@ class AnamaliaViewer {
                     </div>
                 `
             },
+            'tenner-orientation': {
+                title: 'Character Orientation',
+                content: `
+                    <h4>Character Orientations</h4>
+                    <p>Orientations define the camera angle and character positioning relative to the viewer. Each orientation creates different visual perspectives and storytelling effects.</p>
+                    <ul>
+                        <li><strong>Three Quarter Left:</strong> Classic 3/4 view from the left, most common for character shots</li>
+                        <li><strong>Three Quarter Right:</strong> 3/4 view from the right, alternative character angle</li>
+                        <li><strong>Front:</strong> Direct face-on view, formal and symmetrical</li>
+                        <li><strong>Profile Left/Right:</strong> Side view, dramatic and clean silhouettes</li>
+                        <li><strong>Back Three Quarter:</strong> Behind and to the side, mysterious or contemplative</li>
+                        <li><strong>Back:</strong> Completely behind, creates intrigue or distance</li>
+                        <li><strong>Custom:</strong> Create your own unique orientation description</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>📐 Camera Angles:</strong> Orientations control how the character is viewed. Choose angles that enhance your composition and storytelling.</p>
+                    </div>
+                `
+            },
+            'custom-orientation-text': {
+                title: 'Custom Orientation',
+                content: `
+                    <h4>Custom Orientation Description</h4>
+                    <p>Enter a detailed description of the character's orientation and camera angle. Be specific about positioning and perspective.</p>
+                    <div class="highlight">
+                        <p><strong>💡 Examples:</strong> "slight left turn, looking up", "three-quarter view with head tilted", "profile view with over-shoulder angle"</p>
+                    </div>
+                `
+            },
             'custom-pose-text': {
                 title: 'Custom Pose Description',
                 content: `
@@ -3686,6 +3767,7 @@ class AnamaliaViewer {
             'tenner-2': '',
             'tenner-3': '',
             'tenner-pose': 'arms_open_welcome',
+            'tenner-orientation': 'three_quarter_left',
             'assemble-texture': 'texture_001',
             'assemble-material': 'all',
             'assemble-color-palette': 'anamalia_late_summer',

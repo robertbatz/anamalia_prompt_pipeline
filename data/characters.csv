@@ -1,2 +1,11 @@
-id,version,species,anthro_ratio,descriptor,angles,constraints,notes
-ruby_rhino,1.0.3,rhinoceros,0.8,"Felted wool rhinoceros with hyper-realistic eyes and expressive posture","front;3qL;profileL;back;profileR;3qR","no clothes by default","Friendly and welcoming personality"
+id,version,species,anthro_ratio,descriptor,constraints,notes
+ruby_rhino,1.0.3,rhinoceros,0.8,"Felted wool rhinoceros with hyper-realistic eyes and expressive posture","no clothes by default","Friendly and welcoming personality"
+maxine_mouse,1.0.0,mouse,0.7,"Felted wool mouse with bright eyes and curious expression","no clothes by default","Curious and energetic personality"
+sammy_sloth,1.0.0,sloth,0.6,"Felted wool sloth with gentle eyes and calm demeanor","no clothes by default","Calm and thoughtful personality"
+bella_bear,1.0.0,bear,0.9,"Felted wool bear with warm eyes and protective stance","no clothes by default","Strong and protective personality"
+felix_fox,1.0.0,fox,0.8,"Felted wool fox with clever eyes and mischievous grin","no clothes by default","Clever and mischievous personality"
+luna_wolf,1.0.0,wolf,0.8,"Felted wool wolf with wise eyes and noble bearing","no clothes by default","Mysterious and wise personality"
+oscar_owl,1.0.0,owl,0.7,"Felted wool owl with intelligent eyes and observant posture","no clothes by default","Intelligent and observant personality"
+penny_penguin,1.0.0,penguin,0.6,"Felted wool penguin with cheerful eyes and social stance","no clothes by default","Cheerful and social personality"
+rex_rabbit,1.0.0,rabbit,0.7,"Felted wool rabbit with alert eyes and agile posture","no clothes by default","Quick and agile personality"
+zara_zebra,1.0.0,zebra,0.8,"Felted wool zebra with elegant eyes and graceful bearing","no clothes by default","Elegant and graceful personality"

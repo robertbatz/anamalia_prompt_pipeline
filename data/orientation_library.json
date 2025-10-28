@@ -1,0 +1,51 @@
+{
+  "coordinate_system": {
+    "description": "3D character orientation using Euler angles",
+    "axes": {
+      "yaw": "Horizontal rotation (left/right facing)",
+      "pitch": "Vertical rotation (looking up/down)",
+      "roll": "Tilt rotation (head tilt)"
+    },
+    "conventions": {
+      "yaw": "0° = facing camera, positive = clockwise, negative = counter-clockwise",
+      "pitch": "0° = level, positive = up, negative = down",
+      "roll": "0° = no tilt, positive = tilt right, negative = tilt left"
+    }
+  },
+  "cardinal_directions": {
+    "front": {"yaw": 0, "pitch": 0, "roll": 0, "cue": "straight ahead"},
+    "back": {"yaw": 180, "pitch": 0, "roll": 0, "cue": "180° turn"},
+    "left": {"yaw": -90, "pitch": 0, "roll": 0, "cue": "90° counter-clockwise"},
+    "right": {"yaw": 90, "pitch": 0, "roll": 0, "cue": "90° clockwise"}
+  },
+  "diagonal_directions": {
+    "front_left": {"yaw": -45, "pitch": 0, "roll": 0, "cue": "45° counter-clockwise"},
+    "front_right": {"yaw": 45, "pitch": 0, "roll": 0, "cue": "45° clockwise"},
+    "back_left": {"yaw": -135, "pitch": 0, "roll": 0, "cue": "135° counter-clockwise"},
+    "back_right": {"yaw": 135, "pitch": 0, "roll": 0, "cue": "135° clockwise"}
+  },
+  "vertical_directions": {
+    "looking_up": {"yaw": 0, "pitch": 30, "roll": 0, "cue": "30° up"},
+    "looking_down": {"yaw": 0, "pitch": -15, "roll": 0, "cue": "15° down"},
+    "level": {"yaw": 0, "pitch": 0, "roll": 0, "cue": "level"}
+  },
+  "tilted_directions": {
+    "tilted_left": {"yaw": 0, "pitch": 0, "roll": -15, "cue": "15° roll counter-clockwise"},
+    "tilted_right": {"yaw": 0, "pitch": 0, "roll": 15, "cue": "15° roll clockwise"},
+    "no_tilt": {"yaw": 0, "pitch": 0, "roll": 0, "cue": "no tilt"}
+  },
+  "combined_directions": {
+    "looking_up_left": {"yaw": -30, "pitch": 30, "roll": 0, "cue": "30° up and 30° counter-clockwise"},
+    "looking_up_right": {"yaw": 30, "pitch": 30, "roll": 0, "cue": "30° up and 30° clockwise"},
+    "looking_down_left": {"yaw": -30, "pitch": -15, "roll": 0, "cue": "15° down and 30° counter-clockwise"},
+    "looking_down_right": {"yaw": 30, "pitch": -15, "roll": 0, "cue": "15° down and 30° clockwise"}
+  },
+  "user_cues": {
+    "yaw_positive": "clockwise",
+    "yaw_negative": "counter-clockwise",
+    "pitch_positive": "up",
+    "pitch_negative": "down",
+    "roll_positive": "roll clockwise",
+    "roll_negative": "roll counter-clockwise"
+  }
+}

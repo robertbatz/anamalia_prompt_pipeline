@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Orientation Schema",
+  "description": "Schema for orientation assets in the Anamalia Prompt Assembler",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique identifier in snake_case"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version"
+    },
+    "descriptor": {
+      "type": "string",
+      "minLength": 5,
+      "description": "Textual description for prompt generation"
+    },
+    "yaw_degrees": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "Yaw rotation in degrees (left/right)"
+    },
+    "pitch_degrees": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90,
+      "description": "Pitch rotation in degrees (up/down)"
+    },
+    "roll_degrees": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "Roll rotation in degrees (tilt)"
+    },
+    "user_cue": {
+      "type": "string",
+      "description": "Human-readable cue for the orientation"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": ["id", "version", "descriptor", "yaw_degrees", "pitch_degrees", "roll_degrees"],
+  "additionalProperties": false
+}

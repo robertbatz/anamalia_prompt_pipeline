@@ -1,0 +1,11 @@
+id,descriptor,version,description
+default,"three quarter left orientation, camera positioned at 3/4-left angle",1.0.0,Default three quarter left orientation
+three_quarter_left,"three quarter left orientation, camera positioned at 3/4-left angle",1.0.0,Three quarter left view showing character from the left side
+three_quarter_right,"three quarter right orientation, camera positioned at 3/4-right angle",1.0.0,Three quarter right view showing character from the right side
+front,"front orientation, camera positioned directly in front",1.0.0,Front view showing character face-on
+profile_left,"profile left orientation, camera positioned at left side",1.0.0,Left profile view showing character from the side
+profile_right,"profile right orientation, camera positioned at right side",1.0.0,Right profile view showing character from the side
+back_three_quarter_left,"back three quarter left orientation, camera positioned behind and to the left",1.0.0,Back three quarter left view showing character from behind and left
+back_three_quarter_right,"back three quarter right orientation, camera positioned behind and to the right",1.0.0,Back three quarter right view showing character from behind and right
+back,"back orientation, camera positioned directly behind",1.0.0,Back view showing character from behind
+custom,"custom orientation, user-defined camera angle",1.0.0,Custom orientation with user-specified camera positioning
