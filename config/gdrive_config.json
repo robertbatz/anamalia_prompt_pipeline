@@ -1,0 +1,15 @@
+{
+  "service_account_email": "your-service-account@your-project.iam.gserviceaccount.com",
+  "credentials_file": "gdrive_credentials.json",
+  "target_folder_id": "your-photoflip-folder-id",
+  "folder_name": "PhotoFlip",
+  "max_file_size_mb": 10,
+  "allowed_mime_types": [
+    "image/jpeg",
+    "image/png", 
+    "image/gif",
+    "image/webp",
+    "image/bmp",
+    "image/tiff"
+  ]
+}

@@ -4,32 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Flip Tool - Anamalia Prompt Assembler</title>
-    <link rel="stylesheet" href="styles.css?v=202501241045">
+    <link rel="stylesheet" href="styles.css?v=202501241500">
+    <script src="https://apis.google.com/js/api.js"></script>
     <style>
+        /* VIENNALE-Inspired Dark Theme for Photo Flip Tool */
+        
+        /* Override body styling for dark theme */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000000, #001a33);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header styling with VIENNALE-inspired design */
+        .header {
+            background: linear-gradient(135deg, #000000, #001a33);
+            color: #00ffff;
+            padding: 2rem 2rem 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #00ffff;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .header p {
+            color: #ffffff;
+            opacity: 0.9;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+        
         .photo-flip-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
+            background: rgba(0, 26, 51, 0.1);
+            border-radius: 12px;
+            margin-top: 2rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
         }
         
         .upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            padding: 3rem;
+            border: 2px dashed #00ffff;
+            border-radius: 12px;
+            padding: 4rem 3rem;
             text-align: center;
             margin: 2rem 0;
             transition: all 0.3s ease;
             cursor: pointer;
+            background: rgba(0, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .upload-area:hover::before {
+            left: 100%;
         }
         
         .upload-area:hover {
-            border-color: #007bff;
-            background-color: #f8f9fa;
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
         }
         
         .upload-area.dragover {
-            border-color: #007bff;
-            background-color: #e3f2fd;
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.15);
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .upload-area h3 {
+            color: #00ffff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .upload-area p {
+            color: #ffffff;
+            font-size: 1rem;
+            opacity: 0.8;
         }
         
         .preview-container {
@@ -42,70 +125,234 @@
         
         .image-preview {
             text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1rem;
-            background: white;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            background: rgba(0, 26, 51, 0.5);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .image-preview:hover {
+            border-color: #00ffff;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
         }
         
         .image-preview img {
             max-width: 300px;
             max-height: 300px;
-            border-radius: 4px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         
         .image-preview h4 {
-            margin: 0.5rem 0;
-            color: #333;
+            margin: 1rem 0;
+            color: #00ffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .download-btn {
-            background: #28a745;
-            color: white;
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #000000;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 4px;
+            padding: 1rem 2rem;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
+            font-weight: 700;
             margin: 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
         }
         
         .download-btn:hover {
-            background: #218838;
+            background: linear-gradient(135deg, #00cccc, #00ffff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .download-btn:active {
+            transform: translateY(0);
         }
         
         .download-btn:disabled {
-            background: #6c757d;
+            background: #333333;
+            color: #666666;
             cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .gdrive-btn {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(66, 133, 244, 0.3);
+        }
+        
+        .gdrive-btn:hover {
+            background: linear-gradient(135deg, #3367d6, #2e7d32);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
+        }
+        
+        .gdrive-btn:disabled {
+            background: #333333;
+            color: #666666;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .progress-bar {
             width: 100%;
-            height: 20px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
+            height: 8px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 4px;
             overflow: hidden;
             margin: 1rem 0;
             display: none;
+            border: 1px solid rgba(0, 255, 255, 0.3);
         }
         
         .progress-fill {
             height: 100%;
-            background-color: #007bff;
+            background: linear-gradient(90deg, #00ffff, #0099cc);
             width: 0%;
             transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
         
         .back-link {
             display: inline-block;
             margin-bottom: 2rem;
-            color: #007bff;
+            color: #00ffff;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 6px;
         }
         
         .back-link:hover {
-            text-decoration: underline;
+            background: rgba(0, 255, 255, 0.1);
+            text-decoration: none;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        /* Error message styling */
+        #errorMessage {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        /* Floating tools with dark theme */
+        .tools-toggle-btn {
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .tools-toggle-btn:hover {
+            background: linear-gradient(135deg, #00cccc, #00ffff);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .tools-menu {
+            background: rgba(0, 26, 51, 0.95);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tools-menu-header {
+            background: rgba(0, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .tools-menu-header h3 {
+            color: #00ffff;
+        }
+        
+        .tools-close-btn {
+            color: #ffffff;
+        }
+        
+        .tools-close-btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+        
+        .tool-menu-item {
+            color: #ffffff;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-menu-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            transform: translateX(4px);
+        }
+        
+        .tool-menu-title {
+            color: #00ffff;
+        }
+        
+        .tool-menu-desc {
+            color: #cccccc;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 3rem 2rem;
+            }
+            
+            .preview-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .image-preview {
+                width: 100%;
+                max-width: 400px;
+            }
         }
     </style>
 </head>
@@ -158,7 +405,11 @@
                 <h4>Flipped</h4>
                 <img id="flippedPreview" alt="Flipped image">
                 <br>
-                <button class="download-btn" id="downloadBtn" disabled>📥 Download Flipped Image</button>
+                <div class="button-group">
+                    <button class="download-btn" id="downloadBtn" disabled>📥 Download Flipped Image</button>
+                    <button class="gdrive-btn" id="exportGDriveBtn" disabled>📁 Export to Google Drive</button>
+                    <button class="gdrive-btn" id="importGDriveBtn">📁 Import from Google Drive</button>
+                </div>
             </div>
         </div>
 
@@ -174,9 +425,16 @@
                 this.originalPreview = document.getElementById('originalPreview');
                 this.flippedPreview = document.getElementById('flippedPreview');
                 this.downloadBtn = document.getElementById('downloadBtn');
+                this.exportGDriveBtn = document.getElementById('exportGDriveBtn');
+                this.importGDriveBtn = document.getElementById('importGDriveBtn');
                 this.progressBar = document.getElementById('progressBar');
                 this.progressFill = document.getElementById('progressFill');
                 this.errorMessage = document.getElementById('errorMessage');
+                
+                // Google Drive API configuration
+                this.apiKey = null; // Will be set when needed
+                this.clientId = null; // Will be set when needed
+                this.pickerApiLoaded = false;
                 
                 this.setupEventListeners();
             }
@@ -216,6 +474,15 @@
                 // Download button
                 this.downloadBtn.addEventListener('click', () => {
                     this.downloadFlippedImage();
+                });
+                
+                // Google Drive buttons
+                this.exportGDriveBtn.addEventListener('click', () => {
+                    this.exportToGoogleDrive();
+                });
+                
+                this.importGDriveBtn.addEventListener('click', () => {
+                    this.importFromGoogleDrive();
                 });
             }
             
@@ -271,6 +538,7 @@
                         // Show preview and enable download
                         this.previewContainer.style.display = 'flex';
                         this.downloadBtn.disabled = false;
+                        this.exportGDriveBtn.disabled = false;
                         this.hideProgress();
                         
                         console.log('✅ Image processed successfully');
@@ -331,6 +599,129 @@
             
             hideError() {
                 this.errorMessage.style.display = 'none';
+            }
+            
+            async exportToGoogleDrive() {
+                if (!this.flippedImageData) {
+                    this.showError('No flipped image to export');
+                    return;
+                }
+                
+                try {
+                    this.showProgress();
+                    this.exportGDriveBtn.disabled = true;
+                    
+                    const response = await fetch('/api/gdrive/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            image_data: this.flippedImageData,
+                            filename: this.getFlippedFileName()
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showSuccess(`Successfully exported to Google Drive! <a href="${result.web_view_link}" target="_blank">View in Drive</a>`);
+                    } else {
+                        this.showError(`Export failed: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('Export error:', error);
+                    this.showError('Failed to export to Google Drive. Please try again.');
+                } finally {
+                    this.hideProgress();
+                    this.exportGDriveBtn.disabled = false;
+                }
+            }
+            
+            async importFromGoogleDrive() {
+                try {
+                    // Load Google Drive Picker API
+                    await this.loadGoogleDriveAPI();
+                    
+                    // Create and show picker
+                    const picker = new google.picker.PickerBuilder()
+                        .addView(google.picker.ViewId.DOCS_IMAGES)
+                        .setOAuthToken('') // We'll use service account for backend
+                        .setDeveloperKey(this.apiKey)
+                        .setCallback(this.onPickerSelect.bind(this))
+                        .build();
+                    
+                    picker.setVisible(true);
+                } catch (error) {
+                    console.error('Import error:', error);
+                    this.showError('Failed to load Google Drive picker. Please try again.');
+                }
+            }
+            
+            async loadGoogleDriveAPI() {
+                if (this.pickerApiLoaded) return;
+                
+                return new Promise((resolve, reject) => {
+                    gapi.load('picker', () => {
+                        this.pickerApiLoaded = true;
+                        resolve();
+                    });
+                });
+            }
+            
+            async onPickerSelect(data) {
+                if (data.action === google.picker.Action.PICKED && data.docs && data.docs.length > 0) {
+                    const fileId = data.docs[0].id;
+                    
+                    try {
+                        this.showProgress();
+                        this.importGDriveBtn.disabled = true;
+                        
+                        const response = await fetch('/api/gdrive/download', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                file_id: fileId
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Create a file object from the downloaded data
+                            const response = await fetch(result.image_data);
+                            const blob = await response.blob();
+                            const file = new File([blob], result.filename, { type: result.mime_type });
+                            
+                            // Process the file
+                            await this.handleFile(file);
+                            this.showSuccess(`Successfully imported ${result.filename} from Google Drive`);
+                        } else {
+                            this.showError(`Import failed: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error('Import error:', error);
+                        this.showError('Failed to import from Google Drive. Please try again.');
+                    } finally {
+                        this.hideProgress();
+                        this.importGDriveBtn.disabled = false;
+                    }
+                }
+            }
+            
+            showSuccess(message) {
+                this.errorMessage.innerHTML = message;
+                this.errorMessage.style.display = 'block';
+                this.errorMessage.style.color = '#28a745';
+                this.errorMessage.style.backgroundColor = '#d4edda';
+                this.errorMessage.style.borderColor = '#c3e6cb';
+                
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    this.hideError();
+                }, 5000);
             }
         }
         

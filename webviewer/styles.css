@@ -42,45 +42,56 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f8f9fa;
-    color: #333;
+    background: linear-gradient(135deg, #000000, #001a33);
+    color: #ffffff;
     line-height: 1.6;
+    min-height: 100vh;
 }
 
 .header {
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    color: white;
-    padding: 1.5rem 2rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #000000, #001a33);
+    color: #00ffff;
+    padding: 2rem 2rem 1rem 2rem;
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
+    border-bottom: 2px solid #00ffff;
 }
 
 .header h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 900;
     margin-bottom: 0.5rem;
+    color: #00ffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
 .header p {
+    color: #ffffff;
     opacity: 0.9;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: 300;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
+    background: linear-gradient(135deg, #000000, #001a33);
+    min-height: calc(100vh - 120px);
 }
 
 .filters {
-    background: white;
+    background: rgba(0, 26, 51, 0.1);
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
     margin-bottom: 2rem;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .filter-group {
@@ -96,26 +107,32 @@ body {
 
 .filter-group label {
     font-weight: 600;
-    color: #495057;
+    color: #00ffff;
     margin-bottom: 0.5rem;
     display: block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
 }
 
 .filter-group select,
 .filter-group input {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e9ecef;
+    border: 2px solid rgba(0, 255, 255, 0.3);
     border-radius: 8px;
     font-size: 0.95rem;
     transition: border-color 0.2s ease;
+    background: rgba(0, 26, 51, 0.5);
+    color: #ffffff;
+    backdrop-filter: blur(10px);
 }
 
 .filter-group select:focus,
 .filter-group input:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    border-color: #00ffff;
+    box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.2);
 }
 
 .search-box {
@@ -139,9 +156,10 @@ body {
 .filter-section {
     margin-bottom: 2rem;
     padding: 1.5rem;
-    background: #f8f9fa;
+    background: transparent;
     border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .filter-section:last-child {
@@ -152,38 +170,40 @@ body {
     margin: 0 0 1rem 0;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #495057;
-    border-bottom: 2px solid #007bff;
+    color: #00ffff;
+    border-bottom: 2px solid #00ffff;
     padding-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* Filter section specific styling */
+/* Filter section specific styling - all cyan for VIENNALE theme */
 .filter-section:nth-child(1) h3 { /* Search */
-    border-bottom-color: #3b82f6;
+    border-bottom-color: #00ffff;
 }
 
 .filter-section:nth-child(2) h3 { /* Character Guide */
-    border-bottom-color: #10b981;
+    border-bottom-color: #00ffff;
 }
 
 .filter-section:nth-child(3) h3 { /* Style Guide */
-    border-bottom-color: #f59e0b;
+    border-bottom-color: #00ffff;
 }
 
 .filter-section:nth-child(4) h3 { /* Scene Guide */
-    border-bottom-color: #8b5cf6;
+    border-bottom-color: #00ffff;
 }
 
 .filter-section:nth-child(5) h3 { /* Wardrobe */
-    border-bottom-color: #ef4444;
+    border-bottom-color: #00ffff;
 }
 
 .filter-section:nth-child(6) h3 { /* Mood & Lighting */
-    border-bottom-color: #06b6d4;
+    border-bottom-color: #00ffff;
 }
 
 .filter-section:nth-child(7) h3 { /* Advanced */
-    border-bottom-color: #6b7280;
+    border-bottom-color: #00ffff;
 }
 
 /* Mode Toggle */
@@ -196,43 +216,50 @@ body {
 
 .mode-btn {
     padding: 0.75rem 1.5rem;
-    border: 2px solid #e9ecef;
-    background: white;
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    background: transparent;
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.95rem;
     text-decoration: none;
-    color: #495057;
+    color: #ffffff;
     display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .mode-btn:hover {
-    border-color: #007bff;
-    background: #f8f9fa;
-    color: #495057;
+    border-color: #00ffff;
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
     text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
 }
 
 .mode-btn.active {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
+    background: linear-gradient(135deg, #00ffff, #0099cc);
+    color: #000000;
+    border-color: #00ffff;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
 }
 
 .mode-btn.active:hover {
-    color: white;
+    color: #000000;
+    background: linear-gradient(135deg, #00cccc, #00ffff);
 }
 
 /* Assemble Mode */
 .assemble-mode {
-    background: white;
+    background: rgba(0, 26, 51, 0.1);
     border-radius: 12px;
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .assemble-header {
@@ -244,36 +271,44 @@ body {
 
 .assemble-header h2 {
     margin: 0 0 0.5rem 0;
-    color: #495057;
+    color: #00ffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
 }
 
 .assemble-header p {
     margin: 0;
-    color: #6c757d;
+    color: #ffffff;
+    opacity: 0.9;
 }
 
 .assemble-section {
     margin-bottom: 2rem;
     padding: 1.5rem;
-    background: #f8f9fa;
+    background: transparent;
     border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 /* Tenner System Styles */
 .tenner-mode-toggle {
     margin-bottom: 1.5rem;
     padding: 1rem;
-    background: #f8f9fa;
+    background: transparent;
     border-radius: 6px;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .tenner-mode-toggle label {
     font-weight: 600;
-    color: #495057;
+    color: #00ffff;
     margin-bottom: 0.5rem;
     display: block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .radio-group {
@@ -290,10 +325,11 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: background-color 0.2s;
+    color: #ffffff;
 }
 
 .radio-option:hover {
-    background-color: #e9ecef;
+    background-color: rgba(0, 255, 255, 0.1);
 }
 
 .radio-option input[type="radio"] {
@@ -302,16 +338,17 @@ body {
 
 .radio-option span {
     font-weight: 500;
-    color: #495057;
+    color: #ffffff;
 }
 
 /* Color Palette System Styles */
 .palette-mode-selection {
     margin-bottom: 1rem;
     padding: 1rem;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 255, 0.2);
     border-radius: 8px;
+    backdrop-filter: blur(10px);
 }
 
 .palette-section {
@@ -321,9 +358,10 @@ body {
 .color-usage-mode {
     margin: 1rem 0;
     padding: 0.75rem;
-    background: #ffffff;
-    border: 1px solid #dee2e6;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 255, 0.2);
     border-radius: 6px;
+    backdrop-filter: blur(10px);
 }
 
 .color-swatches {
@@ -332,9 +370,10 @@ body {
     gap: 0.75rem;
     margin: 1rem 0;
     padding: 1rem;
-    background: #ffffff;
-    border: 1px solid #dee2e6;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 255, 0.2);
     border-radius: 8px;
+    backdrop-filter: blur(10px);
 }
 
 .color-swatch {
@@ -372,16 +411,17 @@ body {
     font-size: 0.75rem;
     font-weight: 500;
     text-align: center;
-    color: #495057;
+    color: #ffffff;
     line-height: 1.2;
 }
 
 .individual-color-selection {
     margin-top: 1rem;
     padding: 1rem;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 255, 0.2);
     border-radius: 8px;
+    backdrop-filter: blur(10px);
 }
 
 .color-checkbox {
@@ -395,7 +435,7 @@ body {
 }
 
 .color-checkbox:hover {
-    background-color: #e9ecef;
+    background-color: rgba(0, 255, 255, 0.1);
 }
 
 .color-checkbox input[type="checkbox"] {
@@ -666,9 +706,11 @@ body {
     margin: 0 0 1rem 0;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #495057;
-    border-bottom: 2px solid #007bff;
+    color: #00ffff;
+    border-bottom: 2px solid #00ffff;
     padding-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .assembly-options {
@@ -681,16 +723,17 @@ body {
     display: flex;
     align-items: center;
     padding: 0.75rem;
-    background: white;
-    border: 2px solid #e9ecef;
+    background: transparent;
+    border: 2px solid rgba(0, 255, 255, 0.3);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    color: #ffffff;
 }
 
 .radio-option:hover {
-    border-color: #007bff;
-    background: #f8f9fa;
+    border-color: #00ffff;
+    background: rgba(0, 255, 255, 0.1);
 }
 
 .radio-option input[type="radio"] {
@@ -699,17 +742,18 @@ body {
 
 .radio-option input[type="radio"]:checked + span {
     font-weight: 600;
-    color: #007bff;
+    color: #00ffff;
 }
 
 /* Tape Markings Section */
 .tape-markings-section {
     margin-top: 1rem;
     padding: 1rem;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background: transparent;
+    border: 1px solid rgba(0, 255, 255, 0.2);
     border-radius: 8px;
-    border-left: 4px solid #28a745;
+    border-left: 4px solid #00ffff;
+    backdrop-filter: blur(10px);
 }
 
 .checkbox-group {
@@ -726,10 +770,11 @@ body {
     padding: 0.5rem;
     border-radius: 4px;
     transition: background-color 0.2s;
+    color: #ffffff;
 }
 
 .checkbox-option:hover {
-    background-color: #e9ecef;
+    background-color: rgba(0, 255, 255, 0.1);
 }
 
 .checkbox-option input[type="checkbox"] {
@@ -739,12 +784,12 @@ body {
 
 .checkbox-option span {
     font-weight: 500;
-    color: #495057;
+    color: #ffffff;
 }
 
 .field-help {
     font-size: 0.85rem;
-    color: #6c757d;
+    color: #cccccc;
     margin: 0;
     font-style: italic;
 }
@@ -1194,17 +1239,19 @@ html {
 }
 
 .render-card {
-    background: white;
+    background: rgba(0, 26, 51, 0.2);
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
 .render-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
+    border-color: #00ffff;
 }
 
 .render-image {
@@ -1227,12 +1274,14 @@ html {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: #2c3e50;
+    color: #00ffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .render-meta {
     font-size: 0.85rem;
-    color: #6c757d;
+    color: #cccccc;
     margin-bottom: 1rem;
 }
 
@@ -1273,12 +1322,18 @@ html {
 }
 
 .btn-primary {
-    background: #007bff;
-    color: white;
+    background: linear-gradient(135deg, #00ffff, #0099cc);
+    color: #000000;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
 }
 
 .btn-primary:hover {
-    background: #0056b3;
+    background: linear-gradient(135deg, #00cccc, #00ffff);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
 }
 
 .btn-secondary {
@@ -2309,14 +2364,17 @@ html {
 
 /* Project Management Styles */
 .project-management {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border: 2px solid #007bff;
+    background: transparent;
+    border: 2px solid rgba(0, 255, 255, 0.3);
     border-radius: 12px;
+    backdrop-filter: blur(10px);
 }
 
 .project-management h3 {
-    color: #007bff;
-    border-bottom-color: #007bff;
+    color: #00ffff;
+    border-bottom-color: #00ffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .project-create-group {
@@ -2468,11 +2526,11 @@ html {
     height: 60px;
     border-radius: 50%;
     border: none;
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
+    background: linear-gradient(135deg, #00ffff, #0099cc);
+    color: #000000;
     font-size: 1.5rem;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -2481,8 +2539,8 @@ html {
 
 .tools-toggle-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
-    background: linear-gradient(135deg, #0056b3, #004085);
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+    background: linear-gradient(135deg, #00cccc, #00ffff);
 }
 
 .tools-toggle-btn:active {
@@ -2494,14 +2552,15 @@ html {
     top: 70px;
     right: 0;
     width: 300px;
-    background: white;
+    background: rgba(0, 26, 51, 0.95);
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 .tools-menu.show {
@@ -2515,14 +2574,14 @@ html {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e9ecef;
-    background: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    background: rgba(0, 255, 255, 0.1);
     border-radius: 12px 12px 0 0;
 }
 
 .tools-menu-header h3 {
     margin: 0;
-    color: #2c3e50;
+    color: #00ffff;
     font-size: 1.1rem;
     font-weight: 600;
 }
@@ -2531,7 +2590,7 @@ html {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #6c757d;
+    color: #ffffff;
     cursor: pointer;
     padding: 0;
     width: 24px;
@@ -2544,8 +2603,8 @@ html {
 }
 
 .tools-close-btn:hover {
-    background: #e9ecef;
-    color: #495057;
+    background: rgba(0, 255, 255, 0.1);
+    color: #00ffff;
 }
 
 .tools-menu-content {
@@ -2557,16 +2616,16 @@ html {
     align-items: center;
     padding: 1rem;
     text-decoration: none;
-    color: #333;
+    color: #ffffff;
     border-radius: 8px;
     transition: all 0.2s ease;
     margin-bottom: 0.25rem;
 }
 
 .tool-menu-item:hover {
-    background: #f8f9fa;
+    background: rgba(0, 255, 255, 0.1);
     text-decoration: none;
-    color: #333;
+    color: #00ffff;
     transform: translateX(4px);
 }
 
@@ -2587,14 +2646,14 @@ html {
 
 .tool-menu-title {
     font-weight: 600;
-    color: #2c3e50;
+    color: #00ffff;
     margin-bottom: 0.25rem;
     font-size: 0.95rem;
 }
 
 .tool-menu-desc {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: #cccccc;
     line-height: 1.3;
 }
 
