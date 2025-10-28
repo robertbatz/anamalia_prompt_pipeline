@@ -203,17 +203,26 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.95rem;
+    text-decoration: none;
+    color: #495057;
+    display: inline-block;
 }
 
 .mode-btn:hover {
     border-color: #007bff;
     background: #f8f9fa;
+    color: #495057;
+    text-decoration: none;
 }
 
 .mode-btn.active {
     background: #007bff;
     color: white;
     border-color: #007bff;
+}
+
+.mode-btn.active:hover {
+    color: white;
 }
 
 /* Assemble Mode */
@@ -611,12 +620,8 @@ body {
     overflow-y: auto;
 }
 
-/* Browse Mode */
+/* Browse Mode - now always visible on browse page */
 .browse-mode {
-    display: none;
-}
-
-.browse-mode.active {
     display: block;
 }
 

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anamalia Prompt Assembler - Browse Mode</title>
+    <link rel="stylesheet" href="styles.css?v=202501241045">
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Anamalia Prompt Assembler</h1>
+        <p>Generate assembled prompts and browse your 3D stop-motion renders</p>
+        
+        <!-- Navigation -->
+        <div class="mode-toggle">
+            <a href="assemble.html" class="mode-btn">
+                🔧 Assemble Mode
+            </a>
+            <a href="browse.html" class="mode-btn active">
+                🔍 Browse Mode
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistics -->
+        <div id="stats" class="stats">
+            <!-- Stats will be populated by JavaScript -->
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <!-- Search -->
+            <div class="filter-section">
+                <h3>🔍 Search</h3>
+                <div class="filter-group">
+                    <div class="search-box">
+                        <label for="search" class="field-label">
+                            Search
+                            <button type="button" class="info-icon" data-field="search" title="Click for help" aria-label="Get help for search field">
+                                <span class="sr-only">Get help for search field</span>?
+                            </button>
+                        </label>
+                        <input type="text" id="search" placeholder="Search renders, prompts, or tags...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style Guide -->
+            <div class="filter-section">
+                <h3>🎨 Style Guide</h3>
+                <div class="filter-group">
+                    <div>
+                        <label for="texture-filter" class="field-label">
+                            Texture DNA
+                            <span class="info-icon" data-field="texture-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="texture-filter">
+                            <option value="all">All Textures</option>
+                            <option value="texture_001">Felted Wool Character DNA</option>
+                            <option value="texture_002">Stop-Motion Puppet Realism</option>
+                            <option value="texture_003">Fabric Wardrobe Materials</option>
+                            <option value="texture_004">Wooden Prop Surfaces</option>
+                            <option value="texture_005">Ceramic & Pottery</option>
+                            <option value="texture_006">Metal Hardware</option>
+                            <option value="texture_007">Glass & Crystal</option>
+                            <option value="texture_008">Leather & Hide</option>
+                            <option value="texture_009">Paper & Cardboard</option>
+                            <option value="texture_010">Stone & Mineral</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="material-filter" class="field-label">
+                            Material
+                            <span class="info-icon" data-field="material-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="material-filter">
+                            <option value="all">All Materials</option>
+                            <option value="felted">Felted</option>
+                            <option value="woolen">Woolen</option>
+                            <option value="fibrous">Fibrous</option>
+                            <option value="matte">Matte</option>
+                            <option value="handcrafted">Handcrafted</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="light-filter" class="field-label">
+                            Light
+                            <span class="info-icon" data-field="light-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="light-filter">
+                            <option value="all">All Lighting</option>
+                            <option value="warm">Warm</option>
+                            <option value="directional">Directional</option>
+                            <option value="diffused">Diffused</option>
+                            <option value="golden-hour">Golden Hour</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="color-filter" class="field-label">
+                            Color
+                            <span class="info-icon" data-field="color-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="color-filter">
+                            <option value="all">All Colors</option>
+                            <option value="ochre">Ochre</option>
+                            <option value="cream">Cream</option>
+                            <option value="soft-pink">Soft Pink</option>
+                            <option value="muted-blue">Muted Blue</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="composition-filter" class="field-label">
+                            Composition
+                            <span class="info-icon" data-field="composition-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="composition-filter">
+                            <option value="all">All Compositions</option>
+                            <option value="miniature">Miniature</option>
+                            <option value="tabletop">Tabletop</option>
+                            <option value="cinematic-depth">Cinematic Depth</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="tone-filter" class="field-label">
+                            Tone
+                            <span class="info-icon" data-field="tone-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="tone-filter">
+                            <option value="all">All Tones</option>
+                            <option value="nostalgic">Nostalgic</option>
+                            <option value="cheerful">Cheerful</option>
+                            <option value="gentle">Gentle</option>
+                            <option value="inviting">Inviting</option>
+                        </select>
+                        <button class="btn btn-sm btn-secondary view-doc-btn" data-doc="vocabulary" style="margin-top: 0.5rem; width: 100%;">
+                            📖 View Doc
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene Guide -->
+            <div class="filter-section">
+                <h3>🏞️ Scene Guide</h3>
+                <div class="filter-group">
+                    <div>
+                        <label for="scene-filter" class="field-label">
+                            Scene
+                            <span class="info-icon" data-field="scene-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="scene-filter">
+                            <option value="all">All Scenes</option>
+                            <option value="piazza_v2">Piazza v2</option>
+                            <option value="library_v1">Library v1</option>
+                            <option value="garden_v1">Garden v1</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="props-filter" class="field-label">
+                            Props
+                            <span class="info-icon" data-field="props-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="props-filter">
+                            <option value="all">All Props</option>
+                            <option value="none">No Props</option>
+                            <option value="teacup">Tea Cup</option>
+                            <option value="book">Book</option>
+                            <option value="musical_instrument">Musical Instrument</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wardrobe -->
+            <div class="filter-section">
+                <h3>👕 Wardrobe</h3>
+                <div class="filter-group">
+                    <div>
+                        <label for="wardrobe-filter" class="field-label">
+                            Clothing & Accessories
+                            <span class="info-icon" data-field="wardrobe-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="wardrobe-filter">
+                            <option value="all">All Wardrobe</option>
+                            <option value="none">No Wardrobe</option>
+                            <option value="sunhat">Sun Hat</option>
+                            <option value="cowboy_hat">Cowboy Hat</option>
+                            <option value="spectacles">Spectacles</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mood & Lighting -->
+            <div class="filter-section">
+                <h3>💡 Mood & Lighting</h3>
+                <div class="filter-group">
+                    <div>
+                        <label for="lighting-filter" class="field-label">
+                            Lighting
+                            <span class="info-icon" data-field="lighting-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="lighting-filter">
+                            <option value="all">All Lighting</option>
+                            <option value="lighting_001">Golden Hour Directional Rig</option>
+                            <option value="lighting_002">Soft Indoor Ambient</option>
+                            <option value="lighting_003">Dramatic Studio Shadows</option>
+                            <option value="lighting_004">Studio White Clean</option>
+                            <option value="lighting_005">Warm Sunset Glow</option>
+                            <option value="lighting_006">Cool Moonlight</option>
+                            <option value="lighting_007">Warm Candlelight</option>
+                            <option value="lighting_008">Bright Daylight</option>
+                            <option value="lighting_009">Moody Overcast</option>
+                            <option value="lighting_010">Warm Firelight</option>
+                        </select>
+                        <div id="lighting-codified-display" class="codified-scheme-display" style="display: none;">
+                            <div class="codified-scheme-header">
+                                <strong>📝 Codified Scheme:</strong>
+                            </div>
+                            <div id="lighting-codified-text" class="codified-scheme-text">
+                                <!-- Codified scheme text will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="film-type-filter" class="field-label">
+                            Film Type
+                            <span class="info-icon" data-field="film-type-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="film-type-filter">
+                            <option value="all">All Film Types</option>
+                            <option value="stop_motion">Stop Motion</option>
+                            <option value="claymation">Claymation</option>
+                            <option value="puppet_animation">Puppet Animation</option>
+                            <option value="miniature">Miniature</option>
+                            <option value="diorama">Diorama</option>
+                            <option value="tilt_shift">Tilt Shift</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="film-stock-filter" class="field-label">
+                            Film Stock
+                            <span class="info-icon" data-field="film-stock-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="film-stock-filter">
+                            <option value="all">All Film Stocks</option>
+                            <option value="kodak_portra_400">Kodak Portra 400</option>
+                            <option value="kodak_ultramax_400">Kodak Ultramax 400</option>
+                            <option value="fuji_superia_400">Fuji Superia 400</option>
+                            <option value="ilford_hp5_400">Ilford HP5 400</option>
+                            <option value="kodak_gold_200">Kodak Gold 200</option>
+                            <option value="fuji_velvia_50">Fuji Velvia 50</option>
+                            <option value="kodak_tmax_100">Kodak T-Max 100</option>
+                            <option value="agfa_vista_200">Agfa Vista 200</option>
+                            <option value="lomography_color_400">Lomography Color 400</option>
+                            <option value="cinestill_800t">Cinestill 800T</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="camera-filter" class="field-label">
+                            Camera
+                            <span class="info-icon" data-field="camera-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="camera-filter">
+                            <option value="all">All Cameras</option>
+                            <option value="camera_001">35mm Eye-level</option>
+                            <option value="camera_002">35mm 3/4 Height</option>
+                            <option value="camera_003">35mm Low Angle</option>
+                            <option value="camera_004">35mm High Angle</option>
+                            <option value="camera_005">35mm 3/4 Left</option>
+                            <option value="camera_006">35mm 3/4 Right</option>
+                            <option value="camera_007">35mm Profile</option>
+                            <option value="camera_008">35mm Back 3/4</option>
+                            <option value="camera_009">50mm Portrait</option>
+                            <option value="camera_010">24mm Wide</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="status-filter" class="field-label">
+                            Status
+                            <span class="info-icon" data-field="status-filter" title="Click for help">?</span>
+                        </label>
+                        <select id="status-filter">
+                            <option value="all">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <button id="compare-btn" class="btn btn-primary" disabled>
+                        🔍 Compare (0)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Browse Mode Interface -->
+        <div id="browse-mode" class="browse-mode">
+            <!-- Gallery -->
+            <div id="gallery" class="gallery">
+                <!-- Renders will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="pagination">
+            <!-- Pagination will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Comparison Mode Modal -->
+    <div id="comparison-mode" class="comparison-mode">
+        <!-- Comparison content will be populated by JavaScript -->
+    </div>
+
+    <!-- Info Modal -->
+    <div id="info-modal" class="info-modal" role="dialog" aria-labelledby="info-modal-title" aria-modal="true" aria-hidden="true">
+        <div class="info-modal-content">
+            <div class="info-modal-header">
+                <h3 id="info-modal-title">Field Information</h3>
+                <button id="info-modal-close" class="info-modal-close" aria-label="Close help dialog">×</button>
+            </div>
+            <div class="info-modal-body">
+                <div id="info-modal-content">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Viewer Modal -->
+    <div id="doc-modal" class="doc-modal" role="dialog" aria-labelledby="doc-modal-title" aria-modal="true" aria-hidden="true">
+        <div class="doc-modal-content">
+            <div class="doc-modal-header">
+                <h3 id="doc-modal-title">Documentation</h3>
+                <button id="doc-modal-close" class="doc-modal-close" aria-label="Close document viewer">×</button>
+            </div>
+            <div class="doc-modal-body">
+                <div id="doc-modal-content">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=202501241400"></script>
+</body>
+</html>

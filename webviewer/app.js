@@ -206,17 +206,7 @@ class AnamaliaViewer {
             });
         }
         
-        // Mode toggle
-        const assembleModeBtn = document.getElementById('assemble-mode-btn');
-        const browseModeBtn = document.getElementById('browse-mode-btn');
-        
-        if (assembleModeBtn) {
-            assembleModeBtn.addEventListener('click', () => this.switchToAssembleMode());
-        }
-        
-        if (browseModeBtn) {
-            browseModeBtn.addEventListener('click', () => this.switchToBrowseMode());
-        }
+        // Navigation is now handled by separate pages, no mode switching needed
         
         // Assemble mode functionality
         const generateBundlesBtn = document.getElementById('generate-bundles-btn');
@@ -782,8 +772,12 @@ class AnamaliaViewer {
     
     render() {
         this.renderStats();
-        this.renderGallery();
-        this.renderPagination();
+        
+        // Only render gallery and pagination on browse page
+        if (document.getElementById('gallery')) {
+            this.renderGallery();
+            this.renderPagination();
+        }
     }
     
     renderStats() {
@@ -1023,38 +1017,7 @@ class AnamaliaViewer {
         this.renderStats();
     }
     
-    // Mode switching methods
-    switchToAssembleMode() {
-        document.getElementById('assemble-mode-btn').classList.add('active');
-        document.getElementById('browse-mode-btn').classList.remove('active');
-        document.getElementById('assemble-mode').style.display = 'block';
-        document.getElementById('browse-mode').style.display = 'none';
-        document.querySelector('.filters').style.display = 'none';
-        
-        // Smooth scroll to assemble mode section
-        setTimeout(() => {
-            document.getElementById('assemble-mode').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 100);
-    }
-    
-    switchToBrowseMode() {
-        document.getElementById('browse-mode-btn').classList.add('active');
-        document.getElementById('assemble-mode-btn').classList.remove('active');
-        document.getElementById('browse-mode').style.display = 'block';
-        document.getElementById('assemble-mode').style.display = 'none';
-        document.querySelector('.filters').style.display = 'block';
-        
-        // Smooth scroll to browse mode section (filters)
-        setTimeout(() => {
-            document.querySelector('.filters').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 100);
-    }
+    // Mode switching methods removed - now handled by separate pages
     
     // Assemble mode methods
     generateBundles() {
