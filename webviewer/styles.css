@@ -2012,6 +2012,170 @@ html {
     }
 }
 
+/* Prompt Preview Modal Styles */
+.prompt-preview-content {
+    max-width: 95vw;
+    width: 100%;
+    max-height: 95vh;
+}
+
+/* Tenner Preview Info Styles */
+.tenner-preview-info {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #e3f2fd;
+    border-radius: 8px;
+    border: 1px solid #bbdefb;
+    border-left: 4px solid #2196f3;
+}
+
+.tenner-preview-info h4 {
+    margin: 0 0 0.75rem 0;
+    color: #1976d2;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.tenner-preview-content {
+    color: #424242;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.tenner-preview-content p {
+    margin: 0 0 0.5rem 0;
+}
+
+.tenner-preview-content p:last-child {
+    margin-bottom: 0;
+}
+
+.prompt-preview-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.prompt-preview-text-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.prompt-preview-text {
+    width: 100%;
+    min-height: 500px;
+    max-height: 75vh;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background: #f8f9fa;
+    color: #495057;
+    resize: vertical;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.prompt-preview-text:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.prompt-preview-stats {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    flex-wrap: wrap;
+}
+
+.prompt-stat {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.prompt-stat:not(:last-child)::after {
+    content: "•";
+    margin-left: 1.5rem;
+    color: #dee2e6;
+}
+
+/* Copy button feedback */
+.copy-success {
+    background: #28a745 !important;
+    color: white !important;
+    transform: scale(0.95);
+    transition: all 0.2s ease;
+}
+
+.copy-success::before {
+    content: "✓ ";
+}
+
+/* Responsive prompt preview modal */
+@media (max-width: 768px) {
+    .prompt-preview-content {
+        margin: 0.5rem;
+        max-width: calc(100vw - 1rem);
+        max-height: calc(100vh - 1rem);
+    }
+    
+    .prompt-preview-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .prompt-preview-text {
+        min-height: 400px;
+        max-height: 70vh;
+        font-size: 0.8rem;
+    }
+    
+    .prompt-preview-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .prompt-stat:not(:last-child)::after {
+        display: none;
+    }
+}
+
+/* Dark mode for prompt preview modal */
+@media (prefers-color-scheme: dark) {
+    .prompt-preview-text {
+        background: #2d2d2d;
+        color: #e9ecef;
+        border-color: #404040;
+    }
+    
+    .prompt-preview-text:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+    
+    .prompt-preview-stats {
+        background: #3d3d3d;
+        border-color: #404040;
+    }
+    
+    .prompt-stat {
+        color: #adb5bd;
+    }
+    
+    .prompt-stat:not(:last-child)::after {
+        color: #404040;
+    }
+}
+
 /* Film/Camera Compatibility Styles */
 .compatibility-warning {
     margin: 1rem 0;

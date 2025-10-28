@@ -597,10 +597,19 @@
                             <option value="cheerful">Cheerful</option>
                             <option value="gentle">Gentle</option>
                             <option value="inviting">Inviting</option>
+                            <option value="whimsical">Whimsical</option>
                         </select>
                         <button class="btn btn-sm btn-secondary view-doc-btn" data-doc="vocabulary" style="margin-top: 0.5rem; width: 100%;">
                             📖 View Doc
                         </button>
+                    </div>
+                    
+                    <div>
+                        <label for="assemble-tone-manual" class="field-label">
+                            Manual Tone Entry
+                            <span class="info-icon" data-field="assemble-tone-manual" title="Click for help">?</span>
+                        </label>
+                        <input type="text" id="assemble-tone-manual" placeholder="Enter custom tone description..." />
                     </div>
                 </div>
                 
@@ -879,6 +888,10 @@
                 </div>
                 <div class="prompt-preview-text-container">
                     <textarea id="prompt-preview-text" class="prompt-preview-text" readonly></textarea>
+                </div>
+                <div id="tenner-preview-info" class="tenner-preview-info" style="display: none;">
+                    <h4>🎯 Tenner System Information</h4>
+                    <div id="tenner-preview-content" class="tenner-preview-content"></div>
                 </div>
                 <div class="prompt-preview-stats">
                     <span id="prompt-word-count" class="prompt-stat">Words: 0</span>

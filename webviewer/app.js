@@ -36,6 +36,7 @@ class AnamaliaViewer {
         this.setupInfoModalListeners();
         this.setupDocModalListeners();
         this.setupCompositeModalListeners();
+        this.initPromptPreviewModal();
         this.initOutputParameterSync();
         
         // Initial render
@@ -2024,7 +2025,7 @@ class AnamaliaViewer {
             prompt += `. ${cameraDescription}`;
         }
         
-        // Add Tenner information if Tenners are selected
+        // Handle Tenner information separately (not included in main prompt)
         const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
         const tenner1 = document.getElementById('tenner-1')?.value || '';
         const tenner2 = document.getElementById('tenner-2')?.value || '';
@@ -2032,45 +2033,48 @@ class AnamaliaViewer {
         
         const selectedTenners = [tenner1, tenner2, tenner3].filter(t => t !== '' && t !== 'none');
         
+        // Store Tenner information for separate display
+        let tennerInfo = null;
+        
         // Integrate Tenner selections using real data from JSON
         if (selectedTenners.length > 0) {
             if (!this.tennerData || !this.tennerData.categories) {
                 console.warn('⚠️ No Tenner data available for prompt assembly');
-                return prompt;
-            }
-            
-            if (mode === 'single') {
-                const specific1 = document.getElementById('tenner-1-specific')?.value || '';
-                const specific2 = document.getElementById('tenner-2-specific')?.value || '';
-                const specific3 = document.getElementById('tenner-3-specific')?.value || '';
-                
-                const selectedSpecifics = [specific1, specific2, specific3].filter(s => s !== '');
-                
-                // Parse and integrate each specific option using real data
-                selectedSpecifics.forEach(specific => {
-                    // Parse format: "T1-0: rhino named Ruby"
-                    const match = specific.match(/^(T\d+)-(\d+):\s*(.+)$/);
-                    if (match) {
-                        const tennerKey = match[1];
-                        const optionIndex = parseInt(match[2]);
-                        const descriptor = match[3];
-                        
-                        // Add the descriptor directly to the prompt
-                        if (descriptor) {
-                            prompt += ` ${descriptor}`;
-                        }
-                    }
-                });
-                
-                if (selectedSpecifics.length > 0) {
-                    prompt += `\n\n🎯 Tenner System (Single Mode): ${selectedTenners.join(', ')} - ${selectedSpecifics.join(', ')}`;
-                } else {
-                    prompt += `\n\n🎯 Tenner System (Single Mode): ${selectedTenners.join(', ')} (specific options not selected)`;
-                }
             } else {
-                // In batch mode, show permutation counts
-                const permutationCount = Math.pow(10, selectedTenners.length);
-                prompt += `\n\n🎯 Tenner System (Batch Mode): ${selectedTenners.join(', ')} (${permutationCount} permutations)`;
+                if (mode === 'single') {
+                    const specific1 = document.getElementById('tenner-1-specific')?.value || '';
+                    const specific2 = document.getElementById('tenner-2-specific')?.value || '';
+                    const specific3 = document.getElementById('tenner-3-specific')?.value || '';
+                    
+                    const selectedSpecifics = [specific1, specific2, specific3].filter(s => s !== '');
+                    
+                    // Parse and integrate each specific option using real data
+                    selectedSpecifics.forEach(specific => {
+                        // Parse format: "T1-0: rhino named Ruby"
+                        const match = specific.match(/^(T\d+)-(\d+):\s*(.+)$/);
+                        if (match) {
+                            const tennerKey = match[1];
+                            const optionIndex = parseInt(match[2]);
+                            const descriptor = match[3];
+                            
+                            // Add the descriptor directly to the prompt
+                            if (descriptor) {
+                                prompt += ` ${descriptor}`;
+                            }
+                        }
+                    });
+                    
+                    // Prepare Tenner info for separate display
+                    if (selectedSpecifics.length > 0) {
+                        tennerInfo = `Single Mode: ${selectedTenners.join(', ')} - ${selectedSpecifics.join(', ')}`;
+                    } else {
+                        tennerInfo = `Single Mode: ${selectedTenners.join(', ')} (specific options not selected)`;
+                    }
+                } else {
+                    // In batch mode, show permutation counts
+                    const permutationCount = Math.pow(10, selectedTenners.length);
+                    tennerInfo = `Batch Mode: ${selectedTenners.join(', ')} (${permutationCount} permutations)`;
+                }
             }
         }
         
@@ -2107,8 +2111,156 @@ class AnamaliaViewer {
         
         prompt += `, 3D stop-motion style, high quality, detailed`;
         
-        // Show preview in alert or modal
-        alert(`Preview Prompt:\n\n${prompt}`);
+        // Show preview in modal
+        this.showPromptPreviewModal(prompt, tennerInfo);
+    }
+    
+    showPromptPreviewModal(prompt, tennerInfo = null) {
+        const modal = document.getElementById('prompt-preview-modal');
+        const textarea = document.getElementById('prompt-preview-text');
+        const wordCount = document.getElementById('prompt-word-count');
+        const charCount = document.getElementById('prompt-char-count');
+        const tokenEstimate = document.getElementById('prompt-token-estimate');
+        const tennerPreviewInfo = document.getElementById('tenner-preview-info');
+        const tennerPreviewContent = document.getElementById('tenner-preview-content');
+        
+        if (!modal || !textarea) {
+            console.error('Prompt preview modal elements not found');
+            return;
+        }
+        
+        // Set the prompt text
+        textarea.value = prompt;
+        
+        // Handle Tenner information display
+        if (tennerInfo && tennerPreviewInfo && tennerPreviewContent) {
+            tennerPreviewContent.innerHTML = `<p><strong>Mode:</strong> ${tennerInfo}</p>`;
+            tennerPreviewInfo.style.display = 'block';
+        } else if (tennerPreviewInfo) {
+            tennerPreviewInfo.style.display = 'none';
+        }
+        
+        // Calculate statistics
+        const words = prompt.trim().split(/\s+/).filter(word => word.length > 0).length;
+        const characters = prompt.length;
+        const tokens = Math.ceil(characters / 4); // Rough estimate: 4 chars per token
+        
+        // Update statistics
+        wordCount.textContent = `Words: ${words}`;
+        charCount.textContent = `Characters: ${characters}`;
+        tokenEstimate.textContent = `~Tokens: ${tokens}`;
+        
+        // Show the modal
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+        
+        // Focus on the textarea for easy selection
+        setTimeout(() => {
+            textarea.focus();
+            textarea.select();
+        }, 100);
+    }
+    
+    hidePromptPreviewModal() {
+        const modal = document.getElementById('prompt-preview-modal');
+        if (modal) {
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+        
+        const textarea = document.getElementById('prompt-preview-text');
+        if (textarea) {
+            textarea.value = '';
+        }
+        
+        const tennerPreviewInfo = document.getElementById('tenner-preview-info');
+        if (tennerPreviewInfo) {
+            tennerPreviewInfo.style.display = 'none';
+        }
+    }
+    
+    async copyPromptToClipboard(includeFormatting = false) {
+        const textarea = document.getElementById('prompt-preview-text');
+        if (!textarea) return false;
+        
+        try {
+            let textToCopy = textarea.value;
+            
+            if (includeFormatting) {
+                // Add some basic formatting for better readability
+                textToCopy = `🎨 Anamalia Prompt:\n\n${textToCopy}\n\n---\nGenerated by Anamalia Prompt Assembler`;
+            }
+            
+            await navigator.clipboard.writeText(textToCopy);
+            return true;
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            return false;
+        }
+    }
+    
+    showCopySuccess(button) {
+        const originalText = button.textContent;
+        const originalClass = button.className;
+        
+        button.textContent = '✓ Copied!';
+        button.className = originalClass + ' copy-success';
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.className = originalClass;
+        }, 2000);
+    }
+    
+    initPromptPreviewModal() {
+        const modal = document.getElementById('prompt-preview-modal');
+        const closeBtn = document.getElementById('prompt-preview-close');
+        const copyBtn = document.getElementById('copy-prompt-btn');
+        const copyFormattingBtn = document.getElementById('copy-prompt-with-formatting-btn');
+        
+        if (!modal) return;
+        
+        // Close modal handlers
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.hidePromptPreviewModal());
+        }
+        
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.hidePromptPreviewModal();
+            }
+        });
+        
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                this.hidePromptPreviewModal();
+            }
+        });
+        
+        // Copy button handlers
+        if (copyBtn) {
+            copyBtn.addEventListener('click', async () => {
+                const success = await this.copyPromptToClipboard(false);
+                if (success) {
+                    this.showCopySuccess(copyBtn);
+                } else {
+                    alert('Failed to copy to clipboard. Please try again.');
+                }
+            });
+        }
+        
+        if (copyFormattingBtn) {
+            copyFormattingBtn.addEventListener('click', async () => {
+                const success = await this.copyPromptToClipboard(true);
+                if (success) {
+                    this.showCopySuccess(copyFormattingBtn);
+                } else {
+                    alert('Failed to copy to clipboard. Please try again.');
+                }
+            });
+        }
     }
     
     initOutputParameterSync() {
