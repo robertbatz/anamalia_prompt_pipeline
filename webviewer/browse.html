@@ -155,11 +155,21 @@
                             <span class="info-icon" data-field="scene-filter" title="Click for help">?</span>
                         </label>
                         <select id="scene-filter">
+                            <option value="default">Default (All Scenes)</option>
                             <option value="all">All Scenes</option>
                             <option value="piazza_v2">Piazza v2</option>
                             <option value="library_v1">Library v1</option>
                             <option value="garden_v1">Garden v1</option>
+                            <option value="greenscreen_v1">Green Screen v1</option>
                         </select>
+                    </div>
+                    
+                    <div>
+                        <label for="scene-filter-manual" class="field-label">
+                            Manual Scene Entry
+                            <span class="info-icon" data-field="scene-filter-manual" title="Click for help">?</span>
+                        </label>
+                        <input type="text" id="scene-filter-manual" placeholder="Enter custom scene description..." />
                     </div>
                     
                     <div>
@@ -168,6 +178,7 @@
                             <span class="info-icon" data-field="props-filter" title="Click for help">?</span>
                         </label>
                         <select id="props-filter">
+                            <option value="default">Default (All Props)</option>
                             <option value="all">All Props</option>
                             <option value="none">No Props</option>
                             <option value="teacup">Tea Cup</option>
@@ -188,6 +199,7 @@
                             <span class="info-icon" data-field="wardrobe-filter" title="Click for help">?</span>
                         </label>
                         <select id="wardrobe-filter">
+                            <option value="default">Default (All Wardrobe)</option>
                             <option value="all">All Wardrobe</option>
                             <option value="none">No Wardrobe</option>
                             <option value="sunhat">Sun Hat</option>
@@ -208,6 +220,7 @@
                             <span class="info-icon" data-field="lighting-filter" title="Click for help">?</span>
                         </label>
                         <select id="lighting-filter">
+                            <option value="default">Default (All Lighting)</option>
                             <option value="all">All Lighting</option>
                             <option value="lighting_001">Golden Hour Directional Rig</option>
                             <option value="lighting_002">Soft Indoor Ambient</option>
@@ -236,6 +249,7 @@
                             <span class="info-icon" data-field="film-type-filter" title="Click for help">?</span>
                         </label>
                         <select id="film-type-filter">
+                            <option value="default">Default (All Film Types)</option>
                             <option value="all">All Film Types</option>
                             <option value="stop_motion">Stop Motion</option>
                             <option value="claymation">Claymation</option>
@@ -252,6 +266,7 @@
                             <span class="info-icon" data-field="film-stock-filter" title="Click for help">?</span>
                         </label>
                         <select id="film-stock-filter">
+                            <option value="default">Default (All Film Stocks)</option>
                             <option value="all">All Film Stocks</option>
                             <option value="kodak_portra_400">Kodak Portra 400</option>
                             <option value="kodak_ultramax_400">Kodak Ultramax 400</option>
@@ -272,6 +287,7 @@
                             <span class="info-icon" data-field="camera-filter" title="Click for help">?</span>
                         </label>
                         <select id="camera-filter">
+                            <option value="default">Default (All Cameras)</option>
                             <option value="all">All Cameras</option>
                             <option value="camera_001">35mm Eye-level</option>
                             <option value="camera_002">35mm 3/4 Height</option>
@@ -292,6 +308,7 @@
                             <span class="info-icon" data-field="status-filter" title="Click for help">?</span>
                         </label>
                         <select id="status-filter">
+                            <option value="default">Default (All Status)</option>
                             <option value="all">All Status</option>
                             <option value="completed">Completed</option>
                             <option value="pending">Pending</option>
@@ -306,8 +323,14 @@
             <!-- Actions -->
             <div class="filter-section">
                 <div class="filter-group">
+                    <button id="reset-filters-btn" class="btn btn-outline">
+                        🔄 Reset Filters
+                    </button>
                     <button id="compare-btn" class="btn btn-primary" disabled>
                         🔍 Compare (0)
+                    </button>
+                    <button id="grid-overlay-btn" class="btn btn-secondary">
+                        📐 Grid Overlay
                     </button>
                 </div>
             </div>
@@ -357,6 +380,38 @@
             <div class="doc-modal-body">
                 <div id="doc-modal-content">
                     <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compositing Preview Modal -->
+    <div id="composite-modal" class="composite-modal" role="dialog" aria-labelledby="composite-modal-title" aria-modal="true" aria-hidden="true">
+        <div class="composite-modal-content">
+            <div class="composite-modal-header">
+                <h3 id="composite-modal-title">🎬 Background Composite Preview</h3>
+                <button id="composite-modal-close" class="composite-modal-close" aria-label="Close composite preview">×</button>
+            </div>
+            <div class="composite-modal-body">
+                <div class="composite-controls">
+                    <div class="control-group">
+                        <label for="background-upload">Upload Background Image:</label>
+                        <input type="file" id="background-upload" accept="image/*">
+                    </div>
+                    <div class="control-group">
+                        <label for="background-url">Or enter image URL:</label>
+                        <input type="url" id="background-url" placeholder="https://example.com/background.jpg">
+                    </div>
+                    <div class="control-group">
+                        <button id="load-background" class="btn btn-primary">Load Background</button>
+                        <button id="reset-composite" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
+                <div class="composite-canvas-container">
+                    <canvas id="composite-canvas" width="800" height="600"></canvas>
+                </div>
+                <div class="composite-info">
+                    <p><strong>Instructions:</strong> Upload or provide a background image URL to see how your green-screen character will look composited. The green-screen will be automatically keyed out.</p>
                 </div>
             </div>
         </div>

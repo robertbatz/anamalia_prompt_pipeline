@@ -68,9 +68,22 @@ tripod height 1 meter, angled 0° downward, positioned at stage center."
 4. **Orientation Changes**: Only camera rotation, not position
 5. **Shadow Consistency**: Soft floor shadows from fixed overhead lighting
 
+## Green-Screen Integration
+
+The Virtual Stage System supports green-screen rendering for pixel-perfect compositing:
+
+- **Green-Screen Scene**: `greenscreen_v1` replaces backdrop with chroma-key green (#00FF00)
+- **Maintains Constants**: All camera, lighting, and material specifications preserved
+- **Dual Output**: Generates both green-screen plate and alpha mask
+- **Spatial Metadata**: Includes character origin and camera position for alignment
+- **Grid Overlay**: Toggleable 10cm grid for compositing reference
+
+See [Green-Screen System Documentation](greenscreen_system.md) for complete details.
+
 ## Benefits
 
 - **Visual Coherence**: All characters appear in same "world"
 - **Scalable System**: Easy to add new camera positions
 - **Professional Quality**: Consistent framing and composition
 - **Flexible**: Can modify individual elements while maintaining base system
+- **Compositing Ready**: Green-screen support for background insertion

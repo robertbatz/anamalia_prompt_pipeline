@@ -15,7 +15,7 @@ Create thousands of high-fidelity 3D stop-motion animation stills representing a
 - **Camera System:** 35mm lens, eye-level, tripod height 1m, angled 5° downward.
 - **Lighting:** Warm late-afternoon sunlight (approx. 4800K) from front-left at 45°, soft fill from right, subtle rim light, diffused floor shadows.
 - **Material DNA:** Felted wool body, visible fibers, hyper-realistic eyes/nose, human-style expressive gestures.
-- **Backdrop Geometry:** Matte off-white floor and wall meeting at 90°, subtle contact shadows.
+- **Backdrop Geometry:** Matte off-white floor and wall meeting at 90°, subtle contact shadows. (Exception: `greenscreen_v1` scene uses #00FF00 chroma-key green while maintaining all other Film Bible constants)
 - **Color & Tone:** Soft contrast, warm palette, slight golden undertone. Ektachrome film look.
 
 ### 3.2 Emotional Tone

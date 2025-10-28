@@ -228,6 +228,14 @@
                     </div>
                     
                     <div>
+                        <label for="scene-filter-manual" class="field-label">
+                            Manual Scene Entry
+                            <span class="info-icon" data-field="scene-filter-manual" title="Click for help">?</span>
+                        </label>
+                        <input type="text" id="scene-filter-manual" placeholder="Enter custom scene description..." />
+                    </div>
+                    
+                    <div>
                         <label for="props-filter" class="field-label">
                             Props
                             <span class="info-icon" data-field="props-filter" title="Click for help">?</span>
@@ -525,11 +533,11 @@
                     <label>Generation Mode:</label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="tenner-mode" value="batch" checked>
+                            <input type="radio" name="tenner-mode" value="batch">
                             <span>Batch (all permutations)</span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="tenner-mode" value="single">
+                            <input type="radio" name="tenner-mode" value="single" checked>
                             <span>Single (specific option)</span>
                         </label>
                     </div>
@@ -896,6 +904,14 @@
                             <option value="library_v1">Library v1</option>
                             <option value="garden_v1">Garden v1</option>
                         </select>
+                    </div>
+                    
+                    <div>
+                        <label for="assemble-scene-manual" class="field-label">
+                            Manual Scene Entry
+                            <span class="info-icon" data-field="assemble-scene-manual" title="Click for help">?</span>
+                        </label>
+                        <input type="text" id="assemble-scene-manual" placeholder="Enter custom scene description..." />
                     </div>
                     
                 </div>

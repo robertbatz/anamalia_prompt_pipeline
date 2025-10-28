@@ -35,6 +35,44 @@
                 <p>Generate new prompt bundles by selecting assets and settings</p>
             </div>
 
+            <!-- Project Management -->
+            <div class="filter-section project-management">
+                <h3>⚙️ Project Management</h3>
+                <div class="filter-group">
+                    <div>
+                        <label for="project-default" class="field-label">
+                            Current Project
+                            <span class="info-icon" data-field="project-default" title="Click for help">?</span>
+                        </label>
+                        <select id="project-default">
+                            <option value="anamalia-password" selected>Anamalia Password</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="new-project-name" class="field-label">
+                            New Project Name
+                        </label>
+                        <div class="project-create-group">
+                            <input type="text" id="new-project-name" placeholder="Enter project name..." />
+                            <button id="create-project-btn" class="btn btn-primary">Create Project</button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="field-label">Project Actions</label>
+                        <div class="project-actions-group">
+                            <button id="load-project-btn" class="btn btn-secondary">Load Project</button>
+                            <button id="delete-project-btn" class="btn btn-danger">Delete Project</button>
+                            <label for="upload-project-file" class="btn btn-secondary file-upload-btn">
+                                📁 Upload Project
+                                <input type="file" id="upload-project-file" accept=".json" style="display: none;">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Output Parameters -->
             <div class="filter-section">
                 <h3>📐 Output Parameters</h3>
@@ -45,6 +83,7 @@
                             <span class="info-icon" data-field="output-width" title="Click for help">?</span>
                         </label>
                         <select id="output-width">
+                            <option value="default">Default (1024px)</option>
                             <option value="512">512px</option>
                             <option value="768">768px</option>
                             <option value="1024" selected>1024px</option>
@@ -61,6 +100,7 @@
                             <span class="info-icon" data-field="output-height" title="Click for help">?</span>
                         </label>
                         <select id="output-height">
+                            <option value="default">Default (1024px)</option>
                             <option value="512">512px</option>
                             <option value="768">768px</option>
                             <option value="1024" selected>1024px</option>
@@ -79,6 +119,7 @@
                             <span class="info-icon" data-field="output-aspect-ratio" title="Click for help">?</span>
                         </label>
                         <select id="output-aspect-ratio">
+                            <option value="default">Default (16:9)</option>
                             <option value="1:1">Square (1:1)</option>
                             <option value="4:3">Standard (4:3)</option>
                             <option value="16:9" selected>Widescreen (16:9)</option>
@@ -95,6 +136,7 @@
                             <span class="info-icon" data-field="output-quality" title="Click for help">?</span>
                         </label>
                         <select id="output-quality">
+                            <option value="default">Default (High)</option>
                             <option value="standard">Standard</option>
                             <option value="high" selected>High</option>
                             <option value="ultra">Ultra</option>
@@ -110,6 +152,7 @@
                             <span class="info-icon" data-field="output-format" title="Click for help">?</span>
                         </label>
                         <select id="output-format">
+                            <option value="default">Default (PNG)</option>
                             <option value="png" selected>PNG</option>
                             <option value="jpg">JPEG</option>
                             <option value="webp">WebP</option>
@@ -123,12 +166,19 @@
                             <span class="info-icon" data-field="output-color-space" title="Click for help">?</span>
                         </label>
                         <select id="output-color-space">
+                            <option value="default">Default (sRGB)</option>
                             <option value="sRGB" selected>sRGB</option>
                             <option value="AdobeRGB">Adobe RGB</option>
                             <option value="P3">P3</option>
                             <option value="Rec2020">Rec. 2020</option>
                         </select>
                     </div>
+                </div>
+                
+                <div class="section-save-controls">
+                    <button class="btn btn-sm btn-success section-save-btn" data-section="output-parameters">
+                        💾 Save Output Parameters to Project
+                    </button>
                 </div>
             </div>
             
@@ -141,11 +191,11 @@
                     <label>Generation Mode:</label>
                     <div class="radio-group">
                         <label class="radio-option">
-                            <input type="radio" name="tenner-mode" value="batch" checked>
+                            <input type="radio" name="tenner-mode" value="batch">
                             <span>Batch (all permutations)</span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="tenner-mode" value="single">
+                            <input type="radio" name="tenner-mode" value="single" checked>
                             <span>Single (specific option)</span>
                         </label>
                     </div>
@@ -159,6 +209,7 @@
                         </label>
                         <select id="tenner-1">
                             <option value="">Select Tenner...</option>
+                            <option value="default">Default (None)</option>
                             <option value="T1">T1</option>
                             <option value="T2">T2</option>
                             <option value="T3">T3</option>
@@ -209,6 +260,7 @@
                         </label>
                         <select id="tenner-2">
                             <option value="">Select Tenner...</option>
+                            <option value="default">Default (None)</option>
                             <option value="none">None</option>
                             <option value="T1">T1</option>
                             <option value="T2">T2</option>
@@ -260,6 +312,7 @@
                         </label>
                         <select id="tenner-3">
                             <option value="">Select Tenner...</option>
+                            <option value="default">Default (None)</option>
                             <option value="none">None</option>
                             <option value="T1">T1</option>
                             <option value="T2">T2</option>
@@ -328,6 +381,7 @@
                                 <span class="info-icon" data-field="tenner-pose" title="Click for help">?</span>
                             </label>
                             <select id="tenner-pose">
+                                <option value="default">Default (Arms Open Welcome)</option>
                                 <option value="arms_open_welcome">Arms Open Welcome</option>
                                 <option value="seated_contemplative">Seated Contemplative</option>
                                 <option value="pointing_forward">Pointing Forward</option>
@@ -371,6 +425,12 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="section-save-controls">
+                    <button class="btn btn-sm btn-success section-save-btn" data-section="tenner-system">
+                        💾 Save Tenner System to Project
+                    </button>
+                </div>
             </div>
 
             <!-- Style Guide -->
@@ -383,6 +443,7 @@
                             <span class="info-icon" data-field="assemble-texture" title="Click for help">?</span>
                         </label>
                         <select id="assemble-texture">
+                            <option value="default">Default (Felted Wool Character DNA)</option>
                             <option value="texture_001">Felted Wool Character DNA (Canonical)</option>
                             <option value="texture_002">Stop-Motion Puppet Realism</option>
                             <option value="texture_003">Fabric Wardrobe Materials</option>
@@ -402,6 +463,7 @@
                             <span class="info-icon" data-field="assemble-material" title="Click for help">?</span>
                         </label>
                         <select id="assemble-material">
+                            <option value="default">Default (All Materials)</option>
                             <option value="all">All Materials</option>
                             <option value="felted">Felted</option>
                             <option value="woolen">Woolen</option>
@@ -413,16 +475,99 @@
                     
                     <div>
                         <label for="assemble-color" class="field-label">
-                            Color
+                            Color Palette
                             <span class="info-icon" data-field="assemble-color" title="Click for help">?</span>
                         </label>
-                        <select id="assemble-color">
-                            <option value="all">All Colors</option>
-                            <option value="ochre">Ochre</option>
-                            <option value="cream">Cream</option>
-                            <option value="soft-pink">Soft Pink</option>
-                            <option value="muted-blue">Muted Blue</option>
-                        </select>
+                        
+                        <!-- Palette Mode Selection -->
+                        <div class="palette-mode-selection">
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="palette-mode" value="standard" checked>
+                                    <span>Standard Palette</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="palette-mode" value="custom">
+                                    <span>Custom Palette</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="palette-mode" value="single">
+                                    <span>Single Color</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Standard Palette Selection -->
+                        <div id="standard-palette-section" class="palette-section">
+                            <select id="assemble-color-palette">
+                                <option value="default">Default (Classic Anamalia)</option>
+                                <option value="classic_anamalia">Classic Anamalia</option>
+                                <option value="warm_earth_tones">Warm Earth Tones</option>
+                                <option value="cool_pastels">Cool Pastels</option>
+                                <option value="autumn_harvest">Autumn Harvest</option>
+                                <option value="spring_meadow">Spring Meadow</option>
+                                <option value="ocean_depths">Ocean Depths</option>
+                                <option value="sunset_glow">Sunset Glow</option>
+                                <option value="forest_canopy">Forest Canopy</option>
+                                <option value="desert_bloom">Desert Bloom</option>
+                                <option value="winter_frost">Winter Frost</option>
+                            </select>
+                            
+                            <!-- Color Usage Mode -->
+                            <div class="color-usage-mode">
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="color-usage-mode" value="all" checked>
+                                        <span>Use All Colors</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="color-usage-mode" value="select">
+                                        <span>Select Specific Colors</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Color Swatches Display -->
+                            <div id="color-swatches" class="color-swatches">
+                                <!-- Color swatches will be populated by JavaScript -->
+                            </div>
+                            
+                            <!-- Individual Color Selection -->
+                            <div id="individual-color-selection" class="individual-color-selection" style="display: none;">
+                                <!-- Individual color checkboxes will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Custom Palette Upload -->
+                        <div id="custom-palette-section" class="palette-section" style="display: none;">
+                            <div class="file-upload-area">
+                                <input type="file" id="custom-palette-file" accept=".png,.jpg,.jpeg,.json,.txt">
+                                <div class="file-upload-text">
+                                    <p>Upload palette file:</p>
+                                    <p class="file-types">PNG/JPG (extract colors) • JSON (color array) • TXT (hex codes)</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Custom Palette Preview -->
+                            <div id="custom-palette-preview" class="custom-palette-preview" style="display: none;">
+                                <h4>Custom Palette Preview</h4>
+                                <div id="custom-color-swatches" class="color-swatches">
+                                    <!-- Custom color swatches will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Single Color Selection (Backward Compatibility) -->
+                        <div id="single-color-section" class="palette-section" style="display: none;">
+                            <select id="assemble-color-single">
+                                <option value="default">Default (All Colors)</option>
+                                <option value="all">All Colors</option>
+                                <option value="ochre">Ochre</option>
+                                <option value="cream">Cream</option>
+                                <option value="soft-pink">Soft Pink</option>
+                                <option value="muted-blue">Muted Blue</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div>
@@ -431,6 +576,7 @@
                             <span class="info-icon" data-field="assemble-composition" title="Click for help">?</span>
                         </label>
                         <select id="assemble-composition">
+                            <option value="default">Default (All Compositions)</option>
                             <option value="all">All Compositions</option>
                             <option value="miniature">Miniature</option>
                             <option value="tabletop">Tabletop</option>
@@ -444,6 +590,7 @@
                             <span class="info-icon" data-field="assemble-tone" title="Click for help">?</span>
                         </label>
                         <select id="assemble-tone">
+                            <option value="default">Default (All Tones)</option>
                             <option value="all">All Tones</option>
                             <option value="nostalgic">Nostalgic</option>
                             <option value="cheerful">Cheerful</option>
@@ -467,12 +614,39 @@
                             <span class="info-icon" data-field="assemble-scene" title="Click for help">?</span>
                         </label>
                         <select id="assemble-scene">
+                            <option value="default">Default (Piazza v2)</option>
                             <option value="all">All Scenes</option>
                             <option value="piazza_v2">Piazza v2</option>
                             <option value="library_v1">Library v1</option>
                             <option value="garden_v1">Garden v1</option>
+                            <option value="greenscreen_v1">Green Screen v1</option>
                         </select>
                     </div>
+                    
+                    <div>
+                        <label for="assemble-scene-manual" class="field-label">
+                            Manual Scene Entry
+                            <span class="info-icon" data-field="assemble-scene-manual" title="Click for help">?</span>
+                        </label>
+                        <input type="text" id="assemble-scene-manual" placeholder="Enter custom scene description..." />
+                    </div>
+                    
+                    <!-- Tape Markings Toggle (only visible when green-screen is selected) -->
+                    <div id="tape-markings-section" class="tape-markings-section" style="display: none;">
+                        <div class="checkbox-group">
+                            <label class="checkbox-option">
+                                <input type="checkbox" id="assemble-tape-markings">
+                                <span>Include Tape Markings</span>
+                            </label>
+                            <p class="field-help">Add T-marks and spike tape for alignment reference</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-save-controls">
+                    <button class="btn btn-sm btn-success section-save-btn" data-section="scene-guide">
+                        💾 Save Scene Guide to Project
+                    </button>
                 </div>
             </div>
 
@@ -486,6 +660,7 @@
                             <span class="info-icon" data-field="assemble-wardrobe" title="Click for help">?</span>
                         </label>
                         <select id="assemble-wardrobe">
+                            <option value="default">Default (No Wardrobe)</option>
                             <option value="none">No Wardrobe</option>
                             <option value="sunhat">Sun Hat</option>
                             <option value="cowboy_hat">Cowboy Hat</option>
@@ -499,12 +674,19 @@
                             <span class="info-icon" data-field="assemble-props" title="Click for help">?</span>
                         </label>
                         <select id="assemble-props">
+                            <option value="default">Default (No Props)</option>
                             <option value="none">No Props</option>
                             <option value="teacup">Tea Cup</option>
                             <option value="book">Book</option>
                             <option value="musical_instrument">Musical Instrument</option>
                         </select>
                     </div>
+                </div>
+                
+                <div class="section-save-controls">
+                    <button class="btn btn-sm btn-success section-save-btn" data-section="wardrobe">
+                        💾 Save Wardrobe to Project
+                    </button>
                 </div>
             </div>
 
@@ -518,6 +700,7 @@
                             <span class="info-icon" data-field="assemble-lighting" title="Click for help">?</span>
                         </label>
                         <select id="assemble-lighting">
+                            <option value="default">Default (Golden Hour Directional Rig)</option>
                             <option value="lighting_001">Golden Hour Directional Rig (Canonical)</option>
                             <option value="lighting_002">Soft Indoor Ambient</option>
                             <option value="lighting_003">Dramatic Studio Shadows</option>
@@ -545,6 +728,7 @@
                             <span class="info-icon" data-field="assemble-film-type" title="Click for help">?</span>
                         </label>
                         <select id="assemble-film-type">
+                            <option value="default">Default (Stop Motion)</option>
                             <option value="all">All Film Types</option>
                             <option value="stop_motion">Stop Motion</option>
                             <option value="claymation">Claymation</option>
@@ -561,6 +745,7 @@
                             <span class="info-icon" data-field="assemble-film-stock" title="Click for help">?</span>
                         </label>
                         <select id="assemble-film-stock">
+                            <option value="default">Default (Kodak Portra 400)</option>
                             <option value="kodak_portra_400">Kodak Portra 400</option>
                             <option value="kodak_ultramax_400">Kodak Ultramax 400</option>
                             <option value="fuji_superia_400">Fuji Superia 400</option>
@@ -580,6 +765,7 @@
                             <span class="info-icon" data-field="assemble-camera" title="Click for help">?</span>
                         </label>
                         <select id="assemble-camera">
+                            <option value="default">Default (35mm Eye-level)</option>
                             <option value="camera_001">35mm Eye-level (Canonical)</option>
                             <option value="camera_002">35mm 3/4 Height</option>
                             <option value="camera_003">35mm Low Angle</option>
@@ -592,10 +778,35 @@
                             <option value="camera_010">24mm Wide</option>
                         </select>
                     </div>
+                    
+                    <div>
+                        <label for="assemble-tripod-height" class="field-label">
+                            Tripod Height <span class="auto-sync-indicator">(auto-synced)</span>
+                            <span class="info-icon" data-field="assemble-tripod-height" title="Click for help">?</span>
+                        </label>
+                        <select id="assemble-tripod-height" disabled>
+                            <option value="0.5">0.5 meters</option>
+                            <option value="0.75">0.75 meters</option>
+                            <option value="1.0" selected>1.0 meters</option>
+                            <option value="1.5">1.5 meters</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="section-save-controls">
+                    <button class="btn btn-sm btn-success section-save-btn" data-section="mood-lighting">
+                        💾 Save Mood & Lighting to Project
+                    </button>
                 </div>
             </div>
             
             <div class="assemble-actions">
+                <button id="reset-defaults-btn" class="btn btn-outline">
+                    🔄 Reset to Defaults
+                </button>
+                <button id="save-all-settings-btn" class="btn btn-success btn-large">
+                    💾 Save All Settings to Project
+                </button>
                 <button id="generate-bundles-btn" class="btn btn-primary btn-large">
                     🚀 Generate Bundles
                 </button>

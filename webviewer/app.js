@@ -13,6 +13,8 @@ class AnamaliaViewer {
         this.comparisonMode = false;
         this.selectedForComparison = [];
         this.tennerData = null;
+        this.gridOverlayVisible = false;
+        this.currentCompositeRender = null;
         
         this.init();
     }
@@ -29,8 +31,10 @@ class AnamaliaViewer {
         // Set up event listeners
         this.setupEventListeners();
         this.setupTennerListeners();
+        this.setupPaletteListeners();
         this.setupInfoModalListeners();
         this.setupDocModalListeners();
+        this.setupCompositeModalListeners();
         this.initOutputParameterSync();
         
         // Initial render
@@ -153,6 +157,80 @@ class AnamaliaViewer {
                 },
                 tags: ['tenner', 'chunk', 'house', 'construction'],
                 prompt: 'House made of jelly-beans and gum with Ruby Rhino wearing spectacles...'
+            },
+            {
+                id: 'bundle_005',
+                title: 'Ruby Rhino - Green Screen Welcome',
+                image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMDBmZjAwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzAwMDAwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdyZWVuLVNjcmVlbiBQbGF0ZTwvdGV4dD48L3N2Zz4=',
+                metadata: {
+                    character: 'ruby_rhino',
+                    pose: 'arms_open_welcome',
+                    scene: 'greenscreen_v1',
+                    lighting: 'lighting_001',
+                    film_type: 'stop_motion',
+                    texture: 'texture_001',
+                    film_stock: 'kodak_portra_400',
+                    camera: 'camera_001',
+                    model: 't2i_model_x@0.9',
+                    wardrobe: [],
+                    props: [],
+                    film_bible: 'film_bible@1.0.0',
+                    vocabulary_version: 'lexicon@v1',
+                    bundle_type: 'greenscreen_dual',
+                    output_mode: 'greenscreen_dual',
+                    tape_markings: true,
+                    chroma_key: {
+                        color: '#00FF00',
+                        tolerance: 'standard'
+                    },
+                    spatial_metadata: {
+                        character_origin: [0, 0, 0.1],
+                        camera_position: [0, 0, 1.0],
+                        stage_grid: '10cm'
+                    },
+                    created_at: '2025-10-24T10:30:15.000Z',
+                    status: 'completed',
+                    approved: true
+                },
+                tags: ['rhino', 'greenscreen', 'welcome', 'chroma-key'],
+                prompt: 'Ruby Rhino in a welcoming pose captured on a miniature stop-motion stage with chroma-key green backdrop...'
+            },
+            {
+                id: 'bundle_006',
+                title: 'Maxine Mouse - Green Screen Alpha',
+                image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMwMDAwMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5BbHBoYSBNYXNrPC90ZXh0Pjwvc3ZnPg==',
+                metadata: {
+                    character: 'maxine_mouse',
+                    pose: 'seated_contemplative',
+                    scene: 'greenscreen_v1',
+                    lighting: 'lighting_002',
+                    film_type: 'stop_motion',
+                    texture: 'texture_001',
+                    film_stock: 'fuji_superia_400',
+                    camera: 'camera_005',
+                    model: 't2i_model_x@0.9',
+                    wardrobe: ['spectacles'],
+                    props: ['book'],
+                    film_bible: 'film_bible@1.0.0',
+                    vocabulary_version: 'lexicon@v1',
+                    bundle_type: 'greenscreen_dual',
+                    output_mode: 'greenscreen_dual',
+                    tape_markings: false,
+                    chroma_key: {
+                        color: '#00FF00',
+                        tolerance: 'standard'
+                    },
+                    spatial_metadata: {
+                        character_origin: [0, 0, 0.1],
+                        camera_position: [0, 0, 1.0],
+                        stage_grid: '10cm'
+                    },
+                    created_at: '2025-10-24T11:45:22.000Z',
+                    status: 'completed',
+                    approved: false
+                },
+                tags: ['mouse', 'greenscreen', 'alpha', 'seated'],
+                prompt: 'Maxine Mouse in a contemplative seated pose with clean alpha channel cutout...'
             }
         ];
         
@@ -179,6 +257,12 @@ class AnamaliaViewer {
         // Lighting codified scheme display
         this.setupLightingCodifiedDisplay();
         
+        // Green-screen scene handling
+        this.setupGreenScreenHandling();
+        
+        // Camera-tripod height auto-sync
+        this.setupCameraTripodSync();
+        
         // Comparison mode
         const compareBtn = document.getElementById('compare-btn');
         if (compareBtn) {
@@ -192,6 +276,14 @@ class AnamaliaViewer {
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
                 this.closeComparisonMode();
+            });
+        }
+        
+        // Grid overlay toggle
+        const gridOverlayBtn = document.getElementById('grid-overlay-btn');
+        if (gridOverlayBtn) {
+            gridOverlayBtn.addEventListener('click', () => {
+                this.toggleGridOverlay();
             });
         }
         
@@ -219,6 +311,18 @@ class AnamaliaViewer {
         if (previewPromptBtn) {
             previewPromptBtn.addEventListener('click', () => this.previewPrompt());
         }
+        
+        // Reset to defaults button
+        const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
+        if (resetDefaultsBtn) {
+            resetDefaultsBtn.addEventListener('click', () => this.resetToDefaults());
+        }
+        
+        // Reset filters button
+        const resetFiltersBtn = document.getElementById('reset-filters-btn');
+        if (resetFiltersBtn) {
+            resetFiltersBtn.addEventListener('click', () => this.resetFilters());
+        }
     }
     
     setupLightingCodifiedDisplay() {
@@ -237,6 +341,97 @@ class AnamaliaViewer {
                 this.updateLightingCodifiedDisplay('assemble-lighting', 'assemble-lighting-codified-display', 'assemble-lighting-codified-text');
             });
         }
+    }
+    
+    setupGreenScreenHandling() {
+        // Green-screen scene selection listener
+        const sceneSelect = document.getElementById('assemble-scene');
+        if (sceneSelect) {
+            sceneSelect.addEventListener('change', (e) => {
+                this.updateTapeMarkingsVisibility();
+            });
+        }
+        
+        // Tape markings checkbox listener
+        const tapeMarkingsCheckbox = document.getElementById('assemble-tape-markings');
+        if (tapeMarkingsCheckbox) {
+            tapeMarkingsCheckbox.addEventListener('change', (e) => {
+                // Handle tape markings toggle if needed
+                console.log('Tape markings toggled:', e.target.checked);
+            });
+        }
+    }
+    
+    setupCameraTripodSync() {
+        // Camera-to-tripod height mapping (canonical heights)
+        this.cameraHeightMapping = {
+            'camera_001': '1.0',  // Eye-level
+            'camera_002': '0.75', // 3/4 Height
+            'camera_003': '0.5',  // Low Angle
+            'camera_004': '1.5',  // High Angle
+            'camera_005': '1.0',  // 3/4 Left
+            'camera_006': '1.0',  // 3/4 Right
+            'camera_007': '1.0',  // Profile
+            'camera_008': '1.0',  // Back 3/4
+            'camera_009': '1.0',  // 50mm Portrait
+            'camera_010': '1.0'   // 24mm Wide
+        };
+        
+        // Camera selection listener for auto-sync
+        const cameraSelect = document.getElementById('assemble-camera');
+        const tripodHeightSelect = document.getElementById('assemble-tripod-height');
+        
+        if (cameraSelect && tripodHeightSelect) {
+            cameraSelect.addEventListener('change', (e) => {
+                this.syncTripodHeightToCamera(e.target.value);
+            });
+            
+            // Initialize with default camera selection
+            this.syncTripodHeightToCamera(cameraSelect.value);
+        }
+    }
+    
+    syncTripodHeightToCamera(cameraValue) {
+        const tripodHeightSelect = document.getElementById('assemble-tripod-height');
+        if (!tripodHeightSelect) return;
+        
+        const canonicalHeight = this.cameraHeightMapping[cameraValue];
+        if (canonicalHeight) {
+            // Set the tripod height to the canonical value
+            tripodHeightSelect.value = canonicalHeight;
+            // Disable the dropdown to indicate it's auto-managed
+            tripodHeightSelect.disabled = true;
+        } else {
+            // If no camera selected, enable the dropdown
+            tripodHeightSelect.disabled = false;
+        }
+    }
+    
+    updateTapeMarkingsVisibility() {
+        const sceneSelect = document.getElementById('assemble-scene');
+        const tapeMarkingsSection = document.getElementById('tape-markings-section');
+        
+        if (!sceneSelect || !tapeMarkingsSection) return;
+        
+        const selectedScene = sceneSelect.value;
+        
+        if (selectedScene === 'greenscreen_v1') {
+            tapeMarkingsSection.style.display = 'block';
+        } else {
+            tapeMarkingsSection.style.display = 'none';
+        }
+    }
+    
+    // Helper method to get filter values with default handling
+    getFilterValue(elementId, defaultValue) {
+        const element = document.getElementById(elementId);
+        if (!element) return defaultValue;
+        
+        const value = element.value;
+        if (value === 'default') {
+            return defaultValue;
+        }
+        return value || defaultValue;
     }
     
     updateLightingCodifiedDisplay(selectId, displayId, textId) {
@@ -313,8 +508,387 @@ class AnamaliaViewer {
         }
     }
     
+    setupPaletteListeners() {
+        // Palette mode toggle listeners
+        const paletteModeRadios = document.querySelectorAll('input[name="palette-mode"]');
+        paletteModeRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.updatePaletteMode();
+            });
+        });
+        
+        // Standard palette selection listener
+        const paletteSelect = document.getElementById('assemble-color-palette');
+        if (paletteSelect) {
+            paletteSelect.addEventListener('change', () => {
+                this.updateColorSwatches();
+            });
+        }
+        
+        // Color usage mode toggle listeners
+        const colorUsageRadios = document.querySelectorAll('input[name="color-usage-mode"]');
+        colorUsageRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.updateColorUsageMode();
+            });
+        });
+        
+        // Custom palette file upload listener
+        const customPaletteFile = document.getElementById('custom-palette-file');
+        if (customPaletteFile) {
+            customPaletteFile.addEventListener('change', (e) => {
+                this.handleCustomPaletteUpload(e);
+            });
+        }
+        
+        // Single color selection listener (backward compatibility)
+        const singleColorSelect = document.getElementById('assemble-color-single');
+        if (singleColorSelect) {
+            singleColorSelect.addEventListener('change', () => {
+                // This will be handled in prompt generation
+            });
+        }
+        
+        // Initialize with default palette
+        this.updatePaletteMode();
+        this.updateColorSwatches();
+    }
+    
+    updatePaletteMode() {
+        const mode = document.querySelector('input[name="palette-mode"]:checked')?.value || 'standard';
+        
+        // Hide all sections
+        document.getElementById('standard-palette-section').style.display = 'none';
+        document.getElementById('custom-palette-section').style.display = 'none';
+        document.getElementById('single-color-section').style.display = 'none';
+        
+        // Show selected section
+        switch (mode) {
+            case 'standard':
+                document.getElementById('standard-palette-section').style.display = 'block';
+                break;
+            case 'custom':
+                document.getElementById('custom-palette-section').style.display = 'block';
+                break;
+            case 'single':
+                document.getElementById('single-color-section').style.display = 'block';
+                break;
+        }
+        
+        // Update color swatches if standard mode
+        if (mode === 'standard') {
+            this.updateColorSwatches();
+        }
+    }
+    
+    updateColorSwatches() {
+        const paletteSelect = document.getElementById('assemble-color-palette');
+        const swatchesContainer = document.getElementById('color-swatches');
+        
+        if (!paletteSelect || !swatchesContainer) return;
+        
+        const selectedPalette = paletteSelect.value;
+        const palettes = this.getColorPalettes();
+        const palette = palettes[selectedPalette];
+        
+        if (!palette) return;
+        
+        // Clear existing swatches
+        swatchesContainer.innerHTML = '';
+        
+        // Create color swatches
+        palette.colors.forEach((color, index) => {
+            const swatch = document.createElement('div');
+            swatch.className = 'color-swatch';
+            swatch.dataset.colorIndex = index;
+            swatch.innerHTML = `
+                <div class="color-swatch-circle" style="background-color: ${color.hex}"></div>
+                <div class="color-swatch-name">${color.name}</div>
+            `;
+            
+            // Add click listener for individual selection
+            swatch.addEventListener('click', () => {
+                this.toggleColorSelection(swatch, index);
+            });
+            
+            swatchesContainer.appendChild(swatch);
+        });
+        
+        // Update individual color selection checkboxes
+        this.updateIndividualColorSelection(palette);
+    }
+    
+    updateIndividualColorSelection(palette) {
+        const container = document.getElementById('individual-color-selection');
+        if (!container) return;
+        
+        // Clear existing checkboxes
+        container.innerHTML = '';
+        
+        // Create checkboxes for each color
+        palette.colors.forEach((color, index) => {
+            const checkbox = document.createElement('div');
+            checkbox.className = 'color-checkbox';
+            checkbox.innerHTML = `
+                <label class="color-checkbox-label">
+                    <input type="checkbox" name="selected-colors" value="${index}" checked>
+                    <div class="color-checkbox-swatch" style="background-color: ${color.hex}"></div>
+                    <span>${color.name}</span>
+                </label>
+            `;
+            
+            // Add change listener
+            const checkboxInput = checkbox.querySelector('input[type="checkbox"]');
+            checkboxInput.addEventListener('change', () => {
+                this.updateColorSwatchSelection(index, checkboxInput.checked);
+            });
+            
+            container.appendChild(checkbox);
+        });
+    }
+    
+    updateColorUsageMode() {
+        const mode = document.querySelector('input[name="color-usage-mode"]:checked')?.value || 'all';
+        const individualSelection = document.getElementById('individual-color-selection');
+        
+        if (individualSelection) {
+            individualSelection.style.display = mode === 'select' ? 'block' : 'none';
+        }
+        
+        // Update swatch selection state
+        if (mode === 'all') {
+            // Select all colors
+            const checkboxes = document.querySelectorAll('input[name="selected-colors"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                const index = parseInt(checkbox.value);
+                this.updateColorSwatchSelection(index, true);
+            });
+        }
+    }
+    
+    toggleColorSelection(swatch, index) {
+        const checkbox = document.querySelector(`input[name="selected-colors"][value="${index}"]`);
+        if (checkbox) {
+            checkbox.checked = !checkbox.checked;
+            this.updateColorSwatchSelection(index, checkbox.checked);
+        }
+    }
+    
+    updateColorSwatchSelection(index, selected) {
+        const swatch = document.querySelector(`[data-color-index="${index}"]`);
+        if (swatch) {
+            if (selected) {
+                swatch.classList.add('selected');
+            } else {
+                swatch.classList.remove('selected');
+            }
+        }
+    }
+    
+    async handleCustomPaletteUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const preview = document.getElementById('custom-palette-preview');
+        const swatchesContainer = document.getElementById('custom-color-swatches');
+        
+        try {
+            let colors = [];
+            
+            if (file.type.startsWith('image/')) {
+                colors = await this.extractColorsFromImage(file);
+            } else if (file.name.endsWith('.json')) {
+                colors = await this.parseJSONPalette(file);
+            } else if (file.name.endsWith('.txt')) {
+                colors = await this.parseTextPalette(file);
+            } else {
+                throw new Error('Unsupported file type');
+            }
+            
+            // Display the colors
+            this.displayCustomPalette(colors, swatchesContainer);
+            preview.style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error processing palette file:', error);
+            alert('Error processing palette file: ' + error.message);
+        }
+    }
+    
+    async extractColorsFromImage(file) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const colors = this.getDominantColors(imageData);
+                resolve(colors);
+            };
+            
+            img.onerror = () => reject(new Error('Failed to load image'));
+            img.src = URL.createObjectURL(file);
+        });
+    }
+    
+    getDominantColors(imageData) {
+        const data = imageData.data;
+        const colorCounts = {};
+        
+        // Sample every 10th pixel for performance
+        for (let i = 0; i < data.length; i += 40) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+            
+            colorCounts[hex] = (colorCounts[hex] || 0) + 1;
+        }
+        
+        // Get top 6 colors
+        const sortedColors = Object.entries(colorCounts)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 6)
+            .map(([hex], index) => ({
+                name: `Color ${index + 1}`,
+                hex: hex
+            }));
+        
+        return sortedColors;
+    }
+    
+    async parseJSONPalette(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const colors = Array.isArray(data) ? data : data.colors || [];
+                    resolve(colors);
+                } catch (error) {
+                    reject(new Error('Invalid JSON format'));
+                }
+            };
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsText(file);
+        });
+    }
+    
+    async parseTextPalette(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const lines = e.target.result.split('\n');
+                    const colors = lines
+                        .filter(line => line.trim())
+                        .slice(0, 8) // Limit to 8 colors
+                        .map((line, index) => {
+                            const hex = line.trim();
+                            if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+                                throw new Error(`Invalid hex color: ${hex}`);
+                            }
+                            return {
+                                name: `Color ${index + 1}`,
+                                hex: hex
+                            };
+                        });
+                    resolve(colors);
+                } catch (error) {
+                    reject(new Error('Invalid text format: ' + error.message));
+                }
+            };
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsText(file);
+        });
+    }
+    
+    displayCustomPalette(colors, container) {
+        container.innerHTML = '';
+        
+        colors.forEach((color, index) => {
+            const swatch = document.createElement('div');
+            swatch.className = 'color-swatch';
+            swatch.innerHTML = `
+                <div class="color-swatch-circle" style="background-color: ${color.hex}"></div>
+                <div class="color-swatch-name">${color.name}</div>
+            `;
+            container.appendChild(swatch);
+        });
+    }
+    
+    getCurrentColorPalette() {
+        const mode = document.querySelector('input[name="palette-mode"]:checked')?.value || 'standard';
+        
+        switch (mode) {
+            case 'standard':
+                return this.getStandardPaletteColors();
+            case 'custom':
+                return this.getCustomPaletteColors();
+            case 'single':
+                return this.getSingleColor();
+            default:
+                return [];
+        }
+    }
+    
+    getStandardPaletteColors() {
+        const paletteSelect = document.getElementById('assemble-color-palette');
+        const usageMode = document.querySelector('input[name="color-usage-mode"]:checked')?.value || 'all';
+        
+        if (!paletteSelect) return [];
+        
+        const selectedPalette = paletteSelect.value;
+        const palettes = this.getColorPalettes();
+        const palette = palettes[selectedPalette];
+        
+        if (!palette) return [];
+        
+        if (usageMode === 'all') {
+            return palette.colors;
+        } else {
+            // Get selected colors only
+            const selectedCheckboxes = document.querySelectorAll('input[name="selected-colors"]:checked');
+            return Array.from(selectedCheckboxes).map(checkbox => {
+                const index = parseInt(checkbox.value);
+                return palette.colors[index];
+            }).filter(Boolean);
+        }
+    }
+    
+    getCustomPaletteColors() {
+        // For custom palettes, we would need to store the uploaded colors
+        // For now, return empty array - this would need to be implemented
+        // when custom palette storage is added
+        return [];
+    }
+    
+    getSingleColor() {
+        const singleColorSelect = document.getElementById('assemble-color-single');
+        if (!singleColorSelect) return [];
+        
+        const selectedColor = singleColorSelect.value;
+        if (selectedColor === 'all') return [];
+        
+        // Convert single color selection to palette format
+        const colorMap = {
+            'ochre': { name: 'ochre', hex: '#CC7722' },
+            'cream': { name: 'cream', hex: '#F5F5DC' },
+            'soft-pink': { name: 'soft pink', hex: '#F8BBD9' },
+            'muted-blue': { name: 'muted blue', hex: '#6B8E9A' }
+        };
+        
+        return colorMap[selectedColor] ? [colorMap[selectedColor]] : [];
+    }
+    
     updateTennerMode() {
-        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'batch';
+        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
         
         // Update status and options when mode changes
         this.updateTennerStatus();
@@ -323,7 +897,7 @@ class AnamaliaViewer {
     }
     
     updateTennerSpecificOptions() {
-        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'batch';
+        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
         
         if (mode === 'batch') {
             // Hide all specific option dropdowns in batch mode
@@ -388,7 +962,7 @@ class AnamaliaViewer {
         });
     }    
     updateTennerStatus() {
-        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'batch';
+        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
         const tenner1 = document.getElementById('tenner-1')?.value || '';
         const tenner2 = document.getElementById('tenner-2')?.value || '';
         const tenner3 = document.getElementById('tenner-3')?.value || '';
@@ -596,17 +1170,18 @@ class AnamaliaViewer {
     
     filterRenders() {
         const searchTerm = document.getElementById('search')?.value.toLowerCase() || '';
-        const poseFilter = document.getElementById('pose-filter')?.value || 'all';
-        const sceneFilter = document.getElementById('scene-filter')?.value || 'all';
-        const lightingFilter = document.getElementById('lighting-filter')?.value || 'all';
-        const filmTypeFilter = document.getElementById('film-type-filter')?.value || 'all';
-        const textureFilter = document.getElementById('texture-filter')?.value || 'all';
-        const filmStockFilter = document.getElementById('film-stock-filter')?.value || 'all';
-        const cameraFilter = document.getElementById('camera-filter')?.value || 'all';
-        const wardrobeFilter = document.getElementById('wardrobe-filter')?.value || 'all';
-        const propsFilter = document.getElementById('props-filter')?.value || 'all';
-        const statusFilter = document.getElementById('status-filter')?.value || 'all';
-        const filmBibleFilter = document.getElementById('film-bible-filter')?.value || 'all';
+        const poseFilter = this.getFilterValue('pose-filter', 'all');
+        const sceneFilterManual = document.getElementById('scene-filter-manual')?.value.trim();
+        const sceneFilter = sceneFilterManual || this.getFilterValue('scene-filter', 'all');
+        const lightingFilter = this.getFilterValue('lighting-filter', 'all');
+        const filmTypeFilter = this.getFilterValue('film-type-filter', 'all');
+        const textureFilter = this.getFilterValue('texture-filter', 'all');
+        const filmStockFilter = this.getFilterValue('film-stock-filter', 'all');
+        const cameraFilter = this.getFilterValue('camera-filter', 'all');
+        const wardrobeFilter = this.getFilterValue('wardrobe-filter', 'all');
+        const propsFilter = this.getFilterValue('props-filter', 'all');
+        const statusFilter = this.getFilterValue('status-filter', 'all');
+        const filmBibleFilter = this.getFilterValue('film-bible-filter', 'all');
         // Commented out vocabulary filter - replaced with category-based filters
         // const vocabularyFilter = document.getElementById('vocabulary-filter')?.value || 'all';
         
@@ -816,19 +1391,27 @@ class AnamaliaViewer {
         }
         
         gallery.innerHTML = pageRenders.map(render => this.renderCard(render)).join('');
+        
+        // Update grid overlay if visible
+        if (this.gridOverlayVisible) {
+            this.updateGridOverlay();
+        }
     }
     
     renderCard(render) {
         const statusClass = render.metadata.approved ? 'approved' : 'pending';
         const statusIcon = render.metadata.approved ? '✅' : '⏳';
+        const isGreenScreen = render.metadata.scene === 'greenscreen_v1';
+        const greenScreenBadge = isGreenScreen ? '<span class="greenscreen-badge">🎬 Green-Screen</span>' : '';
         
         return `
-            <div class="render-card" data-render-id="${render.id}">
+            <div class="render-card ${isGreenScreen ? 'greenscreen-card' : ''}" data-render-id="${render.id}">
                 <div class="render-image">
                     <img src="${render.image}" alt="${render.title}" loading="lazy">
+                    ${greenScreenBadge}
                 </div>
                 <div class="render-info">
-                    <div class="render-title">${render.title}</div>
+                    <div class="render-title">${render.title} ${greenScreenBadge}</div>
                     <div class="render-meta">
                         ${statusIcon} ${render.metadata.status} • 
                         ${new Date(render.metadata.created_at).toLocaleDateString()}<br>
@@ -852,6 +1435,20 @@ class AnamaliaViewer {
                         <button class="btn btn-sm btn-secondary" onclick="viewer.toggleComparison('${render.id}')">
                             🔍 Compare
                         </button>
+                        ${isGreenScreen ? `<button class="btn btn-sm btn-info" onclick="viewer.previewComposite('${render.id}')">
+                            🎬 Preview Composite
+                        </button>` : ''}
+                        ${isGreenScreen ? `<div class="download-options">
+                            <button class="btn btn-sm btn-success" onclick="viewer.downloadGreenscreen('${render.id}')">
+                                📥 Green-Screen
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="viewer.downloadAlpha('${render.id}')">
+                                🔳 Alpha
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="viewer.downloadBoth('${render.id}')">
+                                📦 Both (ZIP)
+                            </button>
+                        </div>` : ''}
                         <button class="btn btn-sm ${render.metadata.approved ? 'btn-danger' : 'btn-success'}" 
                                 onclick="viewer.toggleApproval('${render.id}')">
                             ${render.metadata.approved ? '❌ Reject' : '✅ Approve'}
@@ -960,6 +1557,69 @@ class AnamaliaViewer {
         document.getElementById('comparison-mode').style.display = 'none';
     }
     
+    toggleGridOverlay() {
+        this.gridOverlayVisible = !this.gridOverlayVisible;
+        this.updateGridOverlay();
+        this.updateGridOverlayButton();
+    }
+    
+    updateGridOverlay() {
+        const renderCards = document.querySelectorAll('.render-card');
+        renderCards.forEach(card => {
+            const imageContainer = card.querySelector('.render-image');
+            if (!imageContainer) return;
+            
+            // Remove existing grid overlay
+            const existingGrid = imageContainer.querySelector('.grid-overlay');
+            if (existingGrid) {
+                existingGrid.remove();
+            }
+            
+            if (this.gridOverlayVisible) {
+                // Add grid overlay
+                const gridOverlay = document.createElement('div');
+                gridOverlay.className = 'grid-overlay';
+                gridOverlay.innerHTML = this.createGridHTML();
+                imageContainer.appendChild(gridOverlay);
+            }
+        });
+    }
+    
+    createGridHTML() {
+        // Create 10cm x 10cm grid overlay based on Virtual Stage System
+        return `
+            <div class="grid-lines">
+                <div class="grid-line horizontal" style="top: 25%"></div>
+                <div class="grid-line horizontal" style="top: 50%"></div>
+                <div class="grid-line horizontal" style="top: 75%"></div>
+                <div class="grid-line vertical" style="left: 25%"></div>
+                <div class="grid-line vertical" style="left: 50%"></div>
+                <div class="grid-line vertical" style="left: 75%"></div>
+            </div>
+            <div class="grid-markers">
+                <div class="center-marker" style="top: 50%; left: 50%"></div>
+                <div class="character-origin" style="top: 50%; left: 50%"></div>
+            </div>
+            <div class="grid-labels">
+                <div class="grid-label" style="top: 5px; left: 5px;">Stage Grid (10cm)</div>
+                <div class="grid-label" style="bottom: 5px; right: 5px;">Character Origin (0,0,0.1)</div>
+            </div>
+        `;
+    }
+    
+    updateGridOverlayButton() {
+        const gridBtn = document.getElementById('grid-overlay-btn');
+        if (!gridBtn) return;
+        
+        if (this.gridOverlayVisible) {
+            gridBtn.textContent = '📐 Hide Grid';
+            gridBtn.classList.add('active');
+        } else {
+            gridBtn.textContent = '📐 Grid Overlay';
+            gridBtn.classList.remove('active');
+        }
+    }
+    
     renderComparison() {
         const comparisonMode = document.getElementById('comparison-mode');
         if (!comparisonMode) return;
@@ -1023,10 +1683,11 @@ class AnamaliaViewer {
     generateBundles() {
         const assemblyType = document.querySelector('input[name="assembly-type"]:checked').value;
         const pose = document.getElementById('assemble-pose').value;
-        const scene = document.getElementById('assemble-scene').value;
-        const lighting = document.getElementById('assemble-lighting').value;
-        const wardrobe = document.getElementById('assemble-wardrobe').value;
-        const props = document.getElementById('assemble-props').value;
+        const sceneManual = document.getElementById('assemble-scene-manual')?.value.trim();
+        const scene = sceneManual || this.getFilterValue('assemble-scene', 'piazza_v2');
+        const lighting = this.getFilterValue('assemble-lighting', 'lighting_001');
+        const wardrobe = this.getFilterValue('assemble-wardrobe', 'none');
+        const props = this.getFilterValue('assemble-props', 'none');
         const count = document.getElementById('assemble-count').value;
         const outputDir = document.getElementById('assemble-output').value;
         const verbose = document.getElementById('assemble-verbose').checked;
@@ -1058,13 +1719,34 @@ class AnamaliaViewer {
             logContent += `   Creating cartesian product combinations...\n\n`;
         }
         
+        // Check if green-screen scene is selected
+        const isGreenScreen = scene === 'greenscreen_v1';
+        const tapeMarkings = document.getElementById('assemble-tape-markings')?.checked || false;
+        
         logContent += `⚙️ Settings:\n`;
         logContent += `   Output Directory: ${outputDir}\n`;
-        logContent += `   Verbose: ${verbose ? 'Yes' : 'No'}\n\n`;
+        logContent += `   Verbose: ${verbose ? 'Yes' : 'No'}\n`;
         
-        logContent += `✅ Bundle generation complete!\n`;
-        logContent += `📁 Files saved to: ${outputDir}/\n`;
-        logContent += `📊 Generated ${count} bundle(s) successfully\n`;
+        if (isGreenScreen) {
+            logContent += `   🎬 Green-Screen Mode: Dual Output\n`;
+            logContent += `   📐 Tape Markings: ${tapeMarkings ? 'Enabled' : 'Disabled'}\n`;
+            logContent += `   🎨 Chroma Key: #00FF00 (Standard Broadcast Green)\n`;
+        }
+        
+        logContent += `\n`;
+        
+        if (isGreenScreen) {
+            logContent += `✅ Green-Screen Bundle generation complete!\n`;
+            logContent += `📁 Files saved to: ${outputDir}/\n`;
+            logContent += `📊 Generated ${count} bundle(s) with dual outputs:\n`;
+            logContent += `   🎬 Green-screen plates: bundle_xxx_greenscreen.png\n`;
+            logContent += `   🔳 Alpha masks: bundle_xxx_alpha.png\n`;
+            logContent += `   📋 Metadata: bundle_xxx.json\n`;
+        } else {
+            logContent += `✅ Bundle generation complete!\n`;
+            logContent += `📁 Files saved to: ${outputDir}/\n`;
+            logContent += `📊 Generated ${count} bundle(s) successfully\n`;
+        }
         
         outputLog.textContent = logContent;
         
@@ -1096,22 +1778,25 @@ class AnamaliaViewer {
             }
         }
         
-        const scene = document.getElementById('assemble-scene').value;
-        const lighting = document.getElementById('assemble-lighting').value;
-        const filmType = document.getElementById('assemble-film-type').value;
-        const texture = document.getElementById('assemble-texture').value;
-        const filmStock = document.getElementById('assemble-film-stock').value;
-        const camera = document.getElementById('assemble-camera').value;
-        const wardrobe = document.getElementById('assemble-wardrobe').value;
-        const props = document.getElementById('assemble-props').value;
+        const sceneManual = document.getElementById('assemble-scene-manual')?.value.trim();
+        const scene = sceneManual || this.getFilterValue('assemble-scene', 'piazza_v2');
+        const lighting = this.getFilterValue('assemble-lighting', 'lighting_001');
+        const filmType = this.getFilterValue('assemble-film-type', 'stop_motion');
+        const texture = this.getFilterValue('assemble-texture', 'texture_001');
+        const filmStock = this.getFilterValue('assemble-film-stock', 'kodak_portra_400');
+        const camera = this.getFilterValue('assemble-camera', 'camera_001');
+        // Get tripod height from camera mapping (auto-synced)
+        const tripodHeight = this.cameraHeightMapping[camera] || '1.0';
+        const wardrobe = this.getFilterValue('assemble-wardrobe', 'none');
+        const props = this.getFilterValue('assemble-props', 'none');
         
         // Output parameters
-        const outputWidth = document.getElementById('output-width').value;
-        const outputHeight = document.getElementById('output-height').value;
-        const outputAspectRatio = document.getElementById('output-aspect-ratio').value;
-        const outputQuality = document.getElementById('output-quality').value;
-        const outputFormat = document.getElementById('output-format').value;
-        const outputColorSpace = document.getElementById('output-color-space').value;
+        const outputWidth = this.getFilterValue('output-width', '1024');
+        const outputHeight = this.getFilterValue('output-height', '1024');
+        const outputAspectRatio = this.getFilterValue('output-aspect-ratio', '16:9');
+        const outputQuality = this.getFilterValue('output-quality', 'high');
+        const outputFormat = this.getFilterValue('output-format', 'png');
+        const outputColorSpace = this.getFilterValue('output-color-space', 'sRGB');
         
         // Generate preview prompt
         let prompt;
@@ -1144,7 +1829,17 @@ class AnamaliaViewer {
         }
         
         if (scene !== 'all') {
-            prompt += ` at a ${scene.replace('_', ' ')}`;
+            if (scene === 'greenscreen_v1') {
+                // Special handling for green-screen scene
+                const tapeMarkings = document.getElementById('assemble-tape-markings')?.checked || false;
+                prompt += ` captured on a miniature stop-motion stage with chroma-key green backdrop. Floor: vibrant green (#00FF00) matte surface. Wall: vibrant green (#00FF00) matte surface. 90-degree junction visible. Character maintains felted wool texture with natural contact shadows falling on green floor`;
+                
+                if (tapeMarkings) {
+                    prompt += `. White T-mark tape at center stage position. Yellow spike tape strips marking character positions. Subtle reference marks at stage corners. Tape markings appear as physical elements on green floor`;
+                }
+            } else {
+                prompt += ` at a ${scene.replace('_', ' ')}`;
+            }
         }
         
         if (lighting !== 'all') {
@@ -1191,6 +1886,13 @@ class AnamaliaViewer {
             prompt += `. ${texturePhrases[texture]}`;
         }
         
+        // Add color palette directive
+        const colorPalette = this.getCurrentColorPalette();
+        if (colorPalette && colorPalette.length > 0) {
+            const colorNames = colorPalette.map(color => color.name).join(', ');
+            prompt += ` with ${colorNames} color palette`;
+        }
+        
         // Add film stock directive
         if (filmStock && filmStock !== 'all') {
             const filmStockPhrases = {
@@ -1221,26 +1923,28 @@ class AnamaliaViewer {
             prompt += ` holding a ${props.replace('_', ' ')}`;
         }
         
-        // Add camera system description
+        // Add camera system description (tripod height will be injected dynamically)
         const cameraDescriptions = {
-            'camera_001': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center',
-            'camera_002': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 0.75 meters, angled 5° downward, positioned at stage center',
-            'camera_003': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 0.5 meters, angled 10° upward, positioned at stage center',
-            'camera_004': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1.5 meters, angled 5° downward, positioned at stage center',
-            'camera_005': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 45° left',
-            'camera_006': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 45° right',
-            'camera_007': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 90° left',
-            'camera_008': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center, camera rotated 135° left',
-            'camera_009': 'Captured on a miniature stop-motion stage using a fixed camera at 50mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center',
-            'camera_010': 'Captured on a miniature stop-motion stage using a fixed camera at 24mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center'
+            'camera_001': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 0° downward, positioned at stage center',
+            'camera_002': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 5° downward, positioned at stage center',
+            'camera_003': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 10° upward, positioned at stage center',
+            'camera_004': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 5° downward, positioned at stage center',
+            'camera_005': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 0° downward, positioned at stage center, camera rotated 45° left',
+            'camera_006': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 0° downward, positioned at stage center, camera rotated 45° right',
+            'camera_007': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 0° downward, positioned at stage center, camera rotated 90° left',
+            'camera_008': 'Captured on a miniature stop-motion stage using a fixed camera at 35mm lens, tripod height {HEIGHT}, angled 0° downward, positioned at stage center, camera rotated 135° left',
+            'camera_009': 'Captured on a miniature stop-motion stage using a fixed camera at 50mm lens, tripod height {HEIGHT}, angled 0° downward, positioned at stage center',
+            'camera_010': 'Captured on a miniature stop-motion stage using a fixed camera at 24mm lens, tripod height {HEIGHT}, angled 0° downward, positioned at stage center'
         };
         
         if (camera && cameraDescriptions[camera]) {
-            prompt += `. ${cameraDescriptions[camera]}`;
+            const heightText = tripodHeight === '1.0' ? '1 meter' : `${tripodHeight} meters`;
+            const cameraDescription = cameraDescriptions[camera].replace('{HEIGHT}', heightText);
+            prompt += `. ${cameraDescription}`;
         }
         
         // Add Tenner information if Tenners are selected
-        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'batch';
+        const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
         const tenner1 = document.getElementById('tenner-1')?.value || '';
         const tenner2 = document.getElementById('tenner-2')?.value || '';
         const tenner3 = document.getElementById('tenner-3')?.value || '';
@@ -1551,6 +2255,55 @@ class AnamaliaViewer {
         });
     }
     
+    // Composite Modal functionality
+    setupCompositeModalListeners() {
+        // Close modal listeners
+        const closeBtn = document.getElementById('composite-modal-close');
+        const modal = document.getElementById('composite-modal');
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.hideCompositeModal());
+        }
+        
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.hideCompositeModal();
+                }
+            });
+        }
+        
+        // Background loading
+        const loadBtn = document.getElementById('load-background');
+        const resetBtn = document.getElementById('reset-composite');
+        const fileInput = document.getElementById('background-upload');
+        const urlInput = document.getElementById('background-url');
+        
+        if (loadBtn) {
+            loadBtn.addEventListener('click', () => this.loadBackgroundImage());
+        }
+        
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => this.resetComposite());
+        }
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) {
+                    this.loadBackgroundFromFile(e.target.files[0]);
+                }
+            });
+        }
+        
+        if (urlInput) {
+            urlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.loadBackgroundImage();
+                }
+            });
+        }
+    }
+    
     convertInfoIconsToButtons() {
         // Find all info icon spans and convert them to proper buttons
         const infoIcons = document.querySelectorAll('.info-icon');
@@ -1821,6 +2574,22 @@ class AnamaliaViewer {
                     </ul>
                     <div class="highlight">
                         <p><strong>🏛️ Tip:</strong> Scenes work best when paired with appropriate lighting - outdoor scenes with natural light, indoor scenes with ambient lighting.</p>
+                    </div>
+                `
+            },
+            'scene-filter-manual': {
+                title: 'Manual Scene Entry',
+                content: `
+                    <h4>Custom Scene Description</h4>
+                    <p>Enter a custom scene description to override the predefined scene options. This allows you to specify unique environments not covered by the standard scenes.</p>
+                    <p><strong>Examples:</strong></p>
+                    <ul>
+                        <li>"A cozy coffee shop with warm lighting and wooden furniture"</li>
+                        <li>"A futuristic laboratory with clean white surfaces and blue accent lighting"</li>
+                        <li>"A medieval castle courtyard with stone walls and torch lighting"</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>💡 Tip:</strong> Be descriptive about lighting, materials, and architectural elements for best results.</p>
                     </div>
                 `
             },
@@ -2119,19 +2888,58 @@ class AnamaliaViewer {
                 `
             },
             
-            'assemble-color': {
-                title: 'Color Selection',
+            'project-default': {
+                title: 'Project Selection',
                 content: `
-                    <h4>Color Descriptors for Assembly</h4>
-                    <p>Select the color palette that will be used in your prompt generation. These terms define the chromatic characteristics and mood of the visual composition.</p>
+                    <h4>Project Defaults</h4>
+                    <p>Select the project template that will be used as the foundation for your prompt generation. Each project has its own set of default settings and configurations.</p>
+                    
+                    <h5>📋 Available Projects</h5>
                     <ul>
-                        <li><strong>Ochre:</strong> Warm, earthy yellow-brown tones</li>
-                        <li><strong>Cream:</strong> Soft, warm off-white with subtle warmth</li>
-                        <li><strong>Soft Pink:</strong> Gentle, muted pink with delicate tones</li>
-                        <li><strong>Muted Blue:</strong> Subdued, calm blue with reduced saturation</li>
+                        <li><strong>Anamalia Password:</strong> The main Anamalia character stills project with anthropomorphic animal characters, stop-motion aesthetic, and password-derived variations</li>
                     </ul>
+                    
                     <div class="highlight">
-                        <p><strong>🎨 Color Harmony:</strong> Color descriptors establish the visual mood and emotional tone of each composition.</p>
+                        <p><strong>⚙️ Project Templates:</strong> Each project template includes predefined settings for camera, lighting, materials, and style that can be customized as needed.</p>
+                    </div>
+                `
+            },
+            
+            'assemble-color': {
+                title: 'Color Palette Selection',
+                content: `
+                    <h4>Color Palette System</h4>
+                    <p>Choose from standard predefined palettes, upload custom palettes, or use single colors. Each palette contains 5-8 carefully curated colors that work harmoniously together.</p>
+                    
+                    <h5>🎨 Standard Palettes</h5>
+                    <ul>
+                        <li><strong>Classic Anamalia:</strong> Original ochre, cream, soft pink, muted blue</li>
+                        <li><strong>Warm Earth Tones:</strong> Terracotta, rust, sandy beige, warm brown, burnt orange</li>
+                        <li><strong>Cool Pastels:</strong> Powder blue, mint green, lavender, pale yellow, soft coral</li>
+                        <li><strong>Autumn Harvest:</strong> Deep orange, golden yellow, burgundy, forest green, chocolate brown</li>
+                        <li><strong>Spring Meadow:</strong> Grass green, sky blue, buttercup yellow, rose pink, lilac</li>
+                        <li><strong>Ocean Depths:</strong> Teal, navy, seafoam, coral, sand beige</li>
+                        <li><strong>Sunset Glow:</strong> Coral pink, peach, golden yellow, deep purple, soft orange</li>
+                        <li><strong>Forest Canopy:</strong> Moss green, sage, bark brown, olive, forest green</li>
+                        <li><strong>Desert Bloom:</strong> Cactus green, dusty rose, sand, copper, pale turquoise</li>
+                        <li><strong>Winter Frost:</strong> Ice blue, silver gray, white, pale lavender, soft mint</li>
+                    </ul>
+                    
+                    <h5>📁 Custom Palette Upload</h5>
+                    <ul>
+                        <li><strong>Image Files (PNG/JPG):</strong> Automatically extracts dominant colors</li>
+                        <li><strong>JSON Files:</strong> Structured color array with names and hex codes</li>
+                        <li><strong>Text Files:</strong> Simple list of hex codes (one per line)</li>
+                    </ul>
+                    
+                    <h5>⚙️ Usage Modes</h5>
+                    <ul>
+                        <li><strong>Use All Colors:</strong> Includes all palette colors in the prompt</li>
+                        <li><strong>Select Specific Colors:</strong> Choose individual colors from the palette</li>
+                    </ul>
+                    
+                    <div class="highlight">
+                        <p><strong>🎨 Color Harmony:</strong> Palettes ensure cohesive color relationships and establish the visual mood and emotional tone of each composition.</p>
                     </div>
                 `
             },
@@ -2181,6 +2989,22 @@ class AnamaliaViewer {
                     </ul>
                     <div class="highlight">
                         <p><strong>🏛️ Environment Matching:</strong> Choose scenes that complement your lighting selection - outdoor scenes with natural light, indoor scenes with ambient lighting.</p>
+                    </div>
+                `
+            },
+            'assemble-scene-manual': {
+                title: 'Manual Scene Entry',
+                content: `
+                    <h4>Custom Scene Description</h4>
+                    <p>Enter a custom scene description to override the predefined scene options. This allows you to specify unique environments not covered by the standard scenes.</p>
+                    <p><strong>Examples:</strong></p>
+                    <ul>
+                        <li>"A cozy coffee shop with warm lighting and wooden furniture"</li>
+                        <li>"A futuristic laboratory with clean white surfaces and blue accent lighting"</li>
+                        <li>"A medieval castle courtyard with stone walls and torch lighting"</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>💡 Tip:</strong> Be descriptive about lighting, materials, and architectural elements for best results.</p>
                     </div>
                 `
             },
@@ -2419,6 +3243,327 @@ class AnamaliaViewer {
             modal.classList.remove('show');
             document.body.style.overflow = '';
         }
+    }
+    
+    // Composite Modal methods
+    previewComposite(renderId) {
+        const render = this.renders.find(r => r.id === renderId);
+        if (!render || render.metadata.scene !== 'greenscreen_v1') {
+            alert('This render is not a green-screen render.');
+            return;
+        }
+        
+        this.currentCompositeRender = render;
+        this.showCompositeModal();
+    }
+    
+    showCompositeModal() {
+        const modal = document.getElementById('composite-modal');
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            this.resetComposite();
+        }
+    }
+    
+    hideCompositeModal() {
+        const modal = document.getElementById('composite-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            this.currentCompositeRender = null;
+        }
+    }
+    
+    resetComposite() {
+        const canvas = document.getElementById('composite-canvas');
+        if (!canvas || !this.currentCompositeRender) return;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw the green-screen character
+        const characterImg = new Image();
+        characterImg.onload = () => {
+            ctx.drawImage(characterImg, 0, 0, canvas.width, canvas.height);
+        };
+        characterImg.src = this.currentCompositeRender.image;
+    }
+    
+    loadBackgroundImage() {
+        const urlInput = document.getElementById('background-url');
+        const url = urlInput.value.trim();
+        
+        if (!url) {
+            alert('Please enter a background image URL.');
+            return;
+        }
+        
+        this.loadBackgroundFromURL(url);
+    }
+    
+    loadBackgroundFromFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.compositeImages(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    loadBackgroundFromURL(url) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+            this.compositeImages(url);
+        };
+        img.onerror = () => {
+            alert('Failed to load background image. Please check the URL.');
+        };
+        img.src = url;
+    }
+    
+    compositeImages(backgroundSrc) {
+        const canvas = document.getElementById('composite-canvas');
+        if (!canvas || !this.currentCompositeRender) return;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw background
+        const bgImg = new Image();
+        bgImg.onload = () => {
+            ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+            
+            // Draw green-screen character with chroma key
+            const characterImg = new Image();
+            characterImg.onload = () => {
+                // Simple chroma key: replace green pixels with transparency
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = characterImg.width;
+                tempCanvas.height = characterImg.height;
+                
+                tempCtx.drawImage(characterImg, 0, 0);
+                const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const data = imageData.data;
+                
+                // Simple green screen removal (replace green pixels with transparent)
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    
+                    // Check if pixel is green (simple threshold)
+                    if (g > r && g > b && g > 100) {
+                        data[i + 3] = 0; // Set alpha to 0 (transparent)
+                    }
+                }
+                
+                tempCtx.putImageData(imageData, 0, 0);
+                ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+            };
+            characterImg.src = this.currentCompositeRender.image;
+        };
+        bgImg.src = backgroundSrc;
+    }
+    
+    // Download methods for green-screen renders
+    downloadGreenscreen(renderId) {
+        const render = this.renders.find(r => r.id === renderId);
+        if (!render || render.metadata.scene !== 'greenscreen_v1') {
+            alert('This render is not a green-screen render.');
+            return;
+        }
+        
+        // In a real implementation, this would download the actual green-screen file
+        // For now, we'll simulate by downloading the current image
+        this.downloadImage(render.image, `${render.id}_greenscreen.png`);
+    }
+    
+    downloadAlpha(renderId) {
+        const render = this.renders.find(r => r.id === renderId);
+        if (!render || render.metadata.scene !== 'greenscreen_v1') {
+            alert('This render is not a green-screen render.');
+            return;
+        }
+        
+        // In a real implementation, this would download the actual alpha mask file
+        // For now, we'll simulate by downloading a placeholder
+        this.downloadImage(render.image, `${render.id}_alpha.png`);
+    }
+    
+    downloadBoth(renderId) {
+        const render = this.renders.find(r => r.id === renderId);
+        if (!render || render.metadata.scene !== 'greenscreen_v1') {
+            alert('This render is not a green-screen render.');
+            return;
+        }
+        
+        // In a real implementation, this would create a ZIP file with both images
+        // For now, we'll download both files separately
+        this.downloadImage(render.image, `${render.id}_greenscreen.png`);
+        setTimeout(() => {
+            this.downloadImage(render.image, `${render.id}_alpha.png`);
+        }, 500);
+        
+        // Also download metadata
+        this.downloadMetadata(render, `${render.id}_metadata.json`);
+    }
+    
+    downloadImage(imageSrc, filename) {
+        const link = document.createElement('a');
+        link.href = imageSrc;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    downloadMetadata(render, filename) {
+        const metadata = {
+            ...render.metadata,
+            download_timestamp: new Date().toISOString(),
+            download_type: 'green_screen_metadata'
+        };
+        
+        const blob = new Blob([JSON.stringify(metadata, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(url);
+    }
+    
+    // Reset methods for default settings
+    resetToDefaults() {
+        // Reset all assemble mode fields to their default values
+        const defaultValues = {
+            'output-width': '1024',
+            'output-height': '1024',
+            'output-aspect-ratio': '16:9',
+            'output-quality': 'high',
+            'output-format': 'png',
+            'output-color-space': 'sRGB',
+            'tenner-1': '',
+            'tenner-2': '',
+            'tenner-3': '',
+            'tenner-pose': 'arms_open_welcome',
+            'assemble-texture': 'texture_001',
+            'assemble-material': 'all',
+            'assemble-color-palette': 'classic_anamalia',
+            'assemble-color-single': 'all',
+            'assemble-composition': 'all',
+            'assemble-tone': 'all',
+            'assemble-scene': 'piazza_v2',
+            'assemble-wardrobe': 'none',
+            'assemble-props': 'none',
+            'assemble-lighting': 'lighting_001',
+            'assemble-film-type': 'stop_motion',
+            'assemble-film-stock': 'kodak_portra_400',
+            'assemble-camera': 'camera_001'
+        };
+        
+        // Apply default values
+        Object.entries(defaultValues).forEach(([fieldId, defaultValue]) => {
+            const element = document.getElementById(fieldId);
+            if (element) {
+                element.value = defaultValue;
+            }
+        });
+        
+        // Reset tape markings section visibility
+        this.updateTapeMarkingsVisibility();
+        
+        // Show success message
+        this.showSuccess('All fields reset to default values');
+    }
+    
+    resetFilters() {
+        // Reset all browse mode filters to their default values
+        const defaultValues = {
+            'scene-filter': 'all',
+            'props-filter': 'all',
+            'wardrobe-filter': 'all',
+            'lighting-filter': 'all',
+            'film-type-filter': 'all',
+            'film-stock-filter': 'all',
+            'camera-filter': 'all',
+            'status-filter': 'all',
+            'pose-filter': 'all',
+            'texture-filter': 'all',
+            'film-bible-filter': 'all',
+            'material-filter': 'all',
+            'light-filter': 'all',
+            'color-filter': 'all',
+            'composition-filter': 'all',
+            'tone-filter': 'all',
+            'bundle-type-filter': 'all',
+            'date-range-filter': 'all'
+        };
+        
+        // Apply default values
+        Object.entries(defaultValues).forEach(([fieldId, defaultValue]) => {
+            const element = document.getElementById(fieldId);
+            if (element) {
+                element.value = defaultValue;
+            }
+        });
+        
+        // Clear search
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        
+        // Clear manual scene entry
+        const sceneManualInput = document.getElementById('scene-filter-manual');
+        if (sceneManualInput) {
+            sceneManualInput.value = '';
+        }
+        
+        // Reset grid overlay if visible
+        if (this.gridOverlayVisible) {
+            this.toggleGridOverlay();
+        }
+        
+        // Re-filter renders
+        this.filterRenders();
+        
+        // Show success message
+        this.showSuccess('All filters reset to default values');
+    }
+    
+    showSuccess(message) {
+        // Create a temporary success message
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.textContent = message;
+        successDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            font-weight: 500;
+        `;
+        
+        document.body.appendChild(successDiv);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            if (successDiv.parentNode) {
+                successDiv.parentNode.removeChild(successDiv);
+            }
+        }, 3000);
     }
     
     async loadDocument(docType) {
@@ -2867,6 +4012,578 @@ class AnamaliaViewer {
             'camera_009': 'Captured on a miniature stop-motion stage using a fixed camera at 50mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center',
             'camera_010': 'Captured on a miniature stop-motion stage using a fixed camera at 24mm lens, tripod height 1 meter, angled 0° downward, positioned at stage center'
         };
+    }
+    
+    getColorPalettes() {
+        return {
+            'classic_anamalia': {
+                name: 'Classic Anamalia',
+                colors: [
+                    { name: 'ochre', hex: '#CC7722' },
+                    { name: 'cream', hex: '#F5F5DC' },
+                    { name: 'soft pink', hex: '#F8BBD9' },
+                    { name: 'muted blue', hex: '#6B8E9A' }
+                ]
+            },
+            'warm_earth_tones': {
+                name: 'Warm Earth Tones',
+                colors: [
+                    { name: 'terracotta', hex: '#E07856' },
+                    { name: 'rust', hex: '#B7410E' },
+                    { name: 'sandy beige', hex: '#F4E4BC' },
+                    { name: 'warm brown', hex: '#8B4513' },
+                    { name: 'burnt orange', hex: '#CC5500' },
+                    { name: 'clay red', hex: '#CD5C5C' }
+                ]
+            },
+            'cool_pastels': {
+                name: 'Cool Pastels',
+                colors: [
+                    { name: 'powder blue', hex: '#B0E0E6' },
+                    { name: 'mint green', hex: '#98FB98' },
+                    { name: 'lavender', hex: '#E6E6FA' },
+                    { name: 'pale yellow', hex: '#FFFFE0' },
+                    { name: 'soft coral', hex: '#FF7F7F' },
+                    { name: 'baby pink', hex: '#F8BBD9' }
+                ]
+            },
+            'autumn_harvest': {
+                name: 'Autumn Harvest',
+                colors: [
+                    { name: 'deep orange', hex: '#FF8C00' },
+                    { name: 'golden yellow', hex: '#FFD700' },
+                    { name: 'burgundy', hex: '#800020' },
+                    { name: 'forest green', hex: '#228B22' },
+                    { name: 'chocolate brown', hex: '#7B3F00' },
+                    { name: 'amber', hex: '#FFBF00' }
+                ]
+            },
+            'spring_meadow': {
+                name: 'Spring Meadow',
+                colors: [
+                    { name: 'grass green', hex: '#7CFC00' },
+                    { name: 'sky blue', hex: '#87CEEB' },
+                    { name: 'buttercup yellow', hex: '#F0E68C' },
+                    { name: 'rose pink', hex: '#FF69B4' },
+                    { name: 'lilac', hex: '#C8A2C8' },
+                    { name: 'fresh mint', hex: '#00FF7F' }
+                ]
+            },
+            'ocean_depths': {
+                name: 'Ocean Depths',
+                colors: [
+                    { name: 'teal', hex: '#008080' },
+                    { name: 'navy', hex: '#000080' },
+                    { name: 'seafoam', hex: '#9FE2BF' },
+                    { name: 'coral', hex: '#FF7F50' },
+                    { name: 'sand beige', hex: '#F4E4BC' },
+                    { name: 'aqua', hex: '#00FFFF' }
+                ]
+            },
+            'sunset_glow': {
+                name: 'Sunset Glow',
+                colors: [
+                    { name: 'coral pink', hex: '#FF7F7F' },
+                    { name: 'peach', hex: '#FFCBA4' },
+                    { name: 'golden yellow', hex: '#FFD700' },
+                    { name: 'deep purple', hex: '#4B0082' },
+                    { name: 'soft orange', hex: '#FFA500' },
+                    { name: 'rose gold', hex: '#E8B4B8' }
+                ]
+            },
+            'forest_canopy': {
+                name: 'Forest Canopy',
+                colors: [
+                    { name: 'moss green', hex: '#8A9A5B' },
+                    { name: 'sage', hex: '#9CAF88' },
+                    { name: 'bark brown', hex: '#8B4513' },
+                    { name: 'olive', hex: '#808000' },
+                    { name: 'forest green', hex: '#228B22' },
+                    { name: 'pine green', hex: '#01796F' }
+                ]
+            },
+            'desert_bloom': {
+                name: 'Desert Bloom',
+                colors: [
+                    { name: 'cactus green', hex: '#4A6741' },
+                    { name: 'dusty rose', hex: '#B76E79' },
+                    { name: 'sand', hex: '#C2B280' },
+                    { name: 'copper', hex: '#B87333' },
+                    { name: 'pale turquoise', hex: '#AFEEEE' },
+                    { name: 'sunset orange', hex: '#FD5E53' }
+                ]
+            },
+            'winter_frost': {
+                name: 'Winter Frost',
+                colors: [
+                    { name: 'ice blue', hex: '#B0E0E6' },
+                    { name: 'silver gray', hex: '#C0C0C0' },
+                    { name: 'white', hex: '#FFFFFF' },
+                    { name: 'pale lavender', hex: '#E6E6FA' },
+                    { name: 'soft mint', hex: '#98FB98' },
+                    { name: 'frost blue', hex: '#87CEEB' }
+                ]
+            }
+        };
+    }
+}
+
+/**
+ * Project Settings Manager
+ * Handles saving and loading of project settings to/from JSON files
+ */
+class ProjectSettingsManager {
+    constructor() {
+        this.projects = new Map();
+        this.currentProject = 'anamalia-password';
+        this.init();
+    }
+    
+    init() {
+        // Initialize with default project
+        this.projects.set('anamalia-password', {
+            projectName: 'Anamalia Password',
+            version: '1.0',
+            lastModified: new Date().toISOString(),
+            settings: this.getDefaultSettings()
+        });
+    }
+    
+    getDefaultSettings() {
+        return {
+            outputParameters: {
+                width: '1024',
+                height: '1024',
+                aspectRatio: '16:9',
+                quality: 'high',
+                format: 'png',
+                colorSpace: 'sRGB'
+            },
+            tennerSystem: {
+                mode: 'single',
+                tenner1: '',
+                tenner1Specific: '',
+                tenner2: '',
+                tenner2Specific: '',
+                tenner3: '',
+                tenner3Specific: '',
+                pose: 'default',
+                customPose: ''
+            },
+            styleGuide: {
+                texture: 'texture_001',
+                material: 'all',
+                paletteMode: 'standard',
+                colorPalette: 'classic_anamalia',
+                colorUsageMode: 'all',
+                selectedColors: [],
+                customPalette: null,
+                composition: 'all',
+                tone: 'all'
+            },
+            sceneGuide: {
+                scene: 'piazza_v2',
+                manualScene: '',
+                tapeMarkings: false
+            },
+            wardrobe: {
+                wardrobe: 'none',
+                props: 'none'
+            },
+            moodLighting: {
+                lighting: 'lighting_001',
+                filmType: 'stop_motion',
+                filmStock: 'kodak_portra_400',
+                camera: 'camera_001',
+                tripodHeight: '1.0'
+            }
+        };
+    }
+    
+    // Settings Collection Functions
+    collectOutputParametersSettings() {
+        return {
+            width: document.getElementById('output-width').value,
+            height: document.getElementById('output-height').value,
+            aspectRatio: document.getElementById('output-aspect-ratio').value,
+            quality: document.getElementById('output-quality').value,
+            format: document.getElementById('output-format').value,
+            colorSpace: document.getElementById('output-color-space').value
+        };
+    }
+    
+    collectTennerSettings() {
+        const tennerMode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
+        
+        return {
+            mode: tennerMode,
+            tenner1: document.getElementById('tenner-1').value,
+            tenner1Specific: document.getElementById('tenner-1-specific').value,
+            tenner2: document.getElementById('tenner-2').value,
+            tenner2Specific: document.getElementById('tenner-2-specific').value,
+            tenner3: document.getElementById('tenner-3').value,
+            tenner3Specific: document.getElementById('tenner-3-specific').value,
+            pose: document.getElementById('tenner-pose')?.value || 'default',
+            customPose: document.getElementById('custom-pose-text')?.value || ''
+        };
+    }
+    
+    collectStyleGuideSettings() {
+        const paletteMode = document.querySelector('input[name="palette-mode"]:checked')?.value || 'standard';
+        const colorUsageMode = document.querySelector('input[name="color-usage-mode"]:checked')?.value || 'all';
+        
+        // Collect selected colors for individual selection mode
+        const selectedColors = [];
+        if (colorUsageMode === 'select') {
+            const colorCheckboxes = document.querySelectorAll('#individual-color-selection input[type="checkbox"]:checked');
+            colorCheckboxes.forEach(checkbox => {
+                selectedColors.push(checkbox.value);
+            });
+        }
+        
+        return {
+            texture: document.getElementById('assemble-texture').value,
+            material: document.getElementById('assemble-material').value,
+            paletteMode: paletteMode,
+            colorPalette: document.getElementById('assemble-color-palette')?.value || 'classic_anamalia',
+            colorUsageMode: colorUsageMode,
+            selectedColors: selectedColors,
+            customPalette: null, // TODO: Handle custom palette data
+            composition: document.getElementById('assemble-composition').value,
+            tone: document.getElementById('assemble-tone').value
+        };
+    }
+    
+    collectSceneGuideSettings() {
+        return {
+            scene: document.getElementById('assemble-scene').value,
+            manualScene: document.getElementById('assemble-scene-manual').value,
+            tapeMarkings: document.getElementById('assemble-tape-markings')?.checked || false
+        };
+    }
+    
+    collectWardrobeSettings() {
+        return {
+            wardrobe: document.getElementById('assemble-wardrobe').value,
+            props: document.getElementById('assemble-props').value
+        };
+    }
+    
+    collectMoodLightingSettings() {
+        return {
+            lighting: document.getElementById('assemble-lighting').value,
+            filmType: document.getElementById('assemble-film-type').value,
+            filmStock: document.getElementById('assemble-film-stock').value,
+            camera: document.getElementById('assemble-camera').value,
+            tripodHeight: document.getElementById('assemble-tripod-height').value
+        };
+    }
+    
+    // Settings Application Functions
+    applyOutputParametersSettings(settings) {
+        if (settings.width) document.getElementById('output-width').value = settings.width;
+        if (settings.height) document.getElementById('output-height').value = settings.height;
+        if (settings.aspectRatio) document.getElementById('output-aspect-ratio').value = settings.aspectRatio;
+        if (settings.quality) document.getElementById('output-quality').value = settings.quality;
+        if (settings.format) document.getElementById('output-format').value = settings.format;
+        if (settings.colorSpace) document.getElementById('output-color-space').value = settings.colorSpace;
+    }
+    
+    applyTennerSettings(settings) {
+        if (settings.mode) {
+            const modeRadio = document.querySelector(`input[name="tenner-mode"][value="${settings.mode}"]`);
+            if (modeRadio) modeRadio.checked = true;
+        }
+        
+        if (settings.tenner1) document.getElementById('tenner-1').value = settings.tenner1;
+        if (settings.tenner1Specific) document.getElementById('tenner-1-specific').value = settings.tenner1Specific;
+        if (settings.tenner2) document.getElementById('tenner-2').value = settings.tenner2;
+        if (settings.tenner2Specific) document.getElementById('tenner-2-specific').value = settings.tenner2Specific;
+        if (settings.tenner3) document.getElementById('tenner-3').value = settings.tenner3;
+        if (settings.tenner3Specific) document.getElementById('tenner-3-specific').value = settings.tenner3Specific;
+        if (settings.pose && document.getElementById('tenner-pose')) {
+            document.getElementById('tenner-pose').value = settings.pose;
+        }
+        if (settings.customPose && document.getElementById('custom-pose-text')) {
+            document.getElementById('custom-pose-text').value = settings.customPose;
+        }
+    }
+    
+    applyStyleGuideSettings(settings) {
+        if (settings.texture) document.getElementById('assemble-texture').value = settings.texture;
+        if (settings.material) document.getElementById('assemble-material').value = settings.material;
+        if (settings.composition) document.getElementById('assemble-composition').value = settings.composition;
+        if (settings.tone) document.getElementById('assemble-tone').value = settings.tone;
+        
+        // Handle palette mode
+        if (settings.paletteMode) {
+            const paletteModeRadio = document.querySelector(`input[name="palette-mode"][value="${settings.paletteMode}"]`);
+            if (paletteModeRadio) paletteModeRadio.checked = true;
+        }
+        
+        // Handle color palette
+        if (settings.colorPalette && document.getElementById('assemble-color-palette')) {
+            document.getElementById('assemble-color-palette').value = settings.colorPalette;
+        }
+        
+        // Handle color usage mode
+        if (settings.colorUsageMode) {
+            const colorUsageRadio = document.querySelector(`input[name="color-usage-mode"][value="${settings.colorUsageMode}"]`);
+            if (colorUsageRadio) colorUsageRadio.checked = true;
+        }
+        
+        // Handle selected colors
+        if (settings.selectedColors && settings.selectedColors.length > 0) {
+            settings.selectedColors.forEach(color => {
+                const checkbox = document.querySelector(`#individual-color-selection input[value="${color}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+    }
+    
+    applySceneGuideSettings(settings) {
+        if (settings.scene) document.getElementById('assemble-scene').value = settings.scene;
+        if (settings.manualScene) document.getElementById('assemble-scene-manual').value = settings.manualScene;
+        if (settings.tapeMarkings !== undefined && document.getElementById('assemble-tape-markings')) {
+            document.getElementById('assemble-tape-markings').checked = settings.tapeMarkings;
+        }
+    }
+    
+    applyWardrobeSettings(settings) {
+        if (settings.wardrobe) document.getElementById('assemble-wardrobe').value = settings.wardrobe;
+        if (settings.props) document.getElementById('assemble-props').value = settings.props;
+    }
+    
+    applyMoodLightingSettings(settings) {
+        if (settings.lighting) document.getElementById('assemble-lighting').value = settings.lighting;
+        if (settings.filmType) document.getElementById('assemble-film-type').value = settings.filmType;
+        if (settings.filmStock) document.getElementById('assemble-film-stock').value = settings.filmStock;
+        if (settings.camera) document.getElementById('assemble-camera').value = settings.camera;
+        if (settings.tripodHeight) document.getElementById('assemble-tripod-height').value = settings.tripodHeight;
+    }
+    
+    // Project Management Functions
+    createNewProject(projectName) {
+        if (!projectName || projectName.trim() === '') {
+            this.showNotification('Project name cannot be empty', 'error');
+            return false;
+        }
+        
+        const sanitizedName = projectName.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+        
+        if (this.projects.has(sanitizedName)) {
+            this.showNotification('Project already exists', 'error');
+            return false;
+        }
+        
+        this.projects.set(sanitizedName, {
+            projectName: projectName.trim(),
+            version: '1.0',
+            lastModified: new Date().toISOString(),
+            settings: this.getDefaultSettings()
+        });
+        
+        this.updateProjectDropdown();
+        this.currentProject = sanitizedName;
+        document.getElementById('project-default').value = sanitizedName;
+        
+        this.showNotification(`Project "${projectName}" created successfully`, 'success');
+        return true;
+    }
+    
+    deleteProject(projectName) {
+        if (projectName === 'anamalia-password') {
+            this.showNotification('Cannot delete the default project', 'error');
+            return false;
+        }
+        
+        if (this.projects.has(projectName)) {
+            this.projects.delete(projectName);
+            this.updateProjectDropdown();
+            
+            // Switch to default project if current project was deleted
+            if (this.currentProject === projectName) {
+                this.currentProject = 'anamalia-password';
+                document.getElementById('project-default').value = 'anamalia-password';
+                this.loadProject('anamalia-password');
+            }
+            
+            this.showNotification(`Project "${projectName}" deleted successfully`, 'success');
+            return true;
+        }
+        
+        this.showNotification('Project not found', 'error');
+        return false;
+    }
+    
+    loadProject(projectName) {
+        if (!this.projects.has(projectName)) {
+            this.showNotification('Project not found', 'error');
+            return false;
+        }
+        
+        const project = this.projects.get(projectName);
+        const settings = project.settings;
+        
+        // Apply all settings
+        this.applyOutputParametersSettings(settings.outputParameters);
+        this.applyTennerSettings(settings.tennerSystem);
+        this.applyStyleGuideSettings(settings.styleGuide);
+        this.applySceneGuideSettings(settings.sceneGuide);
+        this.applyWardrobeSettings(settings.wardrobe);
+        this.applyMoodLightingSettings(settings.moodLighting);
+        
+        this.currentProject = projectName;
+        this.showNotification(`Project "${project.projectName}" loaded successfully`, 'success');
+        return true;
+    }
+    
+    saveProjectToFile(projectName, settings) {
+        if (!this.projects.has(projectName)) {
+            this.showNotification('Project not found', 'error');
+            return false;
+        }
+        
+        const project = this.projects.get(projectName);
+        const projectData = {
+            ...project,
+            settings: settings,
+            lastModified: new Date().toISOString()
+        };
+        
+        // Update the project in memory
+        this.projects.set(projectName, projectData);
+        
+        // Create and download JSON file
+        const jsonString = JSON.stringify(projectData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${projectName}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        this.showNotification(`Project "${project.projectName}" saved successfully`, 'success');
+        return true;
+    }
+    
+    uploadProjectFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const projectData = JSON.parse(e.target.result);
+                    
+                    // Validate project structure
+                    if (!projectData.projectName || !projectData.settings) {
+                        throw new Error('Invalid project file format');
+                    }
+                    
+                    const sanitizedName = projectData.projectName.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+                    
+                    // Add or update project
+                    this.projects.set(sanitizedName, {
+                        projectName: projectData.projectName,
+                        version: projectData.version || '1.0',
+                        lastModified: new Date().toISOString(),
+                        settings: projectData.settings
+                    });
+                    
+                    this.updateProjectDropdown();
+                    this.showNotification(`Project "${projectData.projectName}" imported successfully`, 'success');
+                    resolve(sanitizedName);
+                } catch (error) {
+                    this.showNotification('Invalid project file: ' + error.message, 'error');
+                    reject(error);
+                }
+            };
+            reader.onerror = () => {
+                this.showNotification('Error reading file', 'error');
+                reject(new Error('File read error'));
+            };
+            reader.readAsText(file);
+        });
+    }
+    
+    updateProjectDropdown() {
+        const select = document.getElementById('project-default');
+        const currentValue = select.value;
+        
+        // Clear existing options
+        select.innerHTML = '';
+        
+        // Add all projects
+        this.projects.forEach((project, key) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = project.projectName;
+            if (key === currentValue) option.selected = true;
+            select.appendChild(option);
+        });
+    }
+    
+    showNotification(message, type = 'info') {
+        // Remove existing notifications
+        const existing = document.querySelectorAll('.project-notification');
+        existing.forEach(notification => notification.remove());
+        
+        // Create new notification
+        const notification = document.createElement('div');
+        notification.className = `project-notification ${type}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+    
+    // Collect all settings
+    collectAllSettings() {
+        return {
+            outputParameters: this.collectOutputParametersSettings(),
+            tennerSystem: this.collectTennerSettings(),
+            styleGuide: this.collectStyleGuideSettings(),
+            sceneGuide: this.collectSceneGuideSettings(),
+            wardrobe: this.collectWardrobeSettings(),
+            moodLighting: this.collectMoodLightingSettings()
+        };
+    }
+    
+    // Save specific section
+    saveSectionToProject(sectionName) {
+        const settings = this.collectAllSettings();
+        const sectionSettings = settings[sectionName];
+        
+        if (!sectionSettings) {
+            this.showNotification(`Unknown section: ${sectionName}`, 'error');
+            return false;
+        }
+        
+        // Update the current project with the new section settings
+        const project = this.projects.get(this.currentProject);
+        if (project) {
+            project.settings[sectionName] = sectionSettings;
+            project.lastModified = new Date().toISOString();
+            this.projects.set(this.currentProject, project);
+        }
+        
+        this.showNotification(`${sectionName} saved to project`, 'success');
+        return true;
+    }
+    
+    // Save all settings
+    saveAllSettingsToProject() {
+        const settings = this.collectAllSettings();
+        return this.saveProjectToFile(this.currentProject, settings);
     }
 }
 
