@@ -861,6 +861,34 @@
         </div>
     </div>
 
+    <!-- Prompt Preview Modal -->
+    <div id="prompt-preview-modal" class="info-modal" role="dialog" aria-labelledby="prompt-preview-title" aria-modal="true" aria-hidden="true">
+        <div class="info-modal-content prompt-preview-content">
+            <div class="info-modal-header">
+                <h3 id="prompt-preview-title">👁️ Prompt Preview</h3>
+                <button id="prompt-preview-close" class="info-modal-close" aria-label="Close prompt preview">×</button>
+            </div>
+            <div class="info-modal-body">
+                <div class="prompt-preview-actions">
+                    <button id="copy-prompt-btn" class="btn btn-primary btn-sm">
+                        📋 Copy Prompt
+                    </button>
+                    <button id="copy-prompt-with-formatting-btn" class="btn btn-secondary btn-sm">
+                        📄 Copy with Formatting
+                    </button>
+                </div>
+                <div class="prompt-preview-text-container">
+                    <textarea id="prompt-preview-text" class="prompt-preview-text" readonly></textarea>
+                </div>
+                <div class="prompt-preview-stats">
+                    <span id="prompt-word-count" class="prompt-stat">Words: 0</span>
+                    <span id="prompt-char-count" class="prompt-stat">Characters: 0</span>
+                    <span id="prompt-token-estimate" class="prompt-stat">~Tokens: 0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js?v=202501241400"></script>
 </body>
 </html>
