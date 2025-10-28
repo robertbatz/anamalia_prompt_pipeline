@@ -4240,17 +4240,6 @@ class ProjectSettingsManager {
                 format: 'png',
                 colorSpace: 'sRGB'
             },
-            tennerSystem: {
-                mode: 'single',
-                tenner1: '',
-                tenner1Specific: '',
-                tenner2: '',
-                tenner2Specific: '',
-                tenner3: '',
-                tenner3Specific: '',
-                pose: 'default',
-                customPose: ''
-            },
             styleGuide: {
                 texture: 'texture_001',
                 material: 'all',
@@ -4290,22 +4279,6 @@ class ProjectSettingsManager {
             quality: document.getElementById('output-quality').value,
             format: document.getElementById('output-format').value,
             colorSpace: document.getElementById('output-color-space').value
-        };
-    }
-    
-    collectTennerSettings() {
-        const tennerMode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
-        
-        return {
-            mode: tennerMode,
-            tenner1: document.getElementById('tenner-1').value,
-            tenner1Specific: document.getElementById('tenner-1-specific').value,
-            tenner2: document.getElementById('tenner-2').value,
-            tenner2Specific: document.getElementById('tenner-2-specific').value,
-            tenner3: document.getElementById('tenner-3').value,
-            tenner3Specific: document.getElementById('tenner-3-specific').value,
-            pose: document.getElementById('tenner-pose')?.value || 'default',
-            customPose: document.getElementById('custom-pose-text')?.value || ''
         };
     }
     
@@ -4368,26 +4341,6 @@ class ProjectSettingsManager {
         if (settings.quality) document.getElementById('output-quality').value = settings.quality;
         if (settings.format) document.getElementById('output-format').value = settings.format;
         if (settings.colorSpace) document.getElementById('output-color-space').value = settings.colorSpace;
-    }
-    
-    applyTennerSettings(settings) {
-        if (settings.mode) {
-            const modeRadio = document.querySelector(`input[name="tenner-mode"][value="${settings.mode}"]`);
-            if (modeRadio) modeRadio.checked = true;
-        }
-        
-        if (settings.tenner1) document.getElementById('tenner-1').value = settings.tenner1;
-        if (settings.tenner1Specific) document.getElementById('tenner-1-specific').value = settings.tenner1Specific;
-        if (settings.tenner2) document.getElementById('tenner-2').value = settings.tenner2;
-        if (settings.tenner2Specific) document.getElementById('tenner-2-specific').value = settings.tenner2Specific;
-        if (settings.tenner3) document.getElementById('tenner-3').value = settings.tenner3;
-        if (settings.tenner3Specific) document.getElementById('tenner-3-specific').value = settings.tenner3Specific;
-        if (settings.pose && document.getElementById('tenner-pose')) {
-            document.getElementById('tenner-pose').value = settings.pose;
-        }
-        if (settings.customPose && document.getElementById('custom-pose-text')) {
-            document.getElementById('custom-pose-text').value = settings.customPose;
-        }
     }
     
     applyStyleGuideSettings(settings) {
@@ -4508,7 +4461,6 @@ class ProjectSettingsManager {
         
         // Apply all settings
         this.applyOutputParametersSettings(settings.outputParameters);
-        this.applyTennerSettings(settings.tennerSystem);
         this.applyStyleGuideSettings(settings.styleGuide);
         this.applySceneGuideSettings(settings.sceneGuide);
         this.applyWardrobeSettings(settings.wardrobe);
@@ -4631,7 +4583,6 @@ class ProjectSettingsManager {
     collectAllSettings() {
         return {
             outputParameters: this.collectOutputParametersSettings(),
-            tennerSystem: this.collectTennerSettings(),
             styleGuide: this.collectStyleGuideSettings(),
             sceneGuide: this.collectSceneGuideSettings(),
             wardrobe: this.collectWardrobeSettings(),
@@ -4644,7 +4595,6 @@ class ProjectSettingsManager {
         // Map kebab-case section names to camelCase
         const sectionMapping = {
             'output-parameters': 'outputParameters',
-            'tenner-system': 'tennerSystem',
             'style-guide': 'styleGuide',
             'scene-guide': 'sceneGuide',
             'wardrobe': 'wardrobe',
