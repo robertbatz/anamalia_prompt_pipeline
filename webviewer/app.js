@@ -3536,7 +3536,7 @@ class AnamaliaViewer {
             'tenner-pose': 'arms_open_welcome',
             'assemble-texture': 'texture_001',
             'assemble-material': 'all',
-            'assemble-color-palette': 'classic_anamalia',
+            'assemble-color-palette': 'anamalia_late_summer',
             'assemble-color-single': 'all',
             'assemble-composition': 'all',
             'assemble-tone': 'all',
@@ -4097,6 +4097,23 @@ class AnamaliaViewer {
     
     getColorPalettes() {
         return {
+            'anamalia_late_summer': {
+                name: 'Anamalia Late Summer Studio',
+                colors: [
+                    { name: 'Backdrop Cream', hex: '#F5F1E6' },
+                    { name: 'Warm Beige Wash', hex: '#EADCC4' },
+                    { name: 'Felt Gray Base', hex: '#8E8B84' },
+                    { name: 'Felt Gray Highlight', hex: '#B5B2AB' },
+                    { name: 'Felt Gray Shadow', hex: '#5E5B56' },
+                    { name: 'Horn Ivory', hex: '#EDE7DA' },
+                    { name: 'Eye Amber', hex: '#8C5A2B' },
+                    { name: 'Iris Deep Ring', hex: '#4D2E16' },
+                    { name: 'Natural Sclera', hex: '#F3F3F0' },
+                    { name: 'Nose Slate', hex: '#3A3A3A' },
+                    { name: 'Golden Hour Key', hex: '#F3C58B' },
+                    { name: 'Soft Shadow Brown', hex: '#5A4636' }
+                ]
+            },
             'classic_anamalia': {
                 name: 'Classic Anamalia',
                 colors: [
@@ -4244,12 +4261,20 @@ class ProjectSettingsManager {
                 texture: 'texture_001',
                 material: 'all',
                 paletteMode: 'standard',
-                colorPalette: 'classic_anamalia',
+                colorPalette: 'anamalia_late_summer',
                 colorUsageMode: 'all',
                 selectedColors: [],
                 customPalette: null,
                 composition: 'all',
                 tone: 'all'
+            },
+            colorProfiles: {
+                paletteMode: 'standard',
+                colorPalette: 'anamalia_late_summer',
+                colorUsageMode: 'all',
+                selectedColors: [],
+                customPalette: null,
+                singleColor: 'default'
             },
             sceneGuide: {
                 scene: 'piazza_v2',
@@ -4299,12 +4324,35 @@ class ProjectSettingsManager {
             texture: document.getElementById('assemble-texture').value,
             material: document.getElementById('assemble-material').value,
             paletteMode: paletteMode,
-            colorPalette: document.getElementById('assemble-color-palette')?.value || 'classic_anamalia',
+            colorPalette: document.getElementById('assemble-color-palette')?.value || 'anamalia_late_summer',
             colorUsageMode: colorUsageMode,
             selectedColors: selectedColors,
             customPalette: null, // TODO: Handle custom palette data
             composition: document.getElementById('assemble-composition').value,
             tone: document.getElementById('assemble-tone').value
+        };
+    }
+    
+    collectColorProfileSettings() {
+        const paletteMode = document.querySelector('input[name="palette-mode"]:checked')?.value || 'standard';
+        const colorUsageMode = document.querySelector('input[name="color-usage-mode"]:checked')?.value || 'all';
+        
+        // Collect selected colors for individual selection mode
+        const selectedColors = [];
+        if (colorUsageMode === 'select') {
+            const colorCheckboxes = document.querySelectorAll('#individual-color-selection input[type="checkbox"]:checked');
+            colorCheckboxes.forEach(checkbox => {
+                selectedColors.push(checkbox.value);
+            });
+        }
+        
+        return {
+            paletteMode: paletteMode,
+            colorPalette: document.getElementById('assemble-color-palette')?.value || 'anamalia_late_summer',
+            colorUsageMode: colorUsageMode,
+            selectedColors: selectedColors,
+            customPalette: null, // TODO: Handle custom palette data
+            singleColor: document.getElementById('assemble-color-single')?.value || 'default'
         };
     }
     
@@ -4372,6 +4420,38 @@ class ProjectSettingsManager {
                 const checkbox = document.querySelector(`#individual-color-selection input[value="${color}"]`);
                 if (checkbox) checkbox.checked = true;
             });
+        }
+    }
+    
+    applyColorProfileSettings(settings) {
+        // Handle palette mode
+        if (settings.paletteMode) {
+            const paletteModeRadio = document.querySelector(`input[name="palette-mode"][value="${settings.paletteMode}"]`);
+            if (paletteModeRadio) paletteModeRadio.checked = true;
+        }
+        
+        // Handle color palette
+        if (settings.colorPalette && document.getElementById('assemble-color-palette')) {
+            document.getElementById('assemble-color-palette').value = settings.colorPalette;
+        }
+        
+        // Handle color usage mode
+        if (settings.colorUsageMode) {
+            const colorUsageRadio = document.querySelector(`input[name="color-usage-mode"][value="${settings.colorUsageMode}"]`);
+            if (colorUsageRadio) colorUsageRadio.checked = true;
+        }
+        
+        // Handle selected colors
+        if (settings.selectedColors && settings.selectedColors.length > 0) {
+            settings.selectedColors.forEach(color => {
+                const checkbox = document.querySelector(`#individual-color-selection input[value="${color}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+        
+        // Handle single color selection
+        if (settings.singleColor && document.getElementById('assemble-color-single')) {
+            document.getElementById('assemble-color-single').value = settings.singleColor;
         }
     }
     
@@ -4462,6 +4542,7 @@ class ProjectSettingsManager {
         // Apply all settings
         this.applyOutputParametersSettings(settings.outputParameters);
         this.applyStyleGuideSettings(settings.styleGuide);
+        this.applyColorProfileSettings(settings.colorProfiles);
         this.applySceneGuideSettings(settings.sceneGuide);
         this.applyWardrobeSettings(settings.wardrobe);
         this.applyMoodLightingSettings(settings.moodLighting);
@@ -4584,6 +4665,7 @@ class ProjectSettingsManager {
         return {
             outputParameters: this.collectOutputParametersSettings(),
             styleGuide: this.collectStyleGuideSettings(),
+            colorProfiles: this.collectColorProfileSettings(),
             sceneGuide: this.collectSceneGuideSettings(),
             wardrobe: this.collectWardrobeSettings(),
             moodLighting: this.collectMoodLightingSettings()
@@ -4596,6 +4678,7 @@ class ProjectSettingsManager {
         const sectionMapping = {
             'output-parameters': 'outputParameters',
             'style-guide': 'styleGuide',
+            'color-profiles': 'colorProfiles',
             'scene-guide': 'sceneGuide',
             'wardrobe': 'wardrobe',
             'mood-lighting': 'moodLighting'

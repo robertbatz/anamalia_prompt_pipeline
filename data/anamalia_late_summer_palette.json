@@ -1,0 +1,66 @@
+{
+  "name": "Anamalia_Late_Summer_Studio",
+  "description": "Warm, gently cheerful, late-afternoon studio palette for felted-wool stop\u2011motion characters with cream backdrop.",
+  "colors": [
+    {
+      "name": "Backdrop Cream",
+      "hex": "#F5F1E6",
+      "usage": "Matte background wall/floor"
+    },
+    {
+      "name": "Warm Beige Wash",
+      "hex": "#EADCC4",
+      "usage": "Subtle warm spill on backdrop"
+    },
+    {
+      "name": "Felt Gray Base",
+      "hex": "#8E8B84",
+      "usage": "Primary felt body tone (e.g., rhino)"
+    },
+    {
+      "name": "Felt Gray Highlight",
+      "hex": "#B5B2AB",
+      "usage": "Edge lights and fiber catchlights"
+    },
+    {
+      "name": "Felt Gray Shadow",
+      "hex": "#5E5B56",
+      "usage": "Occlusion and under\u2011chin shadows"
+    },
+    {
+      "name": "Horn Ivory",
+      "hex": "#EDE7DA",
+      "usage": "Horn/ivory details"
+    },
+    {
+      "name": "Eye Amber",
+      "hex": "#8C5A2B",
+      "usage": "Iris main"
+    },
+    {
+      "name": "Iris Deep Ring",
+      "hex": "#4D2E16",
+      "usage": "Iris limbal ring/accent"
+    },
+    {
+      "name": "Natural Sclera",
+      "hex": "#F3F3F0",
+      "usage": "Sclera (off\u2011white, not pure)"
+    },
+    {
+      "name": "Nose Slate",
+      "hex": "#3A3A3A",
+      "usage": "Nostrils/nasal specular anchor"
+    },
+    {
+      "name": "Golden Hour Key",
+      "hex": "#F3C58B",
+      "usage": "Key\u2011light warmth (reflection tints)"
+    },
+    {
+      "name": "Soft Shadow Brown",
+      "hex": "#5A4636",
+      "usage": "Floor/grounded shadow tint"
+    }
+  ]
+}
