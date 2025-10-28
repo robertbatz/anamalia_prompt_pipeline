@@ -15,6 +15,7 @@ class AnamaliaViewer {
         this.tennerData = null;
         this.gridOverlayVisible = false;
         this.currentCompositeRender = null;
+        this.projectManager = new ProjectSettingsManager();
         
         this.init();
     }
@@ -322,6 +323,86 @@ class AnamaliaViewer {
         const resetFiltersBtn = document.getElementById('reset-filters-btn');
         if (resetFiltersBtn) {
             resetFiltersBtn.addEventListener('click', () => this.resetFilters());
+        }
+        
+        // Project management event listeners
+        this.setupProjectManagementListeners();
+    }
+    
+    setupProjectManagementListeners() {
+        // Project dropdown change - auto-load project settings
+        const projectSelect = document.getElementById('project-default');
+        if (projectSelect) {
+            projectSelect.addEventListener('change', (e) => {
+                const projectName = e.target.value;
+                this.projectManager.currentProject = projectName;
+                this.projectManager.loadProject(projectName);
+            });
+        }
+        
+        // Create new project button
+        const createProjectBtn = document.getElementById('create-project-btn');
+        if (createProjectBtn) {
+            createProjectBtn.addEventListener('click', () => {
+                const projectName = document.getElementById('new-project-name').value;
+                if (this.projectManager.createNewProject(projectName)) {
+                    document.getElementById('new-project-name').value = '';
+                }
+            });
+        }
+        
+        // Load project button (explicit load)
+        const loadProjectBtn = document.getElementById('load-project-btn');
+        if (loadProjectBtn) {
+            loadProjectBtn.addEventListener('click', () => {
+                const projectName = document.getElementById('project-default').value;
+                this.projectManager.loadProject(projectName);
+            });
+        }
+        
+        // Delete project button
+        const deleteProjectBtn = document.getElementById('delete-project-btn');
+        if (deleteProjectBtn) {
+            deleteProjectBtn.addEventListener('click', () => {
+                const projectName = document.getElementById('project-default').value;
+                if (confirm(`Are you sure you want to delete project "${projectName}"?`)) {
+                    this.projectManager.deleteProject(projectName);
+                }
+            });
+        }
+        
+        // Upload project file
+        const uploadProjectFile = document.getElementById('upload-project-file');
+        if (uploadProjectFile) {
+            uploadProjectFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    this.projectManager.uploadProjectFile(file).then((projectName) => {
+                        document.getElementById('project-default').value = projectName;
+                        this.projectManager.currentProject = projectName;
+                        e.target.value = ''; // Clear the file input
+                    }).catch((error) => {
+                        console.error('Error uploading project file:', error);
+                    });
+                }
+            });
+        }
+        
+        // Section save buttons
+        const sectionSaveBtns = document.querySelectorAll('.section-save-btn');
+        sectionSaveBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const sectionName = e.target.dataset.section;
+                this.projectManager.saveSectionToProject(sectionName);
+            });
+        });
+        
+        // Master save all settings button
+        const saveAllSettingsBtn = document.getElementById('save-all-settings-btn');
+        if (saveAllSettingsBtn) {
+            saveAllSettingsBtn.addEventListener('click', () => {
+                this.projectManager.saveAllSettingsToProject();
+            });
         }
     }
     
@@ -4560,18 +4641,34 @@ class ProjectSettingsManager {
     
     // Save specific section
     saveSectionToProject(sectionName) {
+        // Map kebab-case section names to camelCase
+        const sectionMapping = {
+            'output-parameters': 'outputParameters',
+            'tenner-system': 'tennerSystem',
+            'style-guide': 'styleGuide',
+            'scene-guide': 'sceneGuide',
+            'wardrobe': 'wardrobe',
+            'mood-lighting': 'moodLighting'
+        };
+        
+        const mappedSectionName = sectionMapping[sectionName];
+        if (!mappedSectionName) {
+            this.showNotification(`Unknown section: ${sectionName}`, 'error');
+            return false;
+        }
+        
         const settings = this.collectAllSettings();
-        const sectionSettings = settings[sectionName];
+        const sectionSettings = settings[mappedSectionName];
         
         if (!sectionSettings) {
-            this.showNotification(`Unknown section: ${sectionName}`, 'error');
+            this.showNotification(`Failed to collect settings for section: ${sectionName}`, 'error');
             return false;
         }
         
         // Update the current project with the new section settings
         const project = this.projects.get(this.currentProject);
         if (project) {
-            project.settings[sectionName] = sectionSettings;
+            project.settings[mappedSectionName] = sectionSettings;
             project.lastModified = new Date().toISOString();
             this.projects.set(this.currentProject, project);
         }
