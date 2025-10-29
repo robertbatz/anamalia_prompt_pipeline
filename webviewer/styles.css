@@ -2410,6 +2410,61 @@ html {
     cursor: pointer;
 }
 
+/* Project Export Styles */
+.project-export-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.project-export-group .btn {
+    flex: 1;
+    min-width: 120px;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.project-export-group .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Export button specific styles */
+#export-current-project-btn {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border-color: #28a745;
+}
+
+#export-all-projects-btn {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1);
+    border-color: #17a2b8;
+}
+
+#export-project-settings-btn {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    border-color: #ffc107;
+    color: #212529;
+}
+
+#export-project-data-btn {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    border-color: #007bff;
+}
+
+/* Responsive design for export buttons */
+@media (max-width: 768px) {
+    .project-export-group {
+        flex-direction: column;
+    }
+    
+    .project-export-group .btn {
+        flex: none;
+        width: 100%;
+    }
+}
+
 /* Section Save Controls */
 .section-save-controls {
     margin-top: 1rem;
@@ -2721,4 +2776,300 @@ select:disabled {
     color: #6c757d;
     cursor: not-allowed;
     opacity: 0.8;
+}
+
+/* ========================================
+   NEW MASTER PALETTE + SELECTOR SYSTEM
+   ======================================== */
+
+/* Master Palette Section */
+.master-palette-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.sub-field-label {
+    display: block;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.master-palette-display h4 {
+    margin: 1rem 0 0.5rem 0;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.master-palette-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.master-color-swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.master-color-swatch:hover {
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.master-color-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.25rem;
+}
+
+.master-color-name {
+    font-size: 0.7rem;
+    text-align: center;
+    color: #495057;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Character and Background Color Sections */
+.character-color-section,
+.background-color-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.color-selection-container {
+    margin-top: 1rem;
+}
+
+.selected-colors-display {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.selected-color-slot {
+    position: relative;
+    min-width: 150px;
+    height: 60px;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.selected-color-slot.has-color {
+    border-style: solid;
+    border-color: #28a745;
+}
+
+.color-slot-placeholder {
+    color: #6c757d;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.selected-color-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.selected-color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.selected-color-name {
+    font-size: 0.8rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+.remove-color-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: #dc3545;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.remove-color-btn:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+/* Color Picker Grid */
+.color-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.color-picker-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.color-picker-option:hover {
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.color-picker-option.selected {
+    border-color: #28a745;
+    background: #f8fff9;
+}
+
+.color-picker-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.25rem;
+}
+
+.color-picker-name {
+    font-size: 0.7rem;
+    text-align: center;
+    color: #495057;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Color Preview Section */
+.color-preview-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.color-preview-section h4 {
+    margin-bottom: 1rem;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.color-preview-display {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.preview-character,
+.preview-background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.preview-character-fur {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.preview-background-area {
+    width: 120px;
+    height: 80px;
+    border-radius: 8px;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.preview-character-label,
+.preview-background-label {
+    font-size: 0.8rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Responsive Design for Color System */
+@media (max-width: 768px) {
+    .selected-colors-display {
+        flex-direction: column;
+    }
+    
+    .selected-color-slot {
+        min-width: 100%;
+    }
+    
+    .color-picker-grid {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .color-preview-display {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .master-palette-swatches {
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    }
 }

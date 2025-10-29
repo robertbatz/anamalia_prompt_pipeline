@@ -32,7 +32,7 @@ class AnamaliaViewer {
         // Set up event listeners
         this.setupEventListeners();
         this.setupTennerListeners();
-        this.setupPaletteListeners();
+        this.setupMasterPaletteListeners();
         this.setupInfoModalListeners();
         this.setupDocModalListeners();
         this.setupCompositeModalListeners();
@@ -441,6 +441,38 @@ class AnamaliaViewer {
             });
         }
         
+        // Export Current Project button
+        const exportCurrentProjectBtn = document.getElementById('export-current-project-btn');
+        if (exportCurrentProjectBtn) {
+            exportCurrentProjectBtn.addEventListener('click', () => {
+                this.projectManager.exportCurrentProject();
+            });
+        }
+        
+        // Export All Projects button
+        const exportAllProjectsBtn = document.getElementById('export-all-projects-btn');
+        if (exportAllProjectsBtn) {
+            exportAllProjectsBtn.addEventListener('click', () => {
+                this.projectManager.exportAllProjects();
+            });
+        }
+        
+        // Export Project Settings button
+        const exportProjectSettingsBtn = document.getElementById('export-project-settings-btn');
+        if (exportProjectSettingsBtn) {
+            exportProjectSettingsBtn.addEventListener('click', () => {
+                this.projectManager.exportProjectSettings();
+            });
+        }
+        
+        // Export Project Data button
+        const exportProjectDataBtn = document.getElementById('export-project-data-btn');
+        if (exportProjectDataBtn) {
+            exportProjectDataBtn.addEventListener('click', () => {
+                this.projectManager.exportProjectData();
+            });
+        }
+        
         // Section save buttons
         const sectionSaveBtns = document.querySelectorAll('.section-save-btn');
         sectionSaveBtns.forEach(btn => {
@@ -650,384 +682,12 @@ class AnamaliaViewer {
         }
     }
     
-    setupPaletteListeners() {
-        // Palette mode toggle listeners
-        const paletteModeRadios = document.querySelectorAll('input[name="palette-mode"]');
-        paletteModeRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                this.updatePaletteMode();
-            });
-        });
-        
-        // Standard palette selection listener
-        const paletteSelect = document.getElementById('assemble-color-palette');
-        if (paletteSelect) {
-            paletteSelect.addEventListener('change', () => {
-                this.updateColorSwatches();
-            });
-        }
-        
-        // Color usage mode toggle listeners
-        const colorUsageRadios = document.querySelectorAll('input[name="color-usage-mode"]');
-        colorUsageRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                this.updateColorUsageMode();
-            });
-        });
-        
-        // Custom palette file upload listener
-        const customPaletteFile = document.getElementById('custom-palette-file');
-        if (customPaletteFile) {
-            customPaletteFile.addEventListener('change', (e) => {
-                this.handleCustomPaletteUpload(e);
-            });
-        }
-        
-        // Single color selection listener (backward compatibility)
-        const singleColorSelect = document.getElementById('assemble-color-single');
-        if (singleColorSelect) {
-            singleColorSelect.addEventListener('change', () => {
-                // This will be handled in prompt generation
-            });
-        }
-        
-        // Initialize with default palette
-        this.updatePaletteMode();
-        this.updateColorSwatches();
-    }
-    
-    updatePaletteMode() {
-        const mode = document.querySelector('input[name="palette-mode"]:checked')?.value || 'standard';
-        
-        // Hide all sections
-        document.getElementById('standard-palette-section').style.display = 'none';
-        document.getElementById('custom-palette-section').style.display = 'none';
-        document.getElementById('single-color-section').style.display = 'none';
-        
-        // Show selected section
-        switch (mode) {
-            case 'standard':
-                document.getElementById('standard-palette-section').style.display = 'block';
-                break;
-            case 'custom':
-                document.getElementById('custom-palette-section').style.display = 'block';
-                break;
-            case 'single':
-                document.getElementById('single-color-section').style.display = 'block';
-                break;
-        }
-        
-        // Update color swatches if standard mode
-        if (mode === 'standard') {
-            this.updateColorSwatches();
-        }
-    }
-    
-    updateColorSwatches() {
-        const paletteSelect = document.getElementById('assemble-color-palette');
-        const swatchesContainer = document.getElementById('color-swatches');
-        
-        if (!paletteSelect || !swatchesContainer) return;
-        
-        const selectedPalette = paletteSelect.value;
-        const palettes = this.getColorPalettes();
-        const palette = palettes[selectedPalette];
-        
-        if (!palette) return;
-        
-        // Clear existing swatches
-        swatchesContainer.innerHTML = '';
-        
-        // Create color swatches
-        palette.colors.forEach((color, index) => {
-            const swatch = document.createElement('div');
-            swatch.className = 'color-swatch';
-            swatch.dataset.colorIndex = index;
-            swatch.innerHTML = `
-                <div class="color-swatch-circle" style="background-color: ${color.hex}"></div>
-                <div class="color-swatch-name">${color.name}</div>
-            `;
-            
-            // Add click listener for individual selection
-            swatch.addEventListener('click', () => {
-                this.toggleColorSelection(swatch, index);
-            });
-            
-            swatchesContainer.appendChild(swatch);
-        });
-        
-        // Update individual color selection checkboxes
-        this.updateIndividualColorSelection(palette);
-    }
-    
-    updateIndividualColorSelection(palette) {
-        const container = document.getElementById('individual-color-selection');
-        if (!container) return;
-        
-        // Clear existing checkboxes
-        container.innerHTML = '';
-        
-        // Create checkboxes for each color
-        palette.colors.forEach((color, index) => {
-            const checkbox = document.createElement('div');
-            checkbox.className = 'color-checkbox';
-            checkbox.innerHTML = `
-                <label class="color-checkbox-label">
-                    <input type="checkbox" name="selected-colors" value="${index}" checked>
-                    <div class="color-checkbox-swatch" style="background-color: ${color.hex}"></div>
-                    <span>${color.name}</span>
-                </label>
-            `;
-            
-            // Add change listener
-            const checkboxInput = checkbox.querySelector('input[type="checkbox"]');
-            checkboxInput.addEventListener('change', () => {
-                this.updateColorSwatchSelection(index, checkboxInput.checked);
-            });
-            
-            container.appendChild(checkbox);
-        });
-    }
-    
-    updateColorUsageMode() {
-        const mode = document.querySelector('input[name="color-usage-mode"]:checked')?.value || 'all';
-        const individualSelection = document.getElementById('individual-color-selection');
-        
-        if (individualSelection) {
-            individualSelection.style.display = mode === 'select' ? 'block' : 'none';
-        }
-        
-        // Update swatch selection state
-        if (mode === 'all') {
-            // Select all colors
-            const checkboxes = document.querySelectorAll('input[name="selected-colors"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = true;
-                const index = parseInt(checkbox.value);
-                this.updateColorSwatchSelection(index, true);
-            });
-        }
-    }
-    
-    toggleColorSelection(swatch, index) {
-        const checkbox = document.querySelector(`input[name="selected-colors"][value="${index}"]`);
-        if (checkbox) {
-            checkbox.checked = !checkbox.checked;
-            this.updateColorSwatchSelection(index, checkbox.checked);
-        }
-    }
-    
-    updateColorSwatchSelection(index, selected) {
-        const swatch = document.querySelector(`[data-color-index="${index}"]`);
-        if (swatch) {
-            if (selected) {
-                swatch.classList.add('selected');
-            } else {
-                swatch.classList.remove('selected');
-            }
-        }
-    }
-    
-    async handleCustomPaletteUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        const preview = document.getElementById('custom-palette-preview');
-        const swatchesContainer = document.getElementById('custom-color-swatches');
-        
-        try {
-            let colors = [];
-            
-            if (file.type.startsWith('image/')) {
-                colors = await this.extractColorsFromImage(file);
-            } else if (file.name.endsWith('.json')) {
-                colors = await this.parseJSONPalette(file);
-            } else if (file.name.endsWith('.txt')) {
-                colors = await this.parseTextPalette(file);
-            } else {
-                throw new Error('Unsupported file type');
-            }
-            
-            // Display the colors
-            this.displayCustomPalette(colors, swatchesContainer);
-            preview.style.display = 'block';
-            
-        } catch (error) {
-            console.error('Error processing palette file:', error);
-            alert('Error processing palette file: ' + error.message);
-        }
-    }
-    
-    async extractColorsFromImage(file) {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            img.onload = () => {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0);
-                
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const colors = this.getDominantColors(imageData);
-                resolve(colors);
-            };
-            
-            img.onerror = () => reject(new Error('Failed to load image'));
-            img.src = URL.createObjectURL(file);
-        });
-    }
-    
-    getDominantColors(imageData) {
-        const data = imageData.data;
-        const colorCounts = {};
-        
-        // Sample every 10th pixel for performance
-        for (let i = 0; i < data.length; i += 40) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-            
-            colorCounts[hex] = (colorCounts[hex] || 0) + 1;
-        }
-        
-        // Get top 6 colors
-        const sortedColors = Object.entries(colorCounts)
-            .sort(([,a], [,b]) => b - a)
-            .slice(0, 6)
-            .map(([hex], index) => ({
-                name: `Color ${index + 1}`,
-                hex: hex
-            }));
-        
-        return sortedColors;
-    }
-    
-    async parseJSONPalette(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    const colors = Array.isArray(data) ? data : data.colors || [];
-                    resolve(colors);
-                } catch (error) {
-                    reject(new Error('Invalid JSON format'));
-                }
-            };
-            reader.onerror = () => reject(new Error('Failed to read file'));
-            reader.readAsText(file);
-        });
-    }
-    
-    async parseTextPalette(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const lines = e.target.result.split('\n');
-                    const colors = lines
-                        .filter(line => line.trim())
-                        .slice(0, 8) // Limit to 8 colors
-                        .map((line, index) => {
-                            const hex = line.trim();
-                            if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) {
-                                throw new Error(`Invalid hex color: ${hex}`);
-                            }
-                            return {
-                                name: `Color ${index + 1}`,
-                                hex: hex
-                            };
-                        });
-                    resolve(colors);
-                } catch (error) {
-                    reject(new Error('Invalid text format: ' + error.message));
-                }
-            };
-            reader.onerror = () => reject(new Error('Failed to read file'));
-            reader.readAsText(file);
-        });
-    }
-    
-    displayCustomPalette(colors, container) {
-        container.innerHTML = '';
-        
-        colors.forEach((color, index) => {
-            const swatch = document.createElement('div');
-            swatch.className = 'color-swatch';
-            swatch.innerHTML = `
-                <div class="color-swatch-circle" style="background-color: ${color.hex}"></div>
-                <div class="color-swatch-name">${color.name}</div>
-            `;
-            container.appendChild(swatch);
-        });
-    }
     
     getCurrentColorPalette() {
-        const mode = document.querySelector('input[name="palette-mode"]:checked')?.value || 'standard';
-        
-        switch (mode) {
-            case 'standard':
-                return this.getStandardPaletteColors();
-            case 'custom':
-                return this.getCustomPaletteColors();
-            case 'single':
-                return this.getSingleColor();
-            default:
+        // New contextual color system - return empty array as colors are handled contextually
                 return [];
-        }
     }
     
-    getStandardPaletteColors() {
-        const paletteSelect = document.getElementById('assemble-color-palette');
-        const usageMode = document.querySelector('input[name="color-usage-mode"]:checked')?.value || 'all';
-        
-        if (!paletteSelect) return [];
-        
-        const selectedPalette = paletteSelect.value;
-        const palettes = this.getColorPalettes();
-        const palette = palettes[selectedPalette];
-        
-        if (!palette) return [];
-        
-        if (usageMode === 'all') {
-            return palette.colors;
-        } else {
-            // Get selected colors only
-            const selectedCheckboxes = document.querySelectorAll('input[name="selected-colors"]:checked');
-            return Array.from(selectedCheckboxes).map(checkbox => {
-                const index = parseInt(checkbox.value);
-                return palette.colors[index];
-            }).filter(Boolean);
-        }
-    }
-    
-    getCustomPaletteColors() {
-        // For custom palettes, we would need to store the uploaded colors
-        // For now, return empty array - this would need to be implemented
-        // when custom palette storage is added
-        return [];
-    }
-    
-    getSingleColor() {
-        const singleColorSelect = document.getElementById('assemble-color-single');
-        if (!singleColorSelect) return [];
-        
-        const selectedColor = singleColorSelect.value;
-        if (selectedColor === 'all') return [];
-        
-        // Convert single color selection to palette format
-        const colorMap = {
-            'ochre': { name: 'ochre', hex: '#CC7722' },
-            'cream': { name: 'cream', hex: '#F5F5DC' },
-            'soft-pink': { name: 'soft pink', hex: '#F8BBD9' },
-            'muted-blue': { name: 'muted blue', hex: '#6B8E9A' }
-        };
-        
-        return colorMap[selectedColor] ? [colorMap[selectedColor]] : [];
-    }
     
     updateTennerMode() {
         const mode = document.querySelector('input[name="tenner-mode"]:checked')?.value || 'single';
@@ -2072,11 +1732,18 @@ class AnamaliaViewer {
             prompt += `. ${texturePhrases[texture]}`;
         }
         
-        // Add color palette directive
-        const colorPalette = this.getCurrentColorPalette();
-        if (colorPalette && colorPalette.length > 0) {
-            const colorNames = colorPalette.map(color => color.name).join(', ');
-            prompt += ` with ${colorNames} color palette`;
+        // Add contextual color directives
+        const characterColors = this.getSelectedCharacterColors();
+        const backgroundColors = this.getSelectedBackgroundColors();
+        
+        if (characterColors.length > 0) {
+            const characterColorNames = characterColors.map(color => color.name).join(' and ');
+            prompt += ` with ${characterColorNames} fur`;
+        }
+        
+        if (backgroundColors.length > 0) {
+            const backgroundColorNames = backgroundColors.map(color => color.name).join(' and ');
+            prompt += ` against a ${backgroundColorNames} background`;
         }
         
         // Add film stock directive
@@ -3272,40 +2939,30 @@ class AnamaliaViewer {
             },
             
             'assemble-color': {
-                title: 'Color Palette Selection',
+                title: 'Master Palette + Contextual Color System',
                 content: `
-                    <h4>Color Palette System</h4>
-                    <p>Choose from standard predefined palettes, upload custom palettes, or use single colors. Each palette contains 5-8 carefully curated colors that work harmoniously together.</p>
+                    <h4>New Contextual Color System</h4>
+                    <p>This system provides precise control over where colors are applied in your renders. Instead of dumping a whole palette into the prompt, you select specific colors for specific purposes.</p>
                     
-                    <h5>🎨 Standard Palettes</h5>
-                    <ul>
-                        <li><strong>Classic Anamalia:</strong> Original ochre, cream, soft pink, muted blue</li>
-                        <li><strong>Warm Earth Tones:</strong> Terracotta, rust, sandy beige, warm brown, burnt orange</li>
-                        <li><strong>Cool Pastels:</strong> Powder blue, mint green, lavender, pale yellow, soft coral</li>
-                        <li><strong>Autumn Harvest:</strong> Deep orange, golden yellow, burgundy, forest green, chocolate brown</li>
-                        <li><strong>Spring Meadow:</strong> Grass green, sky blue, buttercup yellow, rose pink, lilac</li>
-                        <li><strong>Ocean Depths:</strong> Teal, navy, seafoam, coral, sand beige</li>
-                        <li><strong>Sunset Glow:</strong> Coral pink, peach, golden yellow, deep purple, soft orange</li>
-                        <li><strong>Forest Canopy:</strong> Moss green, sage, bark brown, olive, forest green</li>
-                        <li><strong>Desert Bloom:</strong> Cactus green, dusty rose, sand, copper, pale turquoise</li>
-                        <li><strong>Winter Frost:</strong> Ice blue, silver gray, white, pale lavender, soft mint</li>
-                    </ul>
+                    <h5>🎨 Master Palette</h5>
+                    <p>Choose a comprehensive color palette (20-25 colors) that serves as your project's color pool. This palette does NOT get assembled into the final prompt - it's just your source of colors.</p>
                     
-                    <h5>📁 Custom Palette Upload</h5>
-                    <ul>
-                        <li><strong>Image Files (PNG/JPG):</strong> Automatically extracts dominant colors</li>
-                        <li><strong>JSON Files:</strong> Structured color array with names and hex codes</li>
-                        <li><strong>Text Files:</strong> Simple list of hex codes (one per line)</li>
-                    </ul>
+                    <h5>🎯 Character Colors</h5>
+                    <p>Select up to 2 colors from the master palette for your character's fur/features. These get assembled as "character with [color names] fur" in the prompt.</p>
                     
-                    <h5>⚙️ Usage Modes</h5>
+                    <h5>🌅 Background Colors</h5>
+                    <p>Select up to 2 colors from the master palette for the scene/background. These get assembled as "against a [color names] background" in the prompt.</p>
+                    
+                    <h5>✨ Benefits</h5>
                     <ul>
-                        <li><strong>Use All Colors:</strong> Includes all palette colors in the prompt</li>
-                        <li><strong>Select Specific Colors:</strong> Choose individual colors from the palette</li>
+                        <li><strong>Precise Control:</strong> Colors are assigned to specific visual elements</li>
+                        <li><strong>Better AI Understanding:</strong> "Character with ochre fur against cream background" is clearer than a generic palette</li>
+                        <li><strong>Consistent Aesthetic:</strong> All colors come from the same harmonious palette</li>
+                        <li><strong>Reduced Prompt Bloat:</strong> Only selected colors go into the prompt</li>
                     </ul>
                     
                     <div class="highlight">
-                        <p><strong>🎨 Color Harmony:</strong> Palettes ensure cohesive color relationships and establish the visual mood and emotional tone of each composition.</p>
+                        <p><strong>🎨 Pro Tip:</strong> The master palette ensures all your colors work together harmoniously, while the contextual selectors give you surgical control over the final composition.</p>
                     </div>
                 `
             },
@@ -4381,134 +4038,572 @@ class AnamaliaViewer {
         };
     }
     
-    getColorPalettes() {
+    getMasterPalettes() {
         return {
-            'anamalia_late_summer': {
-                name: 'Anamalia Late Summer Studio',
+            'anamalia_muted_pastels': {
+                name: 'Anamalia Muted Pastels',
+                description: 'Soft, harmonious color palette perfect for the Anamalia project',
                 colors: [
-                    { name: 'Backdrop Cream', hex: '#F5F1E6' },
-                    { name: 'Warm Beige Wash', hex: '#EADCC4' },
-                    { name: 'Felt Gray Base', hex: '#8E8B84' },
-                    { name: 'Felt Gray Highlight', hex: '#B5B2AB' },
-                    { name: 'Felt Gray Shadow', hex: '#5E5B56' },
-                    { name: 'Horn Ivory', hex: '#EDE7DA' },
-                    { name: 'Eye Amber', hex: '#8C5A2B' },
-                    { name: 'Iris Deep Ring', hex: '#4D2E16' },
-                    { name: 'Natural Sclera', hex: '#F3F3F0' },
-                    { name: 'Nose Slate', hex: '#3A3A3A' },
-                    { name: 'Golden Hour Key', hex: '#F3C58B' },
-                    { name: 'Soft Shadow Brown', hex: '#5A4636' }
-                ]
-            },
-            'classic_anamalia': {
-                name: 'Classic Anamalia',
-                colors: [
-                    { name: 'ochre', hex: '#CC7722' },
-                    { name: 'cream', hex: '#F5F5DC' },
-                    { name: 'soft pink', hex: '#F8BBD9' },
-                    { name: 'muted blue', hex: '#6B8E9A' }
+                    { name: 'Warm Cream', hex: '#F5F1E6', category: 'neutral' },
+                    { name: 'Soft Ochre', hex: '#CC7722', category: 'warm' },
+                    { name: 'Muted Blue', hex: '#6B8E9A', category: 'cool' },
+                    { name: 'Dusty Rose', hex: '#B76E79', category: 'warm' },
+                    { name: 'Sage Green', hex: '#9CAF88', category: 'cool' },
+                    { name: 'Warm Beige', hex: '#EADCC4', category: 'neutral' },
+                    { name: 'Soft Lavender', hex: '#C8A2C8', category: 'cool' },
+                    { name: 'Terracotta', hex: '#E07856', category: 'warm' },
+                    { name: 'Pale Mint', hex: '#98FB98', category: 'cool' },
+                    { name: 'Golden Sand', hex: '#F4E4BC', category: 'neutral' },
+                    { name: 'Dusty Purple', hex: '#8B7D9A', category: 'cool' },
+                    { name: 'Warm Brown', hex: '#8B4513', category: 'warm' },
+                    { name: 'Soft Coral', hex: '#FF7F7F', category: 'warm' },
+                    { name: 'Pale Blue', hex: '#B0E0E6', category: 'cool' },
+                    { name: 'Moss Green', hex: '#8A9A5B', category: 'cool' },
+                    { name: 'Rust Orange', hex: '#B7410E', category: 'warm' },
+                    { name: 'Powder Pink', hex: '#F8BBD9', category: 'warm' },
+                    { name: 'Slate Gray', hex: '#8E8B84', category: 'neutral' },
+                    { name: 'Soft Yellow', hex: '#FFFFE0', category: 'warm' },
+                    { name: 'Dusty Teal', hex: '#5F9EA0', category: 'cool' },
+                    { name: 'Warm White', hex: '#F3F3F0', category: 'neutral' },
+                    { name: 'Burnt Sienna', hex: '#A0522D', category: 'warm' },
+                    { name: 'Pale Green', hex: '#98FB98', category: 'cool' },
+                    { name: 'Soft Mauve', hex: '#E6E6FA', category: 'cool' },
+                    { name: 'Warm Gray', hex: '#B5B2AB', category: 'neutral' }
                 ]
             },
             'warm_earth_tones': {
                 name: 'Warm Earth Tones',
+                description: 'Rich, natural earth colors with warm undertones',
                 colors: [
-                    { name: 'terracotta', hex: '#E07856' },
-                    { name: 'rust', hex: '#B7410E' },
-                    { name: 'sandy beige', hex: '#F4E4BC' },
-                    { name: 'warm brown', hex: '#8B4513' },
-                    { name: 'burnt orange', hex: '#CC5500' },
-                    { name: 'clay red', hex: '#CD5C5C' }
+                    { name: 'Terracotta', hex: '#E07856', category: 'warm' },
+                    { name: 'Rust', hex: '#B7410E', category: 'warm' },
+                    { name: 'Sandy Beige', hex: '#F4E4BC', category: 'neutral' },
+                    { name: 'Warm Brown', hex: '#8B4513', category: 'warm' },
+                    { name: 'Burnt Orange', hex: '#CC5500', category: 'warm' },
+                    { name: 'Clay Red', hex: '#CD5C5C', category: 'warm' },
+                    { name: 'Golden Sand', hex: '#F4E4BC', category: 'neutral' },
+                    { name: 'Copper', hex: '#B87333', category: 'warm' },
+                    { name: 'Sienna', hex: '#A0522D', category: 'warm' },
+                    { name: 'Chestnut', hex: '#954535', category: 'warm' },
+                    { name: 'Amber', hex: '#FFBF00', category: 'warm' },
+                    { name: 'Cinnamon', hex: '#D2691E', category: 'warm' },
+                    { name: 'Brick Red', hex: '#CB4154', category: 'warm' },
+                    { name: 'Taupe', hex: '#8B7D6B', category: 'neutral' },
+                    { name: 'Sepia', hex: '#704214', category: 'warm' },
+                    { name: 'Honey', hex: '#F0E68C', category: 'warm' },
+                    { name: 'Camel', hex: '#C19A6B', category: 'neutral' },
+                    { name: 'Mahogany', hex: '#C04000', category: 'warm' },
+                    { name: 'Cocoa', hex: '#D2691E', category: 'warm' },
+                    { name: 'Pecan', hex: '#A0522D', category: 'warm' }
                 ]
             },
             'cool_pastels': {
                 name: 'Cool Pastels',
+                description: 'Soft, gentle pastel colors with cool undertones',
                 colors: [
-                    { name: 'powder blue', hex: '#B0E0E6' },
-                    { name: 'mint green', hex: '#98FB98' },
-                    { name: 'lavender', hex: '#E6E6FA' },
-                    { name: 'pale yellow', hex: '#FFFFE0' },
-                    { name: 'soft coral', hex: '#FF7F7F' },
-                    { name: 'baby pink', hex: '#F8BBD9' }
+                    { name: 'Powder Blue', hex: '#B0E0E6', category: 'cool' },
+                    { name: 'Mint Green', hex: '#98FB98', category: 'cool' },
+                    { name: 'Lavender', hex: '#E6E6FA', category: 'cool' },
+                    { name: 'Pale Yellow', hex: '#FFFFE0', category: 'warm' },
+                    { name: 'Soft Coral', hex: '#FF7F7F', category: 'warm' },
+                    { name: 'Baby Pink', hex: '#F8BBD9', category: 'warm' },
+                    { name: 'Sky Blue', hex: '#87CEEB', category: 'cool' },
+                    { name: 'Pale Green', hex: '#98FB98', category: 'cool' },
+                    { name: 'Soft Purple', hex: '#C8A2C8', category: 'cool' },
+                    { name: 'Cream', hex: '#F5F5DC', category: 'neutral' },
+                    { name: 'Pale Peach', hex: '#FFCBA4', category: 'warm' },
+                    { name: 'Ice Blue', hex: '#B0E0E6', category: 'cool' },
+                    { name: 'Soft Rose', hex: '#FFB6C1', category: 'warm' },
+                    { name: 'Pale Mint', hex: '#98FB98', category: 'cool' },
+                    { name: 'Lilac', hex: '#C8A2C8', category: 'cool' },
+                    { name: 'Soft Blue', hex: '#ADD8E6', category: 'cool' },
+                    { name: 'Pale Pink', hex: '#FFB6C1', category: 'warm' },
+                    { name: 'Mint Cream', hex: '#F5FFFA', category: 'cool' },
+                    { name: 'Powder Pink', hex: '#FFB6C1', category: 'warm' },
+                    { name: 'Soft Aqua', hex: '#AFEEEE', category: 'cool' }
                 ]
             },
             'autumn_harvest': {
                 name: 'Autumn Harvest',
+                description: 'Rich, warm colors inspired by autumn foliage',
                 colors: [
-                    { name: 'deep orange', hex: '#FF8C00' },
-                    { name: 'golden yellow', hex: '#FFD700' },
-                    { name: 'burgundy', hex: '#800020' },
-                    { name: 'forest green', hex: '#228B22' },
-                    { name: 'chocolate brown', hex: '#7B3F00' },
-                    { name: 'amber', hex: '#FFBF00' }
+                    { name: 'Deep Orange', hex: '#FF8C00', category: 'warm' },
+                    { name: 'Golden Yellow', hex: '#FFD700', category: 'warm' },
+                    { name: 'Burgundy', hex: '#800020', category: 'warm' },
+                    { name: 'Forest Green', hex: '#228B22', category: 'cool' },
+                    { name: 'Chocolate Brown', hex: '#7B3F00', category: 'warm' },
+                    { name: 'Amber', hex: '#FFBF00', category: 'warm' },
+                    { name: 'Rust', hex: '#B7410E', category: 'warm' },
+                    { name: 'Crimson', hex: '#DC143C', category: 'warm' },
+                    { name: 'Olive', hex: '#808000', category: 'cool' },
+                    { name: 'Copper', hex: '#B87333', category: 'warm' },
+                    { name: 'Pumpkin', hex: '#FF7518', category: 'warm' },
+                    { name: 'Maroon', hex: '#800000', category: 'warm' },
+                    { name: 'Gold', hex: '#FFD700', category: 'warm' },
+                    { name: 'Sage', hex: '#9CAF88', category: 'cool' },
+                    { name: 'Chestnut', hex: '#954535', category: 'warm' },
+                    { name: 'Coral', hex: '#FF7F50', category: 'warm' },
+                    { name: 'Bronze', hex: '#CD7F32', category: 'warm' },
+                    { name: 'Garnet', hex: '#733D47', category: 'warm' },
+                    { name: 'Honey', hex: '#F0E68C', category: 'warm' },
+                    { name: 'Sienna', hex: '#A0522D', category: 'warm' }
                 ]
             },
             'spring_meadow': {
                 name: 'Spring Meadow',
+                description: 'Fresh, vibrant colors of spring nature',
                 colors: [
-                    { name: 'grass green', hex: '#7CFC00' },
-                    { name: 'sky blue', hex: '#87CEEB' },
-                    { name: 'buttercup yellow', hex: '#F0E68C' },
-                    { name: 'rose pink', hex: '#FF69B4' },
-                    { name: 'lilac', hex: '#C8A2C8' },
-                    { name: 'fresh mint', hex: '#00FF7F' }
+                    { name: 'Grass Green', hex: '#7CFC00', category: 'cool' },
+                    { name: 'Sky Blue', hex: '#87CEEB', category: 'cool' },
+                    { name: 'Buttercup Yellow', hex: '#F0E68C', category: 'warm' },
+                    { name: 'Rose Pink', hex: '#FF69B4', category: 'warm' },
+                    { name: 'Lilac', hex: '#C8A2C8', category: 'cool' },
+                    { name: 'Fresh Mint', hex: '#00FF7F', category: 'cool' },
+                    { name: 'Daffodil', hex: '#FFFF00', category: 'warm' },
+                    { name: 'Robin Egg Blue', hex: '#00CED1', category: 'cool' },
+                    { name: 'Cherry Blossom', hex: '#FFB7C5', category: 'warm' },
+                    { name: 'Lime Green', hex: '#32CD32', category: 'cool' },
+                    { name: 'Peach', hex: '#FFCBA4', category: 'warm' },
+                    { name: 'Periwinkle', hex: '#CCCCFF', category: 'cool' },
+                    { name: 'Tulip Pink', hex: '#FFB6C1', category: 'warm' },
+                    { name: 'Sage Green', hex: '#9CAF88', category: 'cool' },
+                    { name: 'Lemon', hex: '#FFFF00', category: 'warm' },
+                    { name: 'Aqua', hex: '#00FFFF', category: 'cool' },
+                    { name: 'Coral', hex: '#FF7F50', category: 'warm' },
+                    { name: 'Mint', hex: '#98FB98', category: 'cool' },
+                    { name: 'Sunshine', hex: '#FFD700', category: 'warm' },
+                    { name: 'Ocean Blue', hex: '#0077BE', category: 'cool' }
                 ]
             },
             'ocean_depths': {
                 name: 'Ocean Depths',
+                description: 'Deep, calming colors inspired by the ocean',
                 colors: [
-                    { name: 'teal', hex: '#008080' },
-                    { name: 'navy', hex: '#000080' },
-                    { name: 'seafoam', hex: '#9FE2BF' },
-                    { name: 'coral', hex: '#FF7F50' },
-                    { name: 'sand beige', hex: '#F4E4BC' },
-                    { name: 'aqua', hex: '#00FFFF' }
+                    { name: 'Teal', hex: '#008080', category: 'cool' },
+                    { name: 'Navy', hex: '#000080', category: 'cool' },
+                    { name: 'Seafoam', hex: '#9FE2BF', category: 'cool' },
+                    { name: 'Coral', hex: '#FF7F50', category: 'warm' },
+                    { name: 'Sand Beige', hex: '#F4E4BC', category: 'neutral' },
+                    { name: 'Aqua', hex: '#00FFFF', category: 'cool' },
+                    { name: 'Deep Blue', hex: '#0000CD', category: 'cool' },
+                    { name: 'Turquoise', hex: '#40E0D0', category: 'cool' },
+                    { name: 'Sea Green', hex: '#2E8B57', category: 'cool' },
+                    { name: 'Pearl', hex: '#F8F8FF', category: 'neutral' },
+                    { name: 'Ocean Blue', hex: '#0077BE', category: 'cool' },
+                    { name: 'Mint', hex: '#98FB98', category: 'cool' },
+                    { name: 'Steel Blue', hex: '#4682B4', category: 'cool' },
+                    { name: 'Coral Pink', hex: '#FF7F7F', category: 'warm' },
+                    { name: 'Powder Blue', hex: '#B0E0E6', category: 'cool' },
+                    { name: 'Sapphire', hex: '#0F52BA', category: 'cool' },
+                    { name: 'Seashell', hex: '#FFF5EE', category: 'neutral' },
+                    { name: 'Cyan', hex: '#00FFFF', category: 'cool' },
+                    { name: 'Marine', hex: '#008080', category: 'cool' },
+                    { name: 'Azure', hex: '#007FFF', category: 'cool' }
                 ]
             },
             'sunset_glow': {
                 name: 'Sunset Glow',
+                description: 'Warm, romantic colors of sunset skies',
                 colors: [
-                    { name: 'coral pink', hex: '#FF7F7F' },
-                    { name: 'peach', hex: '#FFCBA4' },
-                    { name: 'golden yellow', hex: '#FFD700' },
-                    { name: 'deep purple', hex: '#4B0082' },
-                    { name: 'soft orange', hex: '#FFA500' },
-                    { name: 'rose gold', hex: '#E8B4B8' }
+                    { name: 'Coral Pink', hex: '#FF7F7F', category: 'warm' },
+                    { name: 'Peach', hex: '#FFCBA4', category: 'warm' },
+                    { name: 'Golden Yellow', hex: '#FFD700', category: 'warm' },
+                    { name: 'Deep Purple', hex: '#4B0082', category: 'cool' },
+                    { name: 'Soft Orange', hex: '#FFA500', category: 'warm' },
+                    { name: 'Rose Gold', hex: '#E8B4B8', category: 'warm' },
+                    { name: 'Sunset Orange', hex: '#FD5E53', category: 'warm' },
+                    { name: 'Lavender', hex: '#E6E6FA', category: 'cool' },
+                    { name: 'Crimson', hex: '#DC143C', category: 'warm' },
+                    { name: 'Amber', hex: '#FFBF00', category: 'warm' },
+                    { name: 'Magenta', hex: '#FF00FF', category: 'warm' },
+                    { name: 'Violet', hex: '#8A2BE2', category: 'cool' },
+                    { name: 'Tangerine', hex: '#F28500', category: 'warm' },
+                    { name: 'Fuchsia', hex: '#FF1493', category: 'warm' },
+                    { name: 'Gold', hex: '#FFD700', category: 'warm' },
+                    { name: 'Plum', hex: '#8E4585', category: 'cool' },
+                    { name: 'Salmon', hex: '#FA8072', category: 'warm' },
+                    { name: 'Orchid', hex: '#DA70D6', category: 'cool' },
+                    { name: 'Copper', hex: '#B87333', category: 'warm' },
+                    { name: 'Ruby', hex: '#E0115F', category: 'warm' }
                 ]
             },
             'forest_canopy': {
                 name: 'Forest Canopy',
+                description: 'Natural, earthy greens and browns of the forest',
                 colors: [
-                    { name: 'moss green', hex: '#8A9A5B' },
-                    { name: 'sage', hex: '#9CAF88' },
-                    { name: 'bark brown', hex: '#8B4513' },
-                    { name: 'olive', hex: '#808000' },
-                    { name: 'forest green', hex: '#228B22' },
-                    { name: 'pine green', hex: '#01796F' }
+                    { name: 'Moss Green', hex: '#8A9A5B', category: 'cool' },
+                    { name: 'Sage', hex: '#9CAF88', category: 'cool' },
+                    { name: 'Bark Brown', hex: '#8B4513', category: 'warm' },
+                    { name: 'Olive', hex: '#808000', category: 'cool' },
+                    { name: 'Forest Green', hex: '#228B22', category: 'cool' },
+                    { name: 'Pine Green', hex: '#01796F', category: 'cool' },
+                    { name: 'Fern Green', hex: '#4F7942', category: 'cool' },
+                    { name: 'Cedar', hex: '#4A5D23', category: 'cool' },
+                    { name: 'Hickory', hex: '#8B7D6B', category: 'neutral' },
+                    { name: 'Emerald', hex: '#50C878', category: 'cool' },
+                    { name: 'Jade', hex: '#00A86B', category: 'cool' },
+                    { name: 'Hunter Green', hex: '#355E3B', category: 'cool' },
+                    { name: 'Lime', hex: '#32CD32', category: 'cool' },
+                    { name: 'Chartreuse', hex: '#7FFF00', category: 'cool' },
+                    { name: 'Teal', hex: '#008080', category: 'cool' },
+                    { name: 'Seafoam', hex: '#9FE2BF', category: 'cool' },
+                    { name: 'Mint', hex: '#98FB98', category: 'cool' },
+                    { name: 'Sage Green', hex: '#9CAF88', category: 'cool' },
+                    { name: 'Forest Floor', hex: '#8B4513', category: 'warm' },
+                    { name: 'Leaf Green', hex: '#4CAF50', category: 'cool' }
                 ]
             },
             'desert_bloom': {
                 name: 'Desert Bloom',
+                description: 'Warm, sandy colors with vibrant desert flower accents',
                 colors: [
-                    { name: 'cactus green', hex: '#4A6741' },
-                    { name: 'dusty rose', hex: '#B76E79' },
-                    { name: 'sand', hex: '#C2B280' },
-                    { name: 'copper', hex: '#B87333' },
-                    { name: 'pale turquoise', hex: '#AFEEEE' },
-                    { name: 'sunset orange', hex: '#FD5E53' }
+                    { name: 'Cactus Green', hex: '#4A6741', category: 'cool' },
+                    { name: 'Dusty Rose', hex: '#B76E79', category: 'warm' },
+                    { name: 'Sand', hex: '#C2B280', category: 'neutral' },
+                    { name: 'Copper', hex: '#B87333', category: 'warm' },
+                    { name: 'Pale Turquoise', hex: '#AFEEEE', category: 'cool' },
+                    { name: 'Sunset Orange', hex: '#FD5E53', category: 'warm' },
+                    { name: 'Sage', hex: '#9CAF88', category: 'cool' },
+                    { name: 'Terracotta', hex: '#E07856', category: 'warm' },
+                    { name: 'Coral', hex: '#FF7F50', category: 'warm' },
+                    { name: 'Beige', hex: '#F5F5DC', category: 'neutral' },
+                    { name: 'Rust', hex: '#B7410E', category: 'warm' },
+                    { name: 'Mint', hex: '#98FB98', category: 'cool' },
+                    { name: 'Peach', hex: '#FFCBA4', category: 'warm' },
+                    { name: 'Ochre', hex: '#CC7722', category: 'warm' },
+                    { name: 'Dusty Blue', hex: '#6B8E9A', category: 'cool' },
+                    { name: 'Warm White', hex: '#F3F3F0', category: 'neutral' },
+                    { name: 'Burnt Sienna', hex: '#A0522D', category: 'warm' },
+                    { name: 'Pale Pink', hex: '#FFB6C1', category: 'warm' },
+                    { name: 'Golden Sand', hex: '#F4E4BC', category: 'neutral' },
+                    { name: 'Desert Rose', hex: '#E2725B', category: 'warm' }
                 ]
             },
             'winter_frost': {
                 name: 'Winter Frost',
+                description: 'Cool, crisp colors of winter landscapes',
                 colors: [
-                    { name: 'ice blue', hex: '#B0E0E6' },
-                    { name: 'silver gray', hex: '#C0C0C0' },
-                    { name: 'white', hex: '#FFFFFF' },
-                    { name: 'pale lavender', hex: '#E6E6FA' },
-                    { name: 'soft mint', hex: '#98FB98' },
-                    { name: 'frost blue', hex: '#87CEEB' }
+                    { name: 'Ice Blue', hex: '#B0E0E6', category: 'cool' },
+                    { name: 'Silver Gray', hex: '#C0C0C0', category: 'neutral' },
+                    { name: 'White', hex: '#FFFFFF', category: 'neutral' },
+                    { name: 'Pale Lavender', hex: '#E6E6FA', category: 'cool' },
+                    { name: 'Soft Mint', hex: '#98FB98', category: 'cool' },
+                    { name: 'Frost Blue', hex: '#87CEEB', category: 'cool' },
+                    { name: 'Pearl', hex: '#F8F8FF', category: 'neutral' },
+                    { name: 'Powder Blue', hex: '#B0E0E6', category: 'cool' },
+                    { name: 'Snow White', hex: '#FFFAFA', category: 'neutral' },
+                    { name: 'Crystal', hex: '#A7C7E7', category: 'cool' },
+                    { name: 'Frost', hex: '#E1F5FE', category: 'cool' },
+                    { name: 'Mint Cream', hex: '#F5FFFA', category: 'cool' },
+                    { name: 'Ice', hex: '#F0F8FF', category: 'cool' },
+                    { name: 'Pale Blue', hex: '#ADD8E6', category: 'cool' },
+                    { name: 'Ghost White', hex: '#F8F8FF', category: 'neutral' },
+                    { name: 'Alice Blue', hex: '#F0F8FF', category: 'cool' },
+                    { name: 'Lavender Blush', hex: '#FFF0F5', category: 'cool' },
+                    { name: 'Honeydew', hex: '#F0FFF0', category: 'cool' },
+                    { name: 'Azure', hex: '#F0FFFF', category: 'cool' },
+                    { name: 'Ivory', hex: '#FFFFF0', category: 'neutral' }
+                ]
+            },
+            'verena_1': {
+                name: 'Verena 1',
+                description: 'Sophisticated color palette with rich, elegant tones',
+                colors: [
+                    { name: 'Deep Burgundy', hex: '#722F37', category: 'warm' },
+                    { name: 'Warm Gold', hex: '#D4AF37', category: 'warm' },
+                    { name: 'Sage Green', hex: '#9CAF88', category: 'cool' },
+                    { name: 'Cream White', hex: '#F5F5DC', category: 'neutral' },
+                    { name: 'Charcoal Gray', hex: '#36454F', category: 'neutral' },
+                    { name: 'Dusty Rose', hex: '#B76E79', category: 'warm' },
+                    { name: 'Olive Green', hex: '#808000', category: 'cool' },
+                    { name: 'Warm Beige', hex: '#EADCC4', category: 'neutral' },
+                    { name: 'Deep Teal', hex: '#008080', category: 'cool' },
+                    { name: 'Burnt Orange', hex: '#CC5500', category: 'warm' },
+                    { name: 'Muted Purple', hex: '#8B7D9A', category: 'cool' },
+                    { name: 'Taupe', hex: '#8B7D6B', category: 'neutral' },
+                    { name: 'Rust Red', hex: '#B7410E', category: 'warm' },
+                    { name: 'Forest Green', hex: '#228B22', category: 'cool' },
+                    { name: 'Copper', hex: '#B87333', category: 'warm' },
+                    { name: 'Slate Blue', hex: '#6A5ACD', category: 'cool' },
+                    { name: 'Terracotta', hex: '#E07856', category: 'warm' },
+                    { name: 'Moss Green', hex: '#8A9A5B', category: 'cool' },
+                    { name: 'Amber', hex: '#FFBF00', category: 'warm' },
+                    { name: 'Steel Gray', hex: '#71797E', category: 'neutral' },
+                    { name: 'Crimson', hex: '#DC143C', category: 'warm' },
+                    { name: 'Navy Blue', hex: '#000080', category: 'cool' },
+                    { name: 'Sienna', hex: '#A0522D', category: 'warm' },
+                    { name: 'Pale Blue', hex: '#B0E0E6', category: 'cool' },
+                    { name: 'Champagne', hex: '#F7E7CE', category: 'neutral' }
                 ]
             }
         };
+    }
+    
+    // New Master Palette + Selector System Methods
+    
+    setupMasterPaletteListeners() {
+        // Master palette selection listener
+        const masterPaletteSelect = document.getElementById('master-palette-select');
+        if (masterPaletteSelect) {
+            masterPaletteSelect.addEventListener('change', () => {
+                this.updateMasterPaletteDisplay();
+                this.updateColorPickers();
+            });
+        }
+        
+        // Initialize with default palette
+        this.updateMasterPaletteDisplay();
+        this.updateColorPickers();
+    }
+    
+    updateMasterPaletteDisplay() {
+        const masterPaletteSelect = document.getElementById('master-palette-select');
+        const swatchesContainer = document.getElementById('master-palette-swatches');
+        
+        if (!masterPaletteSelect || !swatchesContainer) return;
+        
+        const selectedPalette = masterPaletteSelect.value;
+        const palettes = this.getMasterPalettes();
+        const palette = palettes[selectedPalette];
+        
+        if (!palette) return;
+        
+        // Clear existing swatches
+        swatchesContainer.innerHTML = '';
+        
+        // Create master palette swatches
+        palette.colors.forEach((color, index) => {
+            const swatch = document.createElement('div');
+            swatch.className = 'master-color-swatch';
+            swatch.dataset.colorIndex = index;
+            swatch.innerHTML = `
+                <div class="master-color-circle" style="background-color: ${color.hex}"></div>
+                <div class="master-color-name">${color.name}</div>
+            `;
+            swatchesContainer.appendChild(swatch);
+        });
+    }
+    
+    updateColorPickers() {
+        this.updateCharacterColorPicker();
+        this.updateBackgroundColorPicker();
+    }
+    
+    updateCharacterColorPicker() {
+        const pickerContainer = document.getElementById('character-color-picker');
+        if (!pickerContainer) return;
+        
+        const masterPalette = this.getCurrentMasterPalette();
+        if (!masterPalette) return;
+        
+        // Clear existing options
+        pickerContainer.innerHTML = '';
+        
+        // Create color picker options
+        masterPalette.colors.forEach((color, index) => {
+            const option = document.createElement('div');
+            option.className = 'color-picker-option';
+            option.dataset.colorIndex = index;
+            option.innerHTML = `
+                <div class="color-picker-circle" style="background-color: ${color.hex}"></div>
+                <div class="color-picker-name">${color.name}</div>
+            `;
+            
+            // Add click listener
+            option.addEventListener('click', () => {
+                this.selectCharacterColor(color, index);
+            });
+            
+            pickerContainer.appendChild(option);
+        });
+    }
+    
+    updateBackgroundColorPicker() {
+        const pickerContainer = document.getElementById('background-color-picker');
+        if (!pickerContainer) return;
+        
+        const masterPalette = this.getCurrentMasterPalette();
+        if (!masterPalette) return;
+        
+        // Clear existing options
+        pickerContainer.innerHTML = '';
+        
+        // Create color picker options
+        masterPalette.colors.forEach((color, index) => {
+            const option = document.createElement('div');
+            option.className = 'color-picker-option';
+            option.dataset.colorIndex = index;
+            option.innerHTML = `
+                <div class="color-picker-circle" style="background-color: ${color.hex}"></div>
+                <div class="color-picker-name">${color.name}</div>
+            `;
+            
+            // Add click listener
+            option.addEventListener('click', () => {
+                this.selectBackgroundColor(color, index);
+            });
+            
+            pickerContainer.appendChild(option);
+        });
+    }
+    
+    getCurrentMasterPalette() {
+        const masterPaletteSelect = document.getElementById('master-palette-select');
+        if (!masterPaletteSelect) return null;
+        
+        const selectedPalette = masterPaletteSelect.value;
+        const palettes = this.getMasterPalettes();
+        return palettes[selectedPalette] || null;
+    }
+    
+    selectCharacterColor(color, index) {
+        // Find an empty slot or replace the first one
+        const slots = document.querySelectorAll('.character-color-section .selected-color-slot');
+        let targetSlot = null;
+        
+        for (let slot of slots) {
+            if (!slot.classList.contains('has-color')) {
+                targetSlot = slot;
+                break;
+            }
+        }
+        
+        if (!targetSlot) {
+            // Replace the first slot
+            targetSlot = slots[0];
+        }
+        
+        this.fillColorSlot(targetSlot, color, 'character');
+        this.updateColorPreview();
+    }
+    
+    selectBackgroundColor(color, index) {
+        // Find an empty slot or replace the first one
+        const slots = document.querySelectorAll('.background-color-section .selected-color-slot');
+        let targetSlot = null;
+        
+        for (let slot of slots) {
+            if (!slot.classList.contains('has-color')) {
+                targetSlot = slot;
+                break;
+            }
+        }
+        
+        if (!targetSlot) {
+            // Replace the first slot
+            targetSlot = slots[0];
+        }
+        
+        this.fillColorSlot(targetSlot, color, 'background');
+        this.updateColorPreview();
+    }
+    
+    fillColorSlot(slot, color, type) {
+        const placeholder = slot.querySelector('.color-slot-placeholder');
+        const removeBtn = slot.querySelector('.remove-color-btn');
+        
+        // Clear placeholder and add color display
+        placeholder.style.display = 'none';
+        
+        // Create color display
+        const colorDisplay = document.createElement('div');
+        colorDisplay.className = 'selected-color-display';
+        colorDisplay.innerHTML = `
+            <div class="selected-color-circle" style="background-color: ${color.hex}"></div>
+            <div class="selected-color-name">${color.name}</div>
+        `;
+        
+        // Replace placeholder with color display
+        slot.replaceChild(colorDisplay, placeholder);
+        
+        // Show remove button
+        removeBtn.style.display = 'flex';
+        
+        // Add data attributes
+        slot.dataset.colorName = color.name;
+        slot.dataset.colorHex = color.hex;
+        slot.classList.add('has-color');
+        
+        // Add remove button listener
+        removeBtn.onclick = () => {
+            this.removeColorFromSlot(slot, type);
+        };
+    }
+    
+    removeColorFromSlot(slot, type) {
+        const removeBtn = slot.querySelector('.remove-color-btn');
+        const colorDisplay = slot.querySelector('.selected-color-display');
+        
+        // Create placeholder
+        const placeholder = document.createElement('div');
+        placeholder.className = 'color-slot-placeholder';
+        placeholder.textContent = `Select ${type === 'character' ? 'Character' : 'Background'} Color ${slot.dataset.slot}${slot.dataset.slot === '2' ? ' (Optional)' : ''}`;
+        
+        // Replace color display with placeholder
+        slot.replaceChild(placeholder, colorDisplay);
+        
+        // Hide remove button
+        removeBtn.style.display = 'none';
+        
+        // Remove data attributes
+        delete slot.dataset.colorName;
+        delete slot.dataset.colorHex;
+        slot.classList.remove('has-color');
+        
+        this.updateColorPreview();
+    }
+    
+    updateColorPreview() {
+        const characterFur = document.querySelector('.preview-character-fur');
+        const backgroundArea = document.querySelector('.preview-background-area');
+        
+        if (!characterFur || !backgroundArea) return;
+        
+        // Get selected character colors
+        const characterSlots = document.querySelectorAll('.character-color-section .selected-color-slot.has-color');
+        if (characterSlots.length > 0) {
+            const primaryColor = characterSlots[0].dataset.colorHex;
+            characterFur.style.background = primaryColor;
+            
+            // If there's a second color, create a gradient
+            if (characterSlots.length > 1) {
+                const secondaryColor = characterSlots[1].dataset.colorHex;
+                characterFur.style.background = `linear-gradient(45deg, ${primaryColor}, ${secondaryColor})`;
+            }
+        } else {
+            characterFur.style.background = '#f8f9fa';
+        }
+        
+        // Get selected background colors
+        const backgroundSlots = document.querySelectorAll('.background-color-section .selected-color-slot.has-color');
+        if (backgroundSlots.length > 0) {
+            const primaryColor = backgroundSlots[0].dataset.colorHex;
+            backgroundArea.style.background = primaryColor;
+            
+            // If there's a second color, create a gradient
+            if (backgroundSlots.length > 1) {
+                const secondaryColor = backgroundSlots[1].dataset.colorHex;
+                backgroundArea.style.background = `linear-gradient(45deg, ${primaryColor}, ${secondaryColor})`;
+            }
+        } else {
+            backgroundArea.style.background = '#f8f9fa';
+        }
+    }
+    
+    getSelectedCharacterColors() {
+        const characterSlots = document.querySelectorAll('.character-color-section .selected-color-slot.has-color');
+        return Array.from(characterSlots).map(slot => ({
+            name: slot.dataset.colorName,
+            hex: slot.dataset.colorHex
+        }));
+    }
+    
+    getSelectedBackgroundColors() {
+        const backgroundSlots = document.querySelectorAll('.background-color-section .selected-color-slot.has-color');
+        return Array.from(backgroundSlots).map(slot => ({
+            name: slot.dataset.colorName,
+            hex: slot.dataset.colorHex
+        }));
     }
 }
 
@@ -5000,6 +5095,136 @@ class ProjectSettingsManager {
     saveAllSettingsToProject() {
         const settings = this.collectAllSettings();
         return this.saveProjectToFile(this.currentProject, settings);
+    }
+    
+    // Export Current Project
+    exportCurrentProject() {
+        if (!this.currentProject) {
+            this.showNotification('No current project to export', 'error');
+            return false;
+        }
+        
+        const settings = this.collectAllSettings();
+        return this.saveProjectToFile(this.currentProject, settings);
+    }
+    
+    // Export All Projects
+    exportAllProjects() {
+        if (this.projects.size === 0) {
+            this.showNotification('No projects to export', 'error');
+            return false;
+        }
+        
+        const allProjectsData = {
+            exportDate: new Date().toISOString(),
+            version: '1.0',
+            projects: {}
+        };
+        
+        // Collect all projects
+        for (const [projectId, project] of this.projects) {
+            allProjectsData.projects[projectId] = project;
+        }
+        
+        // Create and download ZIP file
+        this.createProjectsZip(allProjectsData);
+        this.showNotification('All projects exported successfully', 'success');
+        return true;
+    }
+    
+    // Export Project Settings Only
+    exportProjectSettings() {
+        if (!this.currentProject) {
+            this.showNotification('No current project to export', 'error');
+            return false;
+        }
+        
+        const settings = this.collectAllSettings();
+        const project = this.projects.get(this.currentProject);
+        
+        const settingsData = {
+            projectName: project.projectName,
+            version: project.version,
+            exportDate: new Date().toISOString(),
+            settings: settings
+        };
+        
+        // Create and download JSON file
+        const jsonString = JSON.stringify(settingsData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${this.currentProject}-settings.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        this.showNotification(`Project settings exported successfully`, 'success');
+        return true;
+    }
+    
+    // Export Project Data (CSV/JSON)
+    exportProjectData() {
+        if (!this.currentProject) {
+            this.showNotification('No current project to export', 'error');
+            return false;
+        }
+        
+        const project = this.projects.get(this.currentProject);
+        const settings = this.collectAllSettings();
+        
+        // Create comprehensive project data export
+        const projectData = {
+            projectInfo: {
+                name: project.projectName,
+                id: this.currentProject,
+                version: project.version,
+                lastModified: project.lastModified,
+                exportDate: new Date().toISOString()
+            },
+            settings: settings,
+            statistics: {
+                totalProjects: this.projects.size,
+                currentProjectSettings: Object.keys(settings).length,
+                exportFormats: ['JSON', 'CSV']
+            }
+        };
+        
+        // Create and download JSON file
+        const jsonString = JSON.stringify(projectData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${this.currentProject}-data.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        this.showNotification(`Project data exported successfully`, 'success');
+        return true;
+    }
+    
+    // Helper method to create ZIP file for multiple projects
+    createProjectsZip(projectsData) {
+        // For now, we'll create a single JSON file with all projects
+        // In a full implementation, you might want to use a library like JSZip
+        const jsonString = JSON.stringify(projectsData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `anamalia-projects-export-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 }
 

@@ -531,38 +531,22 @@
                             <option value="fibrous">Fibrous</option>
                             <option value="matte">Matte</option>
                             <option value="handcrafted">Handcrafted</option>
+                            <option value="hyper-realistic">Hyper-realistic</option>
+                            <option value="dollhouse-realism">Dollhouse Realism</option>
                         </select>
                     </div>
                     
                     <div>
                         <label for="assemble-color" class="field-label">
-                            Color Palette
+                            Color System
                             <span class="info-icon" data-field="assemble-color" title="Click for help">?</span>
                         </label>
                         
-                        <!-- Palette Mode Selection -->
-                        <div class="palette-mode-selection">
-                            <div class="radio-group">
-                                <label class="radio-option">
-                                    <input type="radio" name="palette-mode" value="standard" checked>
-                                    <span>Standard Palette</span>
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="palette-mode" value="custom">
-                                    <span>Custom Palette</span>
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="palette-mode" value="single">
-                                    <span>Single Color</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <!-- Standard Palette Selection -->
-                        <div id="standard-palette-section" class="palette-section">
-                            <select id="assemble-color-palette">
-                                <option value="anamalia_late_summer" selected>Anamalia Late Summer Studio (Default)</option>
-                                <option value="classic_anamalia">Classic Anamalia</option>
+                        <!-- Master Palette Selection -->
+                        <div class="master-palette-section">
+                            <label for="master-palette-select" class="sub-field-label">Master Palette (Project-wide color pool)</label>
+                            <select id="master-palette-select">
+                                <option value="anamalia_muted_pastels" selected>Anamalia Muted Pastels (Default)</option>
                                 <option value="warm_earth_tones">Warm Earth Tones</option>
                                 <option value="cool_pastels">Cool Pastels</option>
                                 <option value="autumn_harvest">Autumn Harvest</option>
@@ -572,62 +556,71 @@
                                 <option value="forest_canopy">Forest Canopy</option>
                                 <option value="desert_bloom">Desert Bloom</option>
                                 <option value="winter_frost">Winter Frost</option>
+                                <option value="verena_1">Verena 1</option>
                             </select>
                             
-                            <!-- Color Usage Mode -->
-                            <div class="color-usage-mode">
-                                <div class="radio-group">
-                                    <label class="radio-option">
-                                        <input type="radio" name="color-usage-mode" value="all" checked>
-                                        <span>Use All Colors</span>
-                                    </label>
-                                    <label class="radio-option">
-                                        <input type="radio" name="color-usage-mode" value="select">
-                                        <span>Select Specific Colors</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <!-- Color Swatches Display -->
-                            <div id="color-swatches" class="color-swatches">
-                                <!-- Color swatches will be populated by JavaScript -->
-                            </div>
-                            
-                            <!-- Individual Color Selection -->
-                            <div id="individual-color-selection" class="individual-color-selection" style="display: none;">
-                                <!-- Individual color checkboxes will be populated by JavaScript -->
-                            </div>
-                        </div>
-                        
-                        <!-- Custom Palette Upload -->
-                        <div id="custom-palette-section" class="palette-section" style="display: none;">
-                            <div class="file-upload-area">
-                                <input type="file" id="custom-palette-file" accept=".png,.jpg,.jpeg,.json,.txt">
-                                <div class="file-upload-text">
-                                    <p>Upload palette file:</p>
-                                    <p class="file-types">PNG/JPG (extract colors) • JSON (color array) • TXT (hex codes)</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Custom Palette Preview -->
-                            <div id="custom-palette-preview" class="custom-palette-preview" style="display: none;">
-                                <h4>Custom Palette Preview</h4>
-                                <div id="custom-color-swatches" class="color-swatches">
-                                    <!-- Custom color swatches will be populated by JavaScript -->
+                            <!-- Master Palette Display -->
+                            <div class="master-palette-display">
+                                <h4>Master Palette Colors</h4>
+                                <div id="master-palette-swatches" class="master-palette-swatches">
+                                    <!-- Master palette swatches will be populated by JavaScript -->
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Single Color Selection (Backward Compatibility) -->
-                        <div id="single-color-section" class="palette-section" style="display: none;">
-                            <select id="assemble-color-single">
-                                <option value="default">Default (All Colors)</option>
-                                <option value="all">All Colors</option>
-                                <option value="ochre">Ochre</option>
-                                <option value="cream">Cream</option>
-                                <option value="soft-pink">Soft Pink</option>
-                                <option value="muted-blue">Muted Blue</option>
-                            </select>
+                        <!-- Character Color Selection -->
+                        <div class="character-color-section">
+                            <label class="sub-field-label">Character Colors (Select up to 2 for fur/features)</label>
+                            <div class="color-selection-container">
+                                <div class="selected-colors-display">
+                                    <div class="selected-color-slot" data-slot="1">
+                                        <div class="color-slot-placeholder">Select Character Color 1</div>
+                                        <button class="remove-color-btn" style="display: none;">×</button>
+                                    </div>
+                                    <div class="selected-color-slot" data-slot="2">
+                                        <div class="color-slot-placeholder">Select Character Color 2 (Optional)</div>
+                                        <button class="remove-color-btn" style="display: none;">×</button>
+                                    </div>
+                                </div>
+                                <div id="character-color-picker" class="color-picker-grid">
+                                    <!-- Character color options will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Background Color Selection -->
+                        <div class="background-color-section">
+                            <label class="sub-field-label">Background Colors (Select up to 2 for scene/background)</label>
+                            <div class="color-selection-container">
+                                <div class="selected-colors-display">
+                                    <div class="selected-color-slot" data-slot="1">
+                                        <div class="color-slot-placeholder">Select Background Color 1</div>
+                                        <button class="remove-color-btn" style="display: none;">×</button>
+                                    </div>
+                                    <div class="selected-color-slot" data-slot="2">
+                                        <div class="color-slot-placeholder">Select Background Color 2 (Optional)</div>
+                                        <button class="remove-color-btn" style="display: none;">×</button>
+                                    </div>
+                                </div>
+                                <div id="background-color-picker" class="color-picker-grid">
+                                    <!-- Background color options will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Color Preview -->
+                        <div class="color-preview-section">
+                            <h4>Color Preview</h4>
+                            <div id="color-preview" class="color-preview-display">
+                                <div class="preview-character">
+                                    <div class="preview-character-fur"></div>
+                                    <div class="preview-character-label">Character</div>
+                                </div>
+                                <div class="preview-background">
+                                    <div class="preview-background-area"></div>
+                                    <div class="preview-background-label">Background</div>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Color Profile Save Button -->
