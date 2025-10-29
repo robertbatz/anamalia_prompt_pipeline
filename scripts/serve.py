@@ -36,6 +36,13 @@ def serve(port=8080, host='localhost'):
         print(f"📦 Bundles: http://{host}:{port}/bundles/")
         print(f"🎨 Renders: http://{host}:{port}/renders/")
         print(f"🖼️  Photo Flip Tool: http://{host}:{port}/webviewer/photo_flip.html")
+        print(f"🎬 GIF Maker Tool: http://{host}:{port}/webviewer/gif_maker.html")
+        print(f"")
+        print(f"🔧 To use Photo Flip & GIF Maker tools:")
+        print(f"   1. Start Photo Flip API: python3 scripts/photo_flip_api.py --port 5000")
+        print(f"   2. Start GIF Maker API: python3 scripts/gif_maker_api.py --port 5001")
+        print(f"   3. Then use the tools in the web viewer")
+        print(f"")
         print(f"⏹️  Press Ctrl+C to stop")
         
         try:

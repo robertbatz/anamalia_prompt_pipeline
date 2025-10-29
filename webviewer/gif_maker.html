@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Maker Tool - Anamalia Prompt Assembler</title>
+    <link rel="stylesheet" href="styles.css?v=202501241500">
+    <script src="https://apis.google.com/js/api.js"></script>
+    <style>
+        /* VIENNALE-Inspired Dark Theme for GIF Maker Tool */
+        
+        /* Override body styling for dark theme */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000000, #001a33);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header styling with VIENNALE-inspired design */
+        .header {
+            background: linear-gradient(135deg, #000000, #001a33);
+            color: #00ffff;
+            padding: 2rem 2rem 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #00ffff;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .header p {
+            color: #ffffff;
+            opacity: 0.9;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+        
+        .gif-maker-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(0, 26, 51, 0.1);
+            border-radius: 12px;
+            margin-top: 2rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .upload-area {
+            border: 2px dashed #00ffff;
+            border-radius: 12px;
+            padding: 4rem 3rem;
+            text-align: center;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(0, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .upload-area:hover::before {
+            left: 100%;
+        }
+        
+        .upload-area:hover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
+        }
+        
+        .upload-area.dragover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.15);
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .upload-area h3 {
+            color: #00ffff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .upload-area p {
+            color: #ffffff;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .image-counter {
+            color: #00ffff;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+        
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 26, 51, 0.3);
+            min-height: 100px;
+        }
+        
+        .image-item {
+            position: relative;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: move;
+            transition: all 0.3s ease;
+            background: rgba(0, 26, 51, 0.5);
+        }
+        
+        .image-item:hover {
+            border-color: #00ffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .image-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        
+        .image-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .image-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .image-item .remove-btn:hover {
+            background: rgba(220, 53, 69, 1);
+            transform: scale(1.1);
+        }
+        
+        .image-item .order-number {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0, 255, 255, 0.9);
+            color: #000000;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .settings-panel {
+            background: rgba(0, 26, 51, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .settings-panel h3 {
+            color: #00ffff;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .setting-group label {
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .setting-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(0, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .setting-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00ffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .setting-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00ffff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .setting-group select {
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 6px;
+            background: rgba(0, 26, 51, 0.8);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        
+        .setting-group select:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .range-value {
+            color: #00ffff;
+            font-weight: bold;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        
+        .preview-area {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(0, 26, 51, 0.3);
+        }
+        
+        .preview-area h3 {
+            color: #00ffff;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .preview-gif {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #00cccc, #00ffff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #3367d6, #2e7d32);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #333333;
+            color: #666666;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #0099cc);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #00ffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 6px;
+        }
+        
+        .back-link:hover {
+            background: rgba(0, 255, 255, 0.1);
+            text-decoration: none;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .success-message {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #28a745;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #666666;
+            font-style: italic;
+            padding: 2rem;
+        }
+        
+        /* Floating tools with dark theme */
+        .tools-toggle-btn {
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .tools-toggle-btn:hover {
+            background: linear-gradient(135deg, #00cccc, #00ffff);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .tools-menu {
+            background: rgba(0, 26, 51, 0.95);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tools-menu-header {
+            background: rgba(0, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .tools-menu-header h3 {
+            color: #00ffff;
+        }
+        
+        .tools-close-btn {
+            color: #ffffff;
+        }
+        
+        .tools-close-btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+        
+        .tool-menu-item {
+            color: #ffffff;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-menu-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            transform: translateX(4px);
+        }
+        
+        .tool-menu-title {
+            color: #00ffff;
+        }
+        
+        .tool-menu-desc {
+            color: #cccccc;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 3rem 2rem;
+            }
+            
+            .images-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 GIF Maker Tool</h1>
+        <p>Upload up to 20 images and create animated GIFs with custom settings</p>
+        <a href="http://localhost:8081/webviewer/" class="back-link">← Back to Main</a>
+        <div class="floating-tools">
+            <button id="tools-toggle" class="tools-toggle-btn" title="Tools Menu">
+                🛠️
+            </button>
+            <div id="tools-menu" class="tools-menu">
+                <div class="tools-menu-header">
+                    <h3>🛠️ Tools</h3>
+                    <button id="tools-close" class="tools-close-btn" title="Close Menu">×</button>
+                </div>
+                <div class="tools-menu-content">
+                    <a href="photo_flip.html" class="tool-menu-item">
+                        <div class="tool-menu-icon">🖼️</div>
+                        <div class="tool-menu-info">
+                            <div class="tool-menu-title">Photo Flip</div>
+                            <div class="tool-menu-desc">Upload and flip images horizontally</div>
+                        </div>
+                    </a>
+                    <a href="gif_maker.html" class="tool-menu-item">
+                        <div class="tool-menu-icon">🎬</div>
+                        <div class="tool-menu-info">
+                            <div class="tool-menu-title">GIF Maker</div>
+                            <div class="tool-menu-desc">Create animated GIFs from multiple images</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="gif-maker-container">
+        <div class="upload-area" id="uploadArea">
+            <div>
+                <h3>📁 Drop your images here or click to browse</h3>
+                <p>Supports JPG, PNG, GIF, WebP, and other common formats (up to 20 images)</p>
+                <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+                <div class="image-counter" id="imageCounter">0 / 20 images</div>
+            </div>
+        </div>
+
+        <div class="images-grid" id="imagesGrid">
+            <div class="empty-state">No images uploaded yet</div>
+        </div>
+
+        <div class="settings-panel" id="settingsPanel" style="display: none;">
+            <h3>⚙️ GIF Settings</h3>
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label for="frameDuration">Frame Duration (ms)</label>
+                    <input type="range" id="frameDuration" min="100" max="2000" value="500" step="50">
+                    <div class="range-value" id="frameDurationValue">500ms</div>
+                </div>
+                <div class="setting-group">
+                    <label for="loopCount">Loop Count</label>
+                    <select id="loopCount">
+                        <option value="0">Infinite Loop</option>
+                        <option value="1">1 time</option>
+                        <option value="2">2 times</option>
+                        <option value="3">3 times</option>
+                        <option value="4">4 times</option>
+                        <option value="5">5 times</option>
+                        <option value="10">10 times</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label for="quality">Quality</label>
+                    <select id="quality">
+                        <option value="low">Low (smaller file)</option>
+                        <option value="medium" selected>Medium (balanced)</option>
+                        <option value="high">High (better quality)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-area" id="previewArea" style="display: none;">
+            <h3>🎬 Preview</h3>
+            <img id="previewGif" class="preview-gif" alt="Generated GIF preview">
+        </div>
+
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="action-buttons" id="actionButtons" style="display: none;">
+            <button class="btn btn-primary" id="generateBtn">🎬 Generate GIF</button>
+            <button class="btn btn-secondary" id="downloadBtn" disabled>📥 Download GIF</button>
+            <button class="btn btn-secondary" id="exportGDriveBtn" disabled>📁 Export to Google Drive</button>
+            <button class="btn btn-secondary" id="importGDriveBtn">📁 Import from Google Drive</button>
+            <button class="btn btn-secondary" id="clearAllBtn">🗑️ Clear All</button>
+        </div>
+
+        <div id="messageArea"></div>
+    </div>
+
+    <script>
+        class GIFMakerTool {
+            constructor() {
+                this.uploadArea = document.getElementById('uploadArea');
+                this.fileInput = document.getElementById('fileInput');
+                this.imagesGrid = document.getElementById('imagesGrid');
+                this.settingsPanel = document.getElementById('settingsPanel');
+                this.previewArea = document.getElementById('previewArea');
+                this.previewGif = document.getElementById('previewGif');
+                this.actionButtons = document.getElementById('actionButtons');
+                this.imageCounter = document.getElementById('imageCounter');
+                this.progressBar = document.getElementById('progressBar');
+                this.progressFill = document.getElementById('progressFill');
+                this.messageArea = document.getElementById('messageArea');
+                
+                // Settings elements
+                this.frameDuration = document.getElementById('frameDuration');
+                this.frameDurationValue = document.getElementById('frameDurationValue');
+                this.loopCount = document.getElementById('loopCount');
+                this.quality = document.getElementById('quality');
+                
+                // Action buttons
+                this.generateBtn = document.getElementById('generateBtn');
+                this.downloadBtn = document.getElementById('downloadBtn');
+                this.exportGDriveBtn = document.getElementById('exportGDriveBtn');
+                this.importGDriveBtn = document.getElementById('importGDriveBtn');
+                this.clearAllBtn = document.getElementById('clearAllBtn');
+                
+                // State
+                this.images = [];
+                this.generatedGifData = null;
+                this.draggedElement = null;
+                
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                // Upload area click
+                this.uploadArea.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+                
+                // File input change
+                this.fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleFiles(Array.from(e.target.files));
+                    }
+                });
+                
+                // Drag and drop
+                this.uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.add('dragover');
+                });
+                
+                this.uploadArea.addEventListener('dragleave', () => {
+                    this.uploadArea.classList.remove('dragover');
+                });
+                
+                this.uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.remove('dragover');
+                    
+                    if (e.dataTransfer.files.length > 0) {
+                        this.handleFiles(Array.from(e.dataTransfer.files));
+                    }
+                });
+                
+                // Settings
+                this.frameDuration.addEventListener('input', () => {
+                    this.frameDurationValue.textContent = this.frameDuration.value + 'ms';
+                });
+                
+                // Action buttons
+                this.generateBtn.addEventListener('click', () => this.generateGIF());
+                this.downloadBtn.addEventListener('click', () => this.downloadGIF());
+                this.exportGDriveBtn.addEventListener('click', () => this.exportToGoogleDrive());
+                this.importGDriveBtn.addEventListener('click', () => this.importFromGoogleDrive());
+                this.clearAllBtn.addEventListener('click', () => this.clearAll());
+            }
+            
+            async handleFiles(files) {
+                // Filter only image files
+                const imageFiles = files.filter(file => file.type.startsWith('image/'));
+                
+                if (imageFiles.length === 0) {
+                    this.showError('Please select valid image files.');
+                    return;
+                }
+                
+                // Check total count
+                if (this.images.length + imageFiles.length > 20) {
+                    this.showError(`Too many images. Maximum 20 allowed. You have ${this.images.length} and trying to add ${imageFiles.length}.`);
+                    return;
+                }
+                
+                this.hideMessage();
+                
+                // Process each image
+                for (const file of imageFiles) {
+                    try {
+                        const imageData = await this.fileToDataURL(file);
+                        this.images.push({
+                            id: Date.now() + Math.random(),
+                            file: file,
+                            dataURL: imageData,
+                            name: file.name
+                        });
+                    } catch (error) {
+                        console.error('Error processing file:', error);
+                        this.showError(`Error processing ${file.name}: ${error.message}`);
+                    }
+                }
+                
+                this.updateUI();
+            }
+            
+            fileToDataURL(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = (e) => reject(new Error('Failed to read file'));
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            updateUI() {
+                this.updateImageCounter();
+                this.renderImagesGrid();
+                
+                if (this.images.length >= 2) {
+                    this.settingsPanel.style.display = 'block';
+                    this.actionButtons.style.display = 'flex';
+                } else {
+                    this.settingsPanel.style.display = 'none';
+                    this.actionButtons.style.display = 'none';
+                }
+            }
+            
+            updateImageCounter() {
+                this.imageCounter.textContent = `${this.images.length} / 20 images`;
+            }
+            
+            renderImagesGrid() {
+                if (this.images.length === 0) {
+                    this.imagesGrid.innerHTML = '<div class="empty-state">No images uploaded yet</div>';
+                    return;
+                }
+                
+                this.imagesGrid.innerHTML = '';
+                
+                this.images.forEach((image, index) => {
+                    const imageItem = document.createElement('div');
+                    imageItem.className = 'image-item';
+                    imageItem.draggable = true;
+                    imageItem.dataset.index = index;
+                    
+                    imageItem.innerHTML = `
+                        <img src="${image.dataURL}" alt="${image.name}">
+                        <button class="remove-btn" onclick="gifMaker.removeImage(${index})">×</button>
+                        <div class="order-number">${index + 1}</div>
+                    `;
+                    
+                    // Drag and drop events
+                    imageItem.addEventListener('dragstart', (e) => {
+                        this.draggedElement = imageItem;
+                        imageItem.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+                    
+                    imageItem.addEventListener('dragend', () => {
+                        imageItem.classList.remove('dragging');
+                        this.draggedElement = null;
+                    });
+                    
+                    imageItem.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+                    });
+                    
+                    imageItem.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        if (this.draggedElement && this.draggedElement !== imageItem) {
+                            this.reorderImages(
+                                parseInt(this.draggedElement.dataset.index),
+                                parseInt(imageItem.dataset.index)
+                            );
+                        }
+                    });
+                    
+                    this.imagesGrid.appendChild(imageItem);
+                });
+            }
+            
+            reorderImages(fromIndex, toIndex) {
+                const image = this.images.splice(fromIndex, 1)[0];
+                this.images.splice(toIndex, 0, image);
+                this.renderImagesGrid();
+            }
+            
+            removeImage(index) {
+                this.images.splice(index, 1);
+                this.updateUI();
+            }
+            
+            clearAll() {
+                this.images = [];
+                this.generatedGifData = null;
+                this.previewArea.style.display = 'none';
+                this.downloadBtn.disabled = true;
+                this.exportGDriveBtn.disabled = true;
+                this.updateUI();
+                this.hideMessage();
+            }
+            
+            async generateGIF() {
+                if (this.images.length < 2) {
+                    this.showError('At least 2 images required to create a GIF.');
+                    return;
+                }
+                
+                this.showProgress();
+                this.generateBtn.disabled = true;
+                
+                try {
+                    const response = await fetch('http://localhost:5001/api/create-gif', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            images: this.images.map(img => img.dataURL),
+                            frame_duration: parseInt(this.frameDuration.value),
+                            loop_count: parseInt(this.loopCount.value),
+                            quality: this.quality.value
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Failed to generate GIF');
+                    }
+                    
+                    // Convert response to blob
+                    const blob = await response.blob();
+                    this.generatedGifData = URL.createObjectURL(blob);
+                    
+                    // Show preview
+                    this.previewGif.src = this.generatedGifData;
+                    this.previewArea.style.display = 'block';
+                    
+                    // Enable download and export
+                    this.downloadBtn.disabled = false;
+                    this.exportGDriveBtn.disabled = false;
+                    
+                    this.showSuccess('GIF generated successfully!');
+                    
+                } catch (error) {
+                    console.error('Error generating GIF:', error);
+                    this.showError(`Error generating GIF: ${error.message}`);
+                } finally {
+                    this.hideProgress();
+                    this.generateBtn.disabled = false;
+                }
+            }
+            
+            downloadGIF() {
+                if (!this.generatedGifData) return;
+                
+                const link = document.createElement('a');
+                link.href = this.generatedGifData;
+                link.download = `animated_gif_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.gif`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                this.showSuccess('GIF download started!');
+            }
+            
+            async exportToGoogleDrive() {
+                if (!this.generatedGifData) {
+                    this.showError('No GIF to export');
+                    return;
+                }
+                
+                try {
+                    this.showProgress();
+                    this.exportGDriveBtn.disabled = true;
+                    
+                    // Convert blob to base64
+                    const response = await fetch(this.generatedGifData);
+                    const blob = await response.blob();
+                    const base64 = await this.blobToBase64(blob);
+                    
+                    const uploadResponse = await fetch('http://localhost:5001/api/gdrive/upload-gif', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            gif_data: base64,
+                            filename: `animated_gif_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.gif`
+                        })
+                    });
+                    
+                    const result = await uploadResponse.json();
+                    
+                    if (result.success) {
+                        this.showSuccess(`Successfully exported to Google Drive! <a href="${result.web_view_link}" target="_blank">View in Drive</a>`);
+                    } else {
+                        this.showError(`Export failed: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('Export error:', error);
+                    this.showError('Failed to export to Google Drive. Please try again.');
+                } finally {
+                    this.hideProgress();
+                    this.exportGDriveBtn.disabled = false;
+                }
+            }
+            
+            async importFromGoogleDrive() {
+                try {
+                    // Load Google Drive Picker API
+                    await this.loadGoogleDriveAPI();
+                    
+                    // Create and show picker
+                    const picker = new google.picker.PickerBuilder()
+                        .addView(google.picker.ViewId.DOCS_IMAGES)
+                        .setOAuthToken('')
+                        .setDeveloperKey('')
+                        .setCallback(this.onPickerSelect.bind(this))
+                        .build();
+                    
+                    picker.setVisible(true);
+                } catch (error) {
+                    console.error('Import error:', error);
+                    this.showError('Failed to load Google Drive picker. Please try again.');
+                }
+            }
+            
+            async loadGoogleDriveAPI() {
+                return new Promise((resolve, reject) => {
+                    gapi.load('picker', () => {
+                        resolve();
+                    });
+                });
+            }
+            
+            async onPickerSelect(data) {
+                if (data.action === google.picker.Action.PICKED && data.docs && data.docs.length > 0) {
+                    const fileIds = data.docs.map(doc => doc.id);
+                    
+                    try {
+                        this.showProgress();
+                        this.importGDriveBtn.disabled = true;
+                        
+                        const response = await fetch('http://localhost:5001/api/gdrive/download-images', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                file_ids: fileIds
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Process downloaded images
+                            for (const imageData of result.images) {
+                                const file = new File([await this.dataURLToBlob(imageData.image_data)], imageData.filename, { type: imageData.mime_type });
+                                this.images.push({
+                                    id: Date.now() + Math.random(),
+                                    file: file,
+                                    dataURL: imageData.image_data,
+                                    name: imageData.filename
+                                });
+                            }
+                            
+                            this.updateUI();
+                            this.showSuccess(`Successfully imported ${result.count} images from Google Drive`);
+                        } else {
+                            this.showError(`Import failed: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error('Import error:', error);
+                        this.showError('Failed to import from Google Drive. Please try again.');
+                    } finally {
+                        this.hideProgress();
+                        this.importGDriveBtn.disabled = false;
+                    }
+                }
+            }
+            
+            dataURLToBlob(dataURL) {
+                return fetch(dataURL).then(res => res.blob());
+            }
+            
+            blobToBase64(blob) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            }
+            
+            showProgress() {
+                this.progressBar.style.display = 'block';
+                this.progressFill.style.width = '100%';
+            }
+            
+            hideProgress() {
+                this.progressBar.style.display = 'none';
+                this.progressFill.style.width = '0%';
+            }
+            
+            showError(message) {
+                this.messageArea.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+            
+            showSuccess(message) {
+                this.messageArea.innerHTML = `<div class="success-message">${message}</div>`;
+            }
+            
+            hideMessage() {
+                this.messageArea.innerHTML = '';
+            }
+        }
+        
+        // Initialize the tool when page loads
+        let gifMaker;
+        document.addEventListener('DOMContentLoaded', () => {
+            gifMaker = new GIFMakerTool();
+            new FloatingToolsManager();
+        });
+        
+        // Floating Tools Manager for GIF maker page
+        class FloatingToolsManager {
+            constructor() {
+                this.setupFloatingToolsListeners();
+            }
+            
+            setupFloatingToolsListeners() {
+                // Floating Tools menu toggle
+                const toolsToggle = document.getElementById('tools-toggle');
+                const toolsMenu = document.getElementById('tools-menu');
+                const toolsClose = document.getElementById('tools-close');
+                
+                if (toolsToggle && toolsMenu) {
+                    toolsToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggleToolsMenu();
+                    });
+                }
+                
+                if (toolsClose && toolsMenu) {
+                    toolsClose.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.closeToolsMenu();
+                    });
+                }
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (toolsMenu && toolsMenu.classList.contains('show') && 
+                        !toolsMenu.contains(e.target) && 
+                        !toolsToggle.contains(e.target)) {
+                        this.closeToolsMenu();
+                    }
+                });
+                
+                // Close menu on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && toolsMenu && toolsMenu.classList.contains('show')) {
+                        this.closeToolsMenu();
+                    }
+                });
+            }
+            
+            toggleToolsMenu() {
+                const toolsMenu = document.getElementById('tools-menu');
+                if (toolsMenu) {
+                    toolsMenu.classList.toggle('show');
+                }
+            }
+            
+            closeToolsMenu() {
+                const toolsMenu = document.getElementById('tools-menu');
+                if (toolsMenu) {
+                    toolsMenu.classList.remove('show');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

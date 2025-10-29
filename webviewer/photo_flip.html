@@ -378,6 +378,13 @@
                             <div class="tool-menu-desc">Upload and flip images horizontally</div>
                         </div>
                     </a>
+                    <a href="gif_maker.html" class="tool-menu-item">
+                        <div class="tool-menu-icon">🎬</div>
+                        <div class="tool-menu-info">
+                            <div class="tool-menu-title">GIF Maker</div>
+                            <div class="tool-menu-desc">Create animated GIFs from multiple images</div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -611,7 +618,7 @@
                     this.showProgress();
                     this.exportGDriveBtn.disabled = true;
                     
-                    const response = await fetch('/api/gdrive/upload', {
+                    const response = await fetch('http://localhost:5000/api/gdrive/upload', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -677,7 +684,7 @@
                         this.showProgress();
                         this.importGDriveBtn.disabled = true;
                         
-                        const response = await fetch('/api/gdrive/download', {
+                        const response = await fetch('http://localhost:5000/api/gdrive/download', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
