@@ -49,6 +49,7 @@ class AnamaliaViewer {
         this.setupFloatingToolsListeners();
         this.initPromptPreviewModal();
         this.initOutputParameterSync();
+        this.setupHexCopyHandler();
         
         // Initial render
         this.render();
@@ -383,6 +384,16 @@ class AnamaliaViewer {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && toolsMenu && toolsMenu.classList.contains('show')) {
                 this.closeToolsMenu();
+            }
+        });
+
+        // Keyboard shortcut: 't' to toggle Tools Menu (ignore when typing in inputs)
+        document.addEventListener('keydown', (e) => {
+            const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+            const isTyping = tag === 'input' || tag === 'textarea' || (e.target && e.target.isContentEditable);
+            if (!isTyping && (e.key === 't' || e.key === 'T')) {
+                e.preventDefault();
+                this.toggleToolsMenu();
             }
         });
     }
@@ -4550,6 +4561,12 @@ class AnamaliaViewer {
             swatch.innerHTML = `
                 <div class="master-color-circle" style="background-color: ${color.hex}"></div>
                 <div class="master-color-name">${color.name}</div>
+                <div class="color-hex-row">
+                    <span class="color-hex">${color.hex}</span>
+                    <button class="copy-hex-btn" type="button" data-hex="${color.hex}" title="Copy hex">
+                        <span class="copy-hex-icon" aria-hidden="true">📋</span>
+                    </button>
+                </div>
             `;
             swatchesContainer.appendChild(swatch);
         });
@@ -4578,6 +4595,12 @@ class AnamaliaViewer {
             option.innerHTML = `
                 <div class="color-picker-circle" style="background-color: ${color.hex}"></div>
                 <div class="color-picker-name">${color.name}</div>
+                <div class="color-hex-row">
+                    <span class="color-hex">${color.hex}</span>
+                    <button class="copy-hex-btn" type="button" data-hex="${color.hex}" title="Copy hex">
+                        <span class="copy-hex-icon" aria-hidden="true">📋</span>
+                    </button>
+                </div>
             `;
             
             // Add click listener
@@ -4607,6 +4630,12 @@ class AnamaliaViewer {
             option.innerHTML = `
                 <div class="color-picker-circle" style="background-color: ${color.hex}"></div>
                 <div class="color-picker-name">${color.name}</div>
+                <div class="color-hex-row">
+                    <span class="color-hex">${color.hex}</span>
+                    <button class="copy-hex-btn" type="button" data-hex="${color.hex}" title="Copy hex">
+                        <span class="copy-hex-icon" aria-hidden="true">📋</span>
+                    </button>
+                </div>
             `;
             
             // Add click listener
@@ -4682,6 +4711,12 @@ class AnamaliaViewer {
         colorDisplay.innerHTML = `
             <div class="selected-color-circle" style="background-color: ${color.hex}"></div>
             <div class="selected-color-name">${color.name}</div>
+            <div class="color-hex-row">
+                <span class="color-hex">${color.hex}</span>
+                <button class="copy-hex-btn" type="button" data-hex="${color.hex}" title="Copy hex">
+                    <span class="copy-hex-icon" aria-hidden="true">📋</span>
+                </button>
+            </div>
         `;
         
         // Replace placeholder with color display
@@ -4699,6 +4734,36 @@ class AnamaliaViewer {
         removeBtn.onclick = () => {
             this.removeColorFromSlot(slot, type);
         };
+    }
+
+    // Generic delegated handler to copy any hex code
+    setupHexCopyHandler() {
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.classList && e.target.classList.contains('copy-hex-btn')
+                ? e.target
+                : (e.target.closest && e.target.closest('.copy-hex-btn'));
+            if (!btn) return;
+
+            e.stopPropagation();
+            e.preventDefault();
+
+            const hex = btn.getAttribute('data-hex');
+            if (!hex) return;
+
+            try {
+                await navigator.clipboard.writeText(hex);
+                // Provide feedback by swapping icon briefly
+                const original = btn.innerHTML;
+                btn.innerHTML = '<span class="copy-hex-icon" aria-hidden="true">✓</span>';
+                btn.classList.add('copy-success');
+                setTimeout(() => {
+                    btn.innerHTML = original;
+                    btn.classList.remove('copy-success');
+                }, 1200);
+            } catch (err) {
+                console.error('Failed to copy hex:', err);
+            }
+        });
     }
     
     removeColorFromSlot(slot, type) {

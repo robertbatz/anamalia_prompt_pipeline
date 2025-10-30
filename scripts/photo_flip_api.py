@@ -10,9 +10,13 @@ import tempfile
 import json
 from pathlib import Path
 from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
 from PIL import Image
 import io
 from datetime import datetime
+import zipfile
+import uuid
+from rembg import remove
 
 # Google Drive imports
 try:
@@ -29,6 +33,8 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 app = Flask(__name__)
+# Enable CORS for all /api/* routes (frontend served from a different port)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Configure upload settings
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max file size
@@ -269,6 +275,8 @@ def api_info():
     """API information endpoint"""
     endpoints = {
         'POST /api/flip-photo': 'Flip an image horizontally',
+        'POST /api/remove-bg': 'Remove background from a single image (PNG with alpha)',
+        'POST /api/remove-bg-batch': 'Remove background from multiple images (ZIP of PNGs)',
         'GET /api/health': 'Health check',
         'GET /api/info': 'API information'
     }
@@ -288,6 +296,92 @@ def api_info():
         'supported_formats': ['JPEG', 'PNG', 'GIF', 'WebP', 'BMP', 'TIFF'],
         'google_drive_available': GDRIVE_AVAILABLE
     })
+
+@app.route('/api/remove-bg', methods=['POST'])
+def remove_bg_api():
+    """Remove background from a single image and return PNG with alpha"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file uploaded'}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        if not file.content_type.startswith('image/'):
+            return jsonify({'error': 'File must be an image'}), 400
+
+        image_data = file.read()
+        with Image.open(io.BytesIO(image_data)) as img:
+            if img.mode not in ('RGBA', 'RGB'):
+                img = img.convert('RGBA')
+            elif img.mode == 'RGB':
+                img = img.convert('RGBA')
+
+            result = remove(img)
+
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+            result.save(temp_file.name, 'PNG')
+            temp_file.close()
+
+            original_name = Path(file.filename).stem
+            out_name = f"{original_name}_no_bg.png"
+
+            return send_file(
+                temp_file.name,
+                as_attachment=True,
+                download_name=out_name,
+                mimetype='image/png'
+            )
+    except Exception as e:
+        return jsonify({'error': f'Error removing background: {str(e)}'}), 500
+
+@app.route('/api/remove-bg-batch', methods=['POST'])
+def remove_bg_batch_api():
+    """Remove backgrounds from multiple images and return a ZIP of PNGs"""
+    try:
+        files = request.files.getlist('files')
+        if not files:
+            return jsonify({'error': 'No files uploaded'}), 400
+
+        # Create a temp directory to store outputs
+        temp_dir = tempfile.mkdtemp(prefix='remove_bg_')
+        output_paths = []
+
+        for f in files:
+            if f and f.filename and f.mimetype and f.mimetype.startswith('image/'):
+                try:
+                    with Image.open(io.BytesIO(f.read())) as img:
+                        if img.mode not in ('RGBA', 'RGB'):
+                            img = img.convert('RGBA')
+                        elif img.mode == 'RGB':
+                            img = img.convert('RGBA')
+                        result = remove(img)
+
+                        stem = Path(f.filename).stem
+                        out_path = Path(temp_dir) / f"{stem}_no_bg.png"
+                        result.save(out_path, 'PNG')
+                        output_paths.append(out_path)
+                except Exception:
+                    # Skip problematic file but continue processing others
+                    continue
+
+        if not output_paths:
+            return jsonify({'error': 'No valid images processed'}), 400
+
+        # Create zip archive
+        zip_name = Path(temp_dir) / f"removed_background_{uuid.uuid4().hex}.zip"
+        with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for p in output_paths:
+                zipf.write(p, arcname=p.name)
+
+        return send_file(
+            str(zip_name),
+            as_attachment=True,
+            download_name='removed_background.zip',
+            mimetype='application/zip'
+        )
+    except Exception as e:
+        return jsonify({'error': f'Error in batch background removal: {str(e)}'}), 500
 
 if __name__ == '__main__':
     import argparse

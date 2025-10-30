@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Background - Anamalia Tools</title>
+    <link rel="stylesheet" href="styles.css?v=202501241500">
+</head>
+<body>
+    <div class="header">
+        <h1>🪄 Remove Background</h1>
+        <p>Generate transparent PNGs by removing backgrounds from your images</p>
+        <div class="mode-toggle">
+            <a href="index.html" class="mode-btn">🏠 Back to Viewer</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="notice" class="output-log" style="display: none; margin-bottom: 1rem;"></div>
+        <div class="filter-section">
+            <h3>Single Image</h3>
+            <div class="filter-group">
+                <input type="file" id="single-file" accept="image/*">
+                <button id="single-upload-btn" class="btn btn-primary" disabled>Upload & Remove</button>
+                <div id="single-status" class="output-log" style="margin-top: 0.5rem;"></div>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>Batch Images</h3>
+            <div class="filter-group">
+                <input type="file" id="batch-files" accept="image/*" multiple>
+                <button id="batch-upload-btn" class="btn btn-secondary" disabled>Upload Batch & Download ZIP</button>
+                <div id="batch-list" class="output-log" style="margin-top: 0.5rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const API_BASE = 'http://localhost:5000';
+
+    const singleInput = document.getElementById('single-file');
+    const singleBtn = document.getElementById('single-upload-btn');
+    const singleStatus = document.getElementById('single-status');
+
+    const batchInput = document.getElementById('batch-files');
+    const batchBtn = document.getElementById('batch-upload-btn');
+    const batchList = document.getElementById('batch-list');
+
+    singleInput.addEventListener('change', () => {
+        singleBtn.disabled = !singleInput.files || singleInput.files.length === 0;
+        singleStatus.textContent = singleInput.files && singleInput.files[0] ? `Selected: ${singleInput.files[0].name}` : '';
+    });
+
+    batchInput.addEventListener('change', () => {
+        batchBtn.disabled = !batchInput.files || batchInput.files.length === 0;
+        if (batchInput.files && batchInput.files.length) {
+            const names = Array.from(batchInput.files).map(f => `• ${f.name}`).join('\n');
+            batchList.textContent = `Selected files (${batchInput.files.length}):\n${names}`;
+        } else {
+            batchList.textContent = '';
+        }
+    });
+
+    function showPortConflictNote(targetEl) {
+        const msg = [
+          'Possible port 5000 conflict with macOS AirPlay Receiver detected. Option A:',
+          '1) System Settings → AirPlay & Handoff → turn off “AirPlay Receiver”.',
+          '2) Restart API: python3 scripts/photo_flip_api.py --port 5000 --debug',
+          '3) Hard refresh this page (Cmd+Shift+R).'
+        ].join('\n');
+        if (targetEl) {
+            targetEl.style.display = 'block';
+            targetEl.textContent = msg;
+        } else {
+            alert(msg);
+        }
+    }
+
+    async function checkApiHealth() {
+        const notice = document.getElementById('notice');
+        try {
+            const res = await fetch(`${API_BASE}/api/health`, { method: 'GET' });
+            if (!res.ok && res.status === 403) {
+                showPortConflictNote(notice);
+            }
+        } catch (e) {
+            // Network/CORS failure; if using port 5000, likely AirPlay
+            if (API_BASE.includes(':5000')) {
+                showPortConflictNote(notice);
+            }
+        }
+    }
+
+    checkApiHealth();
+
+    singleBtn.addEventListener('click', async () => {
+        const file = singleInput.files && singleInput.files[0];
+        if (!file) return;
+        singleBtn.disabled = true;
+        singleStatus.textContent = 'Processing...';
+        try {
+            const fd = new FormData();
+            fd.append('file', file);
+            const res = await fetch(`${API_BASE}/api/remove-bg`, { method: 'POST', body: fd });
+            if (!res.ok) {
+                if (res.status === 403 && API_BASE.includes(':5000')) {
+                    showPortConflictNote(singleStatus);
+                }
+                throw new Error(`Server returned ${res.status}`);
+            }
+            const blob = await res.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = (file.name.replace(/\.[^.]+$/, '')) + '_no_bg.png';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            singleStatus.textContent = 'Done. Download should begin automatically.';
+        } catch (e) {
+            singleStatus.textContent = `Error: ${e.message}`;
+            if ((e && String(e).includes('Failed to fetch')) && API_BASE.includes(':5000')) {
+                showPortConflictNote(singleStatus);
+            }
+        } finally {
+            singleBtn.disabled = false;
+        }
+    });
+
+    batchBtn.addEventListener('click', async () => {
+        const files = batchInput.files;
+        if (!files || !files.length) return;
+        batchBtn.disabled = true;
+        batchList.textContent = 'Processing batch...';
+        try {
+            const fd = new FormData();
+            Array.from(files).forEach(f => fd.append('files', f));
+            const res = await fetch(`${API_BASE}/api/remove-bg-batch`, { method: 'POST', body: fd });
+            if (!res.ok) {
+                if (res.status === 403 && API_BASE.includes(':5000')) {
+                    showPortConflictNote(batchList);
+                }
+                throw new Error(`Server returned ${res.status}`);
+            }
+            const blob = await res.blob();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'removed_background.zip';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            batchList.textContent = 'Done. ZIP download should begin automatically.';
+        } catch (e) {
+            batchList.textContent = `Error: ${e.message}`;
+            if ((e && String(e).includes('Failed to fetch')) && API_BASE.includes(':5000')) {
+                showPortConflictNote(batchList);
+            }
+        } finally {
+            batchBtn.disabled = false;
+        }
+    });
+    </script>
+</body>
+</html>
+
+
