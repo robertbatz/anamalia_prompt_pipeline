@@ -37,6 +37,7 @@ def serve(port=8080, host='localhost'):
         print(f"🎨 Renders: http://{host}:{port}/renders/")
         print(f"🖼️  Photo Flip Tool: http://{host}:{port}/webviewer/photo_flip.html")
         print(f"🎬 GIF Maker Tool: http://{host}:{port}/webviewer/gif_maker.html")
+        print(f"🔄 Iterative Mode: http://{host}:{port}/webviewer/iterative_mode.html")
         print(f"")
         print(f"🔧 To use Photo Flip & GIF Maker tools:")
         print(f"   1. Start Photo Flip API: python3 scripts/photo_flip_api.py --port 5000")

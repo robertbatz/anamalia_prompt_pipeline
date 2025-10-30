@@ -33,6 +33,7 @@ class AnamaliaViewer {
         this.setupEventListeners();
         this.setupTennerListeners();
         this.setupMasterPaletteListeners();
+        this.setupStyleDirectiveDisplay();
         this.setupInfoModalListeners();
         this.setupDocModalListeners();
         this.setupCompositeModalListeners();
@@ -325,6 +326,12 @@ class AnamaliaViewer {
         const resetFiltersBtn = document.getElementById('reset-filters-btn');
         if (resetFiltersBtn) {
             resetFiltersBtn.addEventListener('click', () => this.resetFilters());
+        }
+        
+        // Style Detail Control Settings toggle
+        const styleDetailToggle = document.getElementById('style-detail-toggle');
+        if (styleDetailToggle) {
+            styleDetailToggle.addEventListener('click', () => this.toggleStyleDetailControls());
         }
         
         // Project management event listeners
@@ -1380,6 +1387,27 @@ class AnamaliaViewer {
         this.updateGridOverlayButton();
     }
     
+    toggleStyleDetailControls() {
+        const content = document.getElementById('style-detail-content');
+        const toggle = document.getElementById('style-detail-toggle');
+        
+        if (content && toggle) {
+            const isHidden = content.style.display === 'none';
+            
+            if (isHidden) {
+                content.style.display = 'block';
+                toggle.classList.add('active');
+                toggle.textContent = 'Hide Details';
+                toggle.title = 'Hide Style Detail Controls';
+            } else {
+                content.style.display = 'none';
+                toggle.classList.remove('active');
+                toggle.textContent = 'Show Details';
+                toggle.title = 'Show Style Detail Controls';
+            }
+        }
+    }
+    
     updateGridOverlay() {
         const renderCards = document.querySelectorAll('.render-card');
         renderCards.forEach(card => {
@@ -1737,12 +1765,12 @@ class AnamaliaViewer {
         const backgroundColors = this.getSelectedBackgroundColors();
         
         if (characterColors.length > 0) {
-            const characterColorNames = characterColors.map(color => color.name).join(' and ');
+            const characterColorNames = characterColors.map(color => `${color.name} (${color.hex})`).join(' and ');
             prompt += ` with ${characterColorNames} fur`;
         }
         
         if (backgroundColors.length > 0) {
-            const backgroundColorNames = backgroundColors.map(color => color.name).join(' and ');
+            const backgroundColorNames = backgroundColors.map(color => `${color.name} (${color.hex})`).join(' and ');
             prompt += ` against a ${backgroundColorNames} background`;
         }
         
@@ -1878,6 +1906,18 @@ class AnamaliaViewer {
         
         if (outputColorSpace !== 'sRGB') {
             prompt += `, ${outputColorSpace} color space`;
+        }
+        
+        // Add Style Directive if selected
+        const styleDirective = this.getFilterValue('assemble-style-directive', 'default');
+        if (styleDirective !== 'default') {
+            const styleDirectiveTexts = {
+                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a Wes Anderson-style stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
+            };
+            
+            if (styleDirectiveTexts[styleDirective]) {
+                prompt += `. ${styleDirectiveTexts[styleDirective]}`;
+            }
         }
         
         prompt += `, 3D stop-motion style, high quality, detailed`;
@@ -2835,6 +2875,19 @@ class AnamaliaViewer {
                     </div>
                 `
             },
+            'assemble-style-directive': {
+                title: 'Style Directive Selection',
+                content: `
+                    <h4>Style Directive for Assembly</h4>
+                    <p>Choose a comprehensive style directive that will be added to your final prompt. This provides detailed artistic direction for the overall aesthetic and mood of your renders.</p>
+                    <ul>
+                        <li><strong>Handcrafted Miniature_Anamalia:</strong> A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a Wes Anderson-style stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>🎨 Style Integration:</strong> The selected style directive will be appended to your final prompt to ensure consistent artistic direction across all generated content.</p>
+                    </div>
+                `
+            },
             'assemble-texture': {
                 title: 'Texture DNA Selection',
                 content: `
@@ -3477,6 +3530,7 @@ class AnamaliaViewer {
             'tenner-3': '',
             'tenner-pose': 'arms_open_welcome',
             'tenner-orientation': 'three_quarter_left',
+            'assemble-style-directive': 'handcrafted_miniature_anamalia',
             'assemble-texture': 'texture_001',
             'assemble-material': 'all',
             'assemble-color-palette': 'anamalia_late_summer',
@@ -4356,6 +4410,44 @@ class AnamaliaViewer {
         this.updateColorPickers();
     }
     
+    setupStyleDirectiveDisplay() {
+        // Style Directive selection listener
+        const styleDirectiveSelect = document.getElementById('assemble-style-directive');
+        if (styleDirectiveSelect) {
+            styleDirectiveSelect.addEventListener('change', () => {
+                this.updateStyleDirectiveDisplay();
+            });
+            
+            // Initialize with current selection
+            this.updateStyleDirectiveDisplay();
+        }
+    }
+    
+    updateStyleDirectiveDisplay() {
+        const styleDirectiveSelect = document.getElementById('assemble-style-directive');
+        const displayDiv = document.getElementById('style-directive-display');
+        const textDiv = document.getElementById('style-directive-text');
+        
+        if (!styleDirectiveSelect || !displayDiv || !textDiv) return;
+        
+        const selectedValue = styleDirectiveSelect.value;
+        
+        if (selectedValue === 'default') {
+            displayDiv.style.display = 'none';
+        } else {
+            const styleDirectiveTexts = {
+                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a Wes Anderson-style stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
+            };
+            
+            if (styleDirectiveTexts[selectedValue]) {
+                textDiv.textContent = styleDirectiveTexts[selectedValue];
+                displayDiv.style.display = 'block';
+            } else {
+                displayDiv.style.display = 'none';
+            }
+        }
+    }
+    
     updateMasterPaletteDisplay() {
         const masterPaletteSelect = document.getElementById('master-palette-select');
         const swatchesContainer = document.getElementById('master-palette-swatches');
@@ -4702,6 +4794,7 @@ class ProjectSettingsManager {
         }
         
         return {
+            styleDirective: document.getElementById('assemble-style-directive').value,
             texture: document.getElementById('assemble-texture').value,
             material: document.getElementById('assemble-material').value,
             paletteMode: paletteMode,
@@ -4773,6 +4866,7 @@ class ProjectSettingsManager {
     }
     
     applyStyleGuideSettings(settings) {
+        if (settings.styleDirective) document.getElementById('assemble-style-directive').value = settings.styleDirective;
         if (settings.texture) document.getElementById('assemble-texture').value = settings.texture;
         if (settings.material) document.getElementById('assemble-material').value = settings.material;
         if (settings.composition) document.getElementById('assemble-composition').value = settings.composition;

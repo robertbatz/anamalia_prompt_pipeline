@@ -47,6 +47,13 @@
                         <div class="tool-menu-desc">Create animated GIFs from multiple images</div>
                     </div>
                 </a>
+                <a href="iterative_mode.html" class="tool-menu-item">
+                    <div class="tool-menu-icon">🔄</div>
+                    <div class="tool-menu-info">
+                        <div class="tool-menu-title">Iterative Mode</div>
+                        <div class="tool-menu-desc">Refine images with structured notes</div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -75,10 +82,13 @@
                 </div>
             </div>
 
-            <!-- Style Guide -->
-            <div class="filter-section">
-                <h3>🎨 Style Guide</h3>
-                <div class="filter-group">
+            <!-- Style Detail Control Settings -->
+            <div class="filter-section" id="style-detail-controls">
+                <div class="section-header">
+                    <h3>🎨 Style Detail Control Settings</h3>
+                    <button id="style-detail-toggle" class="toggle-btn" title="Toggle Style Detail Controls">Show Details</button>
+                </div>
+                <div class="filter-group collapsible-content" id="style-detail-content" style="display: none;">
                     <div>
                         <label for="texture-filter" class="field-label">
                             Texture DNA

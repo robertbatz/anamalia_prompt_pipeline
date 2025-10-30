@@ -47,6 +47,13 @@
                         <div class="tool-menu-desc">Create animated GIFs from multiple images</div>
                     </div>
                 </a>
+                <a href="iterative_mode.html" class="tool-menu-item">
+                    <div class="tool-menu-icon">🔄</div>
+                    <div class="tool-menu-info">
+                        <div class="tool-menu-title">Iterative Mode</div>
+                        <div class="tool-menu-desc">Refine images with structured notes</div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -494,10 +501,44 @@
                 </div>
             </div>
 
-            <!-- Style Guide -->
+            <!-- Style Directive -->
             <div class="filter-section">
-                <h3>🎨 Style Guide</h3>
+                <h3>🎭 Style Directive</h3>
                 <div class="filter-group">
+                    <div>
+                        <label for="assemble-style-directive" class="field-label">
+                            Style Directive
+                            <span class="info-icon" data-field="assemble-style-directive" title="Click for help">?</span>
+                        </label>
+                        <select id="assemble-style-directive">
+                            <option value="default">Default (None)</option>
+                            <option value="handcrafted_miniature_anamalia" selected>Handcrafted Miniature_Anamalia</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Style Directive Text Display -->
+                <div class="style-directive-display" id="style-directive-display" style="display: none;">
+                    <h4>Selected Style Directive Text:</h4>
+                    <div class="style-directive-text" id="style-directive-text">
+                        <!-- Style directive text will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="section-save-controls">
+                    <button class="btn btn-sm btn-success section-save-btn" data-section="style-directive">
+                        💾 Save Style Directive to Project
+                    </button>
+                </div>
+            </div>
+
+            <!-- Style Detail Control Settings -->
+            <div class="filter-section" id="style-detail-controls">
+                <div class="section-header">
+                    <h3>🎨 Style Detail Control Settings</h3>
+                    <button id="style-detail-toggle" class="toggle-btn" title="Toggle Style Detail Controls">Show Details</button>
+                </div>
+                <div class="filter-group collapsible-content" id="style-detail-content" style="display: none;">
                     <div>
                         <label for="assemble-texture" class="field-label">
                             Texture DNA
@@ -534,6 +575,39 @@
                             <option value="hyper-realistic">Hyper-realistic</option>
                             <option value="dollhouse-realism">Dollhouse Realism</option>
                         </select>
+                    </div>
+                    
+                    <div>
+                        <label for="assemble-composition" class="field-label">
+                            Composition
+                            <span class="info-icon" data-field="assemble-composition" title="Click for help">?</span>
+                        </label>
+                        <select id="assemble-composition">
+                            <option value="default">Default (All Compositions)</option>
+                            <option value="all">All Compositions</option>
+                            <option value="miniature">Miniature</option>
+                            <option value="tabletop">Tabletop</option>
+                            <option value="cinematic-depth">Cinematic Depth</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="assemble-tone" class="field-label">
+                            Tone
+                            <span class="info-icon" data-field="assemble-tone" title="Click for help">?</span>
+                        </label>
+                        <select id="assemble-tone">
+                            <option value="default">Default (All Tones)</option>
+                            <option value="all">All Tones</option>
+                            <option value="nostalgic">Nostalgic</option>
+                            <option value="cheerful">Cheerful</option>
+                            <option value="gentle">Gentle</option>
+                            <option value="inviting">Inviting</option>
+                            <option value="whimsical">Whimsical</option>
+                        </select>
+                        <button class="btn btn-sm btn-secondary view-doc-btn" data-doc="vocabulary" style="margin-top: 0.5rem; width: 100%;">
+                            📖 View Doc
+                        </button>
                     </div>
                     
                     <div>
@@ -629,39 +703,6 @@
                                 💾 Save Color Profile to Project
                             </button>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <label for="assemble-composition" class="field-label">
-                            Composition
-                            <span class="info-icon" data-field="assemble-composition" title="Click for help">?</span>
-                        </label>
-                        <select id="assemble-composition">
-                            <option value="default">Default (All Compositions)</option>
-                            <option value="all">All Compositions</option>
-                            <option value="miniature">Miniature</option>
-                            <option value="tabletop">Tabletop</option>
-                            <option value="cinematic-depth">Cinematic Depth</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="assemble-tone" class="field-label">
-                            Tone
-                            <span class="info-icon" data-field="assemble-tone" title="Click for help">?</span>
-                        </label>
-                        <select id="assemble-tone">
-                            <option value="default">Default (All Tones)</option>
-                            <option value="all">All Tones</option>
-                            <option value="nostalgic">Nostalgic</option>
-                            <option value="cheerful">Cheerful</option>
-                            <option value="gentle">Gentle</option>
-                            <option value="inviting">Inviting</option>
-                            <option value="whimsical">Whimsical</option>
-                        </select>
-                        <button class="btn btn-sm btn-secondary view-doc-btn" data-doc="vocabulary" style="margin-top: 0.5rem; width: 100%;">
-                            📖 View Doc
-                        </button>
                     </div>
                     
                     <div>

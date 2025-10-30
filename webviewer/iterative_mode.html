@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iterative Mode - Anamalia Prompt Assembler</title>
+    <link rel="stylesheet" href="styles.css?v=202501241500">
+    <style>
+        /* VIENNALE-Inspired Dark Theme for Iterative Mode Tool */
+        
+        /* Override body styling for dark theme */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #000000, #001a33);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header styling with VIENNALE-inspired design */
+        .header {
+            background: linear-gradient(135deg, #000000, #001a33);
+            color: #00ffff;
+            padding: 2rem 2rem 1rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #00ffff;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .header p {
+            color: #ffffff;
+            opacity: 0.9;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+        
+        .iterative-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(0, 26, 51, 0.1);
+            border-radius: 12px;
+            margin-top: 2rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .upload-area {
+            border: 2px dashed #00ffff;
+            border-radius: 12px;
+            padding: 4rem 3rem;
+            text-align: center;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(0, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .upload-area:hover::before {
+            left: 100%;
+        }
+        
+        .upload-area:hover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.2);
+        }
+        
+        .upload-area.dragover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.15);
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .upload-area h3 {
+            color: #00ffff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .upload-area p {
+            color: #ffffff;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .reference-image-section {
+            display: none;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .reference-image {
+            max-width: 400px;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .template-form {
+            display: none;
+            margin: 2rem 0;
+        }
+        
+        .form-section {
+            background: rgba(0, 26, 51, 0.3);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .form-section h4 {
+            color: #00ffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #ffffff;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(0, 26, 51, 0.5);
+            color: #ffffff;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(0, 26, 51, 0.5);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(0, 26, 51, 0.5);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+        
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        
+        .checkbox-option input[type="checkbox"] {
+            margin-right: 0.5rem;
+            transform: scale(1.2);
+        }
+        
+        .prompt-preview-section {
+            display: none;
+            margin: 2rem 0;
+        }
+        
+        .prompt-preview {
+            background: rgba(0, 26, 51, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .prompt-preview h4 {
+            color: #00ffff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .prompt-text {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 1rem;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #00cccc, #00ffff);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #666666, #888888);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(102, 102, 102, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #777777, #999999);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 102, 102, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #333333;
+            color: #666666;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #00ffff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 6px;
+        }
+        
+        .back-link:hover {
+            background: rgba(0, 255, 255, 0.1);
+            text-decoration: none;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .error-message {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff6b6b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #dc3545;
+            display: none;
+        }
+        
+        .success-message {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #28a745;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+        
+        /* Floating tools with dark theme */
+        .tools-toggle-btn {
+            background: linear-gradient(135deg, #00ffff, #0099cc);
+            color: #000000;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .tools-toggle-btn:hover {
+            background: linear-gradient(135deg, #00cccc, #00ffff);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .tools-menu {
+            background: rgba(0, 26, 51, 0.95);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .tools-menu-header {
+            background: rgba(0, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .tools-menu-header h3 {
+            color: #00ffff;
+        }
+        
+        .tools-close-btn {
+            color: #ffffff;
+        }
+        
+        .tools-close-btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+        
+        .tool-menu-item {
+            color: #ffffff;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-menu-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            transform: translateX(4px);
+        }
+        
+        .tool-menu-title {
+            color: #00ffff;
+        }
+        
+        .tool-menu-desc {
+            color: #cccccc;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-area {
+                padding: 3rem 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .checkbox-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔄 Iterative Mode</h1>
+        <p>Upload a reference image and make structured notes for iterative improvements</p>
+        <a href="index.html" class="back-link">← Back to Main</a>
+        <div class="floating-tools">
+            <button id="tools-toggle" class="tools-toggle-btn" title="Tools Menu">
+                🛠️
+            </button>
+            <div id="tools-menu" class="tools-menu">
+                <div class="tools-menu-header">
+                    <h3>🛠️ Tools</h3>
+                    <button id="tools-close" class="tools-close-btn" title="Close Menu">×</button>
+                </div>
+                <div class="tools-menu-content">
+                    <a href="photo_flip.html" class="tool-menu-item">
+                        <div class="tool-menu-icon">🖼️</div>
+                        <div class="tool-menu-info">
+                            <div class="tool-menu-title">Photo Flip</div>
+                            <div class="tool-menu-desc">Upload and flip images horizontally</div>
+                        </div>
+                    </a>
+                    <a href="gif_maker.html" class="tool-menu-item">
+                        <div class="tool-menu-icon">🎬</div>
+                        <div class="tool-menu-info">
+                            <div class="tool-menu-title">GIF Maker</div>
+                            <div class="tool-menu-desc">Create animated GIFs from multiple images</div>
+                        </div>
+                    </a>
+                    <a href="iterative_mode.html" class="tool-menu-item">
+                        <div class="tool-menu-icon">🔄</div>
+                        <div class="tool-menu-info">
+                            <div class="tool-menu-title">Iterative Mode</div>
+                            <div class="tool-menu-desc">Refine images with structured notes</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="iterative-container">
+        <!-- Image Upload Section -->
+        <div class="upload-area" id="uploadArea">
+            <div>
+                <h3>📁 Drop your reference image here or click to browse</h3>
+                <p>Supports JPG, PNG, GIF, WebP, and other common formats (max 10MB)</p>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+        </div>
+
+        <!-- Reference Image Display -->
+        <div class="reference-image-section" id="referenceImageSection">
+            <h3>📸 Reference Image</h3>
+            <img id="referenceImage" class="reference-image" alt="Reference image">
+        </div>
+
+        <!-- Template Form -->
+        <div class="template-form" id="templateForm">
+            <h2>📝 Iterative Refinement Template</h2>
+            <p>Fill out the sections below to create a structured prompt for image refinement.</p>
+
+            <!-- Additions Section -->
+            <div class="form-section">
+                <h4>➕ Add</h4>
+                <div class="form-group">
+                    <label for="additions">What should be added? (e.g., "proper antelope markings to the tail")</label>
+                    <textarea id="additions" placeholder="Enter additions..."></textarea>
+                </div>
+            </div>
+
+            <!-- Specific Details Section -->
+            <div class="form-section">
+                <h4>✨ Add Specific Details</h4>
+                <div class="form-group">
+                    <label for="specificDetails">Specific details to add (e.g., "slight moisture on mouth and nose for touch of realism")</label>
+                    <textarea id="specificDetails" placeholder="Enter specific details..."></textarea>
+                </div>
+            </div>
+
+            <!-- Remove Section -->
+            <div class="form-section">
+                <h4>➖ Remove</h4>
+                <div class="form-group">
+                    <label for="remove">What should be removed?</label>
+                    <textarea id="remove" placeholder="Enter elements to remove..."></textarea>
+                </div>
+            </div>
+
+            <!-- Pose Adjustments Section -->
+            <div class="form-section">
+                <h4>🎭 Pose Adjustments</h4>
+                <div class="form-group">
+                    <label for="poseAdjustments">Adjustments to pose?</label>
+                    <textarea id="poseAdjustments" placeholder="Enter pose adjustments..."></textarea>
+                </div>
+            </div>
+
+            <!-- Tone Adjustments Section -->
+            <div class="form-section">
+                <h4>🎨 Tone Adjustments</h4>
+                <div class="form-group">
+                    <label for="toneAdjustments">Adjustments to tone (more whimsical, more cheerful, etc.)</label>
+                    <select id="toneAdjustments">
+                        <option value="">Select tone adjustment...</option>
+                        <option value="more_whimsical">More Whimsical</option>
+                        <option value="more_cheerful">More Cheerful</option>
+                        <option value="more_dramatic">More Dramatic</option>
+                        <option value="more_gentle">More Gentle</option>
+                        <option value="more_nostalgic">More Nostalgic</option>
+                        <option value="more_inviting">More Inviting</option>
+                        <option value="custom">Custom Tone</option>
+                    </select>
+                </div>
+                <div class="form-group" id="customToneGroup" style="display: none;">
+                    <label for="customTone">Custom tone description</label>
+                    <input type="text" id="customTone" placeholder="Enter custom tone...">
+                </div>
+            </div>
+
+            <!-- Anthropomorphic Mix Section -->
+            <div class="form-section">
+                <h4>🐾 Anthropomorphic Mix</h4>
+                <div class="form-group">
+                    <label for="anthropomorphicMix">Make specific features more realistic (e.g., "Make the antelope-eyes and antelope-nose and antelope-hooves slightly realistic")</label>
+                    <textarea id="anthropomorphicMix" placeholder="Enter anthropomorphic adjustments..."></textarea>
+                </div>
+            </div>
+
+            <!-- Lighting/Style/Color Adjustments Section -->
+            <div class="form-section">
+                <h4>💡 Lighting, Style, or Color Adjustments</h4>
+                <div class="form-group">
+                    <label for="lightingStyleColor">Adjustments to lighting, style, or color?</label>
+                    <textarea id="lightingStyleColor" placeholder="Enter lighting, style, or color adjustments..."></textarea>
+                </div>
+            </div>
+
+            <!-- Keep As-Is Section -->
+            <div class="form-section">
+                <h4>✅ Keep As-Is</h4>
+                <div class="form-group">
+                    <label>What should remain exactly the same?</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" id="keepBodyHeadProportion">
+                            <span>Body and head proportion</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" id="keepColorPalette">
+                            <span>Color palette and tone</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" id="keepLighting">
+                            <span>Lighting</span>
+                        </label>
+                        <label class="checkbox-option">
+                            <input type="checkbox" id="keepTexture">
+                            <span>Felted-wool-fur-texture</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="keepAsIsCustom">Other elements to keep as-is</label>
+                    <textarea id="keepAsIsCustom" placeholder="Enter other elements to keep exactly the same..."></textarea>
+                </div>
+            </div>
+
+            <!-- Output Specifications Section -->
+            <div class="form-section">
+                <h4>📐 Output Specifications</h4>
+                <div class="form-group">
+                    <label for="outputFormat">File type</label>
+                    <select id="outputFormat">
+                        <option value="PNG">PNG</option>
+                        <option value="JPEG">JPEG</option>
+                        <option value="PNG_with_alpha">PNG with alpha layer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="pixelDimensions">Pixel dimensions</label>
+                    <select id="pixelDimensions">
+                        <option value="1024x1024">1024px x 1024px</option>
+                        <option value="2048x2048">2048px x 2048px</option>
+                        <option value="1536x1536">1536px x 1536px</option>
+                        <option value="custom">Custom dimensions</option>
+                    </select>
+                </div>
+                <div class="form-group" id="customDimensionsGroup" style="display: none;">
+                    <label for="customDimensions">Custom dimensions (e.g., 1920x1080)</label>
+                    <input type="text" id="customDimensions" placeholder="Enter custom dimensions...">
+                </div>
+            </div>
+
+            <!-- Generate Prompt Button -->
+            <div class="action-buttons">
+                <button id="generatePromptBtn" class="btn btn-primary">🚀 Generate Prompt</button>
+                <button id="resetFormBtn" class="btn btn-secondary">🔄 Reset Form</button>
+            </div>
+        </div>
+
+        <!-- Prompt Preview Section -->
+        <div class="prompt-preview-section" id="promptPreviewSection">
+            <h3>📄 Generated Prompt</h3>
+            <div class="prompt-preview">
+                <h4>Iterative Refinement Prompt</h4>
+                <div class="prompt-text" id="promptText"></div>
+                <div class="action-buttons">
+                    <button id="copyPromptBtn" class="btn btn-primary">📋 Copy Prompt</button>
+                    <button id="exportPromptBtn" class="btn btn-secondary">💾 Export to File</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error/Success Messages -->
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+    </div>
+
+    <script>
+        class IterativeModeManager {
+            constructor() {
+                this.uploadArea = document.getElementById('uploadArea');
+                this.fileInput = document.getElementById('fileInput');
+                this.referenceImageSection = document.getElementById('referenceImageSection');
+                this.referenceImage = document.getElementById('referenceImage');
+                this.templateForm = document.getElementById('templateForm');
+                this.promptPreviewSection = document.getElementById('promptPreviewSection');
+                this.promptText = document.getElementById('promptText');
+                this.errorMessage = document.getElementById('errorMessage');
+                this.successMessage = document.getElementById('successMessage');
+                
+                this.referenceImageData = null;
+                this.referenceFileName = null;
+                
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                // Click to upload
+                this.uploadArea.addEventListener('click', () => {
+                    this.fileInput.click();
+                });
+                
+                // File input change
+                this.fileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.handleFile(e.target.files[0]);
+                    }
+                });
+                
+                // Drag and drop
+                this.uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.add('dragover');
+                });
+                
+                this.uploadArea.addEventListener('dragleave', () => {
+                    this.uploadArea.classList.remove('dragover');
+                });
+                
+                this.uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.remove('dragover');
+                    
+                    if (e.dataTransfer.files.length > 0) {
+                        this.handleFile(e.dataTransfer.files[0]);
+                    }
+                });
+                
+                // Tone adjustment dropdown
+                document.getElementById('toneAdjustments').addEventListener('change', (e) => {
+                    const customToneGroup = document.getElementById('customToneGroup');
+                    if (e.target.value === 'custom') {
+                        customToneGroup.style.display = 'block';
+                    } else {
+                        customToneGroup.style.display = 'none';
+                    }
+                });
+                
+                // Pixel dimensions dropdown
+                document.getElementById('pixelDimensions').addEventListener('change', (e) => {
+                    const customDimensionsGroup = document.getElementById('customDimensionsGroup');
+                    if (e.target.value === 'custom') {
+                        customDimensionsGroup.style.display = 'block';
+                    } else {
+                        customDimensionsGroup.style.display = 'none';
+                    }
+                });
+                
+                // Generate prompt button
+                document.getElementById('generatePromptBtn').addEventListener('click', () => {
+                    this.generatePrompt();
+                });
+                
+                // Reset form button
+                document.getElementById('resetFormBtn').addEventListener('click', () => {
+                    this.resetForm();
+                });
+                
+                // Copy prompt button
+                document.getElementById('copyPromptBtn').addEventListener('click', () => {
+                    this.copyPrompt();
+                });
+                
+                // Export prompt button
+                document.getElementById('exportPromptBtn').addEventListener('click', () => {
+                    this.exportPrompt();
+                });
+            }
+            
+            async handleFile(file) {
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    this.showError('Please select a valid image file.');
+                    return;
+                }
+                
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    this.showError('File size too large. Please select an image smaller than 10MB.');
+                    return;
+                }
+                
+                this.hideError();
+                this.hideSuccess();
+                
+                try {
+                    // Store file data
+                    this.referenceImageData = await this.fileToDataURL(file);
+                    this.referenceFileName = file.name;
+                    
+                    // Display reference image
+                    this.referenceImage.src = this.referenceImageData;
+                    this.referenceImageSection.style.display = 'block';
+                    this.templateForm.style.display = 'block';
+                    
+                    // Scroll to form
+                    this.templateForm.scrollIntoView({ behavior: 'smooth' });
+                    
+                    console.log('✅ Image loaded successfully');
+                } catch (error) {
+                    console.error('Error loading image:', error);
+                    this.showError('Error loading image. Please try again.');
+                }
+            }
+            
+            fileToDataURL(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = (e) => reject(e);
+                    reader.readAsDataURL(file);
+                });
+            }
+            
+            generatePrompt() {
+                if (!this.referenceImageData) {
+                    this.showError('Please upload a reference image first.');
+                    return;
+                }
+                
+                // Collect form data
+                const formData = this.collectFormData();
+                
+                // Generate prompt
+                const prompt = this.createPrompt(formData);
+                
+                // Display prompt
+                this.promptText.textContent = prompt;
+                this.promptPreviewSection.style.display = 'block';
+                
+                // Scroll to prompt
+                this.promptPreviewSection.scrollIntoView({ behavior: 'smooth' });
+                
+                this.showSuccess('Prompt generated successfully!');
+            }
+            
+            collectFormData() {
+                const toneAdjustment = document.getElementById('toneAdjustments').value;
+                const customTone = document.getElementById('customTone').value;
+                const pixelDimensions = document.getElementById('pixelDimensions').value;
+                const customDimensions = document.getElementById('customDimensions').value;
+                
+                return {
+                    referenceImage: this.referenceFileName,
+                    additions: document.getElementById('additions').value,
+                    specificDetails: document.getElementById('specificDetails').value,
+                    remove: document.getElementById('remove').value,
+                    poseAdjustments: document.getElementById('poseAdjustments').value,
+                    toneAdjustments: toneAdjustment === 'custom' ? customTone : toneAdjustment,
+                    anthropomorphicMix: document.getElementById('anthropomorphicMix').value,
+                    lightingStyleColor: document.getElementById('lightingStyleColor').value,
+                    keepAsIs: {
+                        bodyHeadProportion: document.getElementById('keepBodyHeadProportion').checked,
+                        colorPalette: document.getElementById('keepColorPalette').checked,
+                        lighting: document.getElementById('keepLighting').checked,
+                        texture: document.getElementById('keepTexture').checked,
+                        custom: document.getElementById('keepAsIsCustom').value
+                    },
+                    outputFormat: document.getElementById('outputFormat').value,
+                    pixelDimensions: pixelDimensions === 'custom' ? customDimensions : pixelDimensions
+                };
+            }
+            
+            createPrompt(data) {
+                let prompt = '';
+
+                // Additions
+                if (data.additions) {
+                    prompt += `- ${data.additions}\n`;
+                }
+
+                // Specific Details
+                if (data.specificDetails) {
+                    prompt += `- ${data.specificDetails}\n`;
+                }
+
+                // Remove
+                if (data.remove) {
+                    prompt += `- ${data.remove}\n`;
+                }
+
+                // Pose Adjustments
+                if (data.poseAdjustments) {
+                    prompt += `- ${data.poseAdjustments}\n`;
+                }
+
+                // Tone Adjustments
+                if (data.toneAdjustments) {
+                    prompt += `- ${data.toneAdjustments}\n`;
+                }
+
+                // Anthropomorphic Mix
+                if (data.anthropomorphicMix) {
+                    prompt += `- ${data.anthropomorphicMix}\n`;
+                }
+
+                // Lighting/Style/Color Adjustments
+                if (data.lightingStyleColor) {
+                    prompt += `- ${data.lightingStyleColor}\n`;
+                }
+
+                // Keep As-Is
+                const keepAsIsItems = [];
+                if (data.keepAsIs.bodyHeadProportion) keepAsIsItems.push('Body and head proportion');
+                if (data.keepAsIs.colorPalette) keepAsIsItems.push('Color palette and tone');
+                if (data.keepAsIs.lighting) keepAsIsItems.push('Lighting');
+                if (data.keepAsIs.texture) keepAsIsItems.push('Felted-wool-fur-texture');
+                if (data.keepAsIs.custom) keepAsIsItems.push(data.keepAsIs.custom);
+
+                if (keepAsIsItems.length > 0) {
+                    keepAsIsItems.forEach(item => {
+                        prompt += `- ${item}\n`;
+                    });
+                }
+
+                // Output Specifications
+                prompt += `- Format: ${data.outputFormat}\n`;
+                prompt += `- Dimensions: ${data.pixelDimensions}\n`;
+                prompt += `- Everything else: Same as reference`;
+
+                return prompt;
+            }
+            
+            copyPrompt() {
+                const promptText = this.promptText.textContent;
+                navigator.clipboard.writeText(promptText).then(() => {
+                    this.showSuccess('Prompt copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy prompt:', err);
+                    this.showError('Failed to copy prompt to clipboard.');
+                });
+            }
+            
+            exportPrompt() {
+                const promptText = this.promptText.textContent;
+                const blob = new Blob([promptText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `iterative_prompt_${Date.now()}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                this.showSuccess('Prompt exported to file!');
+            }
+            
+            resetForm() {
+                // Reset all form fields
+                document.getElementById('additions').value = '';
+                document.getElementById('specificDetails').value = '';
+                document.getElementById('remove').value = '';
+                document.getElementById('poseAdjustments').value = '';
+                document.getElementById('toneAdjustments').value = '';
+                document.getElementById('customTone').value = '';
+                document.getElementById('customToneGroup').style.display = 'none';
+                document.getElementById('anthropomorphicMix').value = '';
+                document.getElementById('lightingStyleColor').value = '';
+                document.getElementById('keepBodyHeadProportion').checked = false;
+                document.getElementById('keepColorPalette').checked = false;
+                document.getElementById('keepLighting').checked = false;
+                document.getElementById('keepTexture').checked = false;
+                document.getElementById('keepAsIsCustom').value = '';
+                document.getElementById('outputFormat').value = 'PNG';
+                document.getElementById('pixelDimensions').value = '1024x1024';
+                document.getElementById('customDimensions').value = '';
+                document.getElementById('customDimensionsGroup').style.display = 'none';
+                
+                // Hide prompt preview
+                this.promptPreviewSection.style.display = 'none';
+                
+                this.showSuccess('Form reset successfully!');
+            }
+            
+            showError(message) {
+                this.errorMessage.textContent = message;
+                this.errorMessage.style.display = 'block';
+                this.hideSuccess();
+            }
+            
+            hideError() {
+                this.errorMessage.style.display = 'none';
+            }
+            
+            showSuccess(message) {
+                this.successMessage.textContent = message;
+                this.successMessage.style.display = 'block';
+                this.hideError();
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    this.hideSuccess();
+                }, 3000);
+            }
+            
+            hideSuccess() {
+                this.successMessage.style.display = 'none';
+            }
+        }
+        
+        // Floating Tools Manager for iterative mode page
+        class FloatingToolsManager {
+            constructor() {
+                this.setupFloatingToolsListeners();
+            }
+            
+            setupFloatingToolsListeners() {
+                // Floating Tools menu toggle
+                const toolsToggle = document.getElementById('tools-toggle');
+                const toolsMenu = document.getElementById('tools-menu');
+                const toolsClose = document.getElementById('tools-close');
+                
+                if (toolsToggle && toolsMenu) {
+                    toolsToggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggleToolsMenu();
+                    });
+                }
+                
+                if (toolsClose && toolsMenu) {
+                    toolsClose.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.closeToolsMenu();
+                    });
+                }
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (toolsMenu && toolsMenu.classList.contains('show') && 
+                        !toolsMenu.contains(e.target) && 
+                        !toolsToggle.contains(e.target)) {
+                        this.closeToolsMenu();
+                    }
+                });
+                
+                // Close menu on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && toolsMenu && toolsMenu.classList.contains('show')) {
+                        this.closeToolsMenu();
+                    }
+                });
+            }
+            
+            toggleToolsMenu() {
+                const toolsMenu = document.getElementById('tools-menu');
+                if (toolsMenu) {
+                    toolsMenu.classList.toggle('show');
+                }
+            }
+            
+            closeToolsMenu() {
+                const toolsMenu = document.getElementById('tools-menu');
+                if (toolsMenu) {
+                    toolsMenu.classList.remove('show');
+                }
+            }
+        }
+        
+        // Initialize the tool when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new IterativeModeManager();
+            new FloatingToolsManager();
+        });
+    </script>
+</body>
+</html>
