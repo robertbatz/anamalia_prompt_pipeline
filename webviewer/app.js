@@ -17,6 +17,15 @@ class AnamaliaViewer {
         this.currentCompositeRender = null;
         this.projectManager = new ProjectSettingsManager();
         
+        // Scene descriptions for display and prompt generation
+        this.sceneDescriptions = {
+            'piazza_v2': 'A miniature cobblestone piazza with classical architecture, featuring weathered stone columns, ornate balconies, and warm terracotta buildings. Soft golden hour lighting creates gentle shadows across the textured cobblestones. The scene has a European village square atmosphere with charming architectural details and natural aging.',
+            'library_v1': 'A cozy miniature library with warm wooden bookshelves, soft reading lamps, and rich mahogany furniture. Warm ambient lighting creates a comfortable, intimate atmosphere. Books with aged leather bindings line the shelves, and a soft carpet covers the wooden floor. The scene evokes a quiet, scholarly environment perfect for contemplation.',
+            'garden_v1': 'A lush miniature garden with vibrant green plants, colorful flowers, and natural organic elements. Soft natural lighting filters through the foliage, creating dappled shadows on the ground. The scene features a variety of textures from smooth leaves to rough bark, creating a peaceful outdoor sanctuary atmosphere.',
+            'greenscreen_v1': 'A miniature stop-motion photography stage with chroma-key green backdrop. Floor: vibrant green (#00FF00) matte surface. Wall: vibrant green (#00FF00) matte surface. 90-degree junction visible. Character maintains felted wool texture with natural contact shadows falling on green floor.',
+            'felted_wool_empty_stage': 'A miniature stop-motion photography stage with a soft felt-covered floor and a muted blue-gray felt wall forming a right-angle corner. Warm, directional late-afternoon light coming from the front-left at a 45° angle, with a gentle soft fill from the right. Subtle, natural shadows fall on the floor and wall, giving a cozy studio atmosphere. Lighting mimics Kodak Portra 400 color warmth — soft highlights, warm midtones, and delicate falloff. The background and floor meet seamlessly, creating a contained diorama feel. Shot on a 35mm lens at eye level, with fine-grain film texture and gentle contrast.'
+        };
+        
         this.init();
     }
     
@@ -336,6 +345,9 @@ class AnamaliaViewer {
         
         // Project management event listeners
         this.setupProjectManagementListeners();
+        
+        // Scene description display
+        this.setupSceneDescriptionDisplay();
     }
     
     setupFloatingToolsListeners() {
@@ -592,6 +604,51 @@ class AnamaliaViewer {
             tapeMarkingsSection.style.display = 'block';
         } else {
             tapeMarkingsSection.style.display = 'none';
+        }
+    }
+    
+    setupSceneDescriptionDisplay() {
+        // Scene description display for assemble mode
+        const assembleSceneSelect = document.getElementById('assemble-scene');
+        if (assembleSceneSelect) {
+            assembleSceneSelect.addEventListener('change', (e) => {
+                this.updateSceneDescription('assemble', e.target.value);
+            });
+            // Initialize with current selection
+            this.updateSceneDescription('assemble', assembleSceneSelect.value);
+        }
+        
+        // Scene description display for browse mode
+        const browseSceneSelect = document.getElementById('scene-filter');
+        if (browseSceneSelect) {
+            browseSceneSelect.addEventListener('change', (e) => {
+                this.updateSceneDescription('browse', e.target.value);
+            });
+            // Initialize with current selection
+            this.updateSceneDescription('browse', browseSceneSelect.value);
+        }
+    }
+    
+    updateSceneDescription(mode, sceneValue) {
+        const descriptionId = mode === 'assemble' ? 'assemble-scene-description' : 'browse-scene-description';
+        const descriptionElement = document.getElementById(descriptionId);
+        
+        if (!descriptionElement) return;
+        
+        // Find the text element within the description container
+        const textElement = descriptionElement.querySelector('.scene-description-text');
+        if (!textElement) return;
+        
+        if (sceneValue && sceneValue !== 'none' && sceneValue !== 'all' && sceneValue !== 'default') {
+            const description = this.sceneDescriptions[sceneValue];
+            if (description) {
+                textElement.textContent = description;
+                descriptionElement.style.display = 'block';
+            } else {
+                descriptionElement.style.display = 'none';
+            }
+        } else {
+            descriptionElement.style.display = 'none';
         }
     }
     
@@ -1531,7 +1588,8 @@ class AnamaliaViewer {
         const sceneManual = document.getElementById('assemble-scene-manual')?.value.trim();
         const scene = sceneManual || this.getFilterValue('assemble-scene', 'piazza_v2');
         const lighting = this.getFilterValue('assemble-lighting', 'lighting_001');
-        const wardrobe = this.getFilterValue('assemble-wardrobe', 'none');
+        const wardrobeManual = document.getElementById('assemble-wardrobe-manual')?.value.trim();
+        const wardrobe = wardrobeManual || this.getFilterValue('assemble-wardrobe', 'none');
         const props = this.getFilterValue('assemble-props', 'none');
         const count = document.getElementById('assemble-count').value;
         const outputDir = document.getElementById('assemble-output').value;
@@ -1647,7 +1705,8 @@ class AnamaliaViewer {
         const camera = this.getFilterValue('assemble-camera', 'camera_001');
         // Get tripod height from camera mapping (auto-synced)
         const tripodHeight = this.cameraHeightMapping[camera] || '1.0';
-        const wardrobe = this.getFilterValue('assemble-wardrobe', 'none');
+        const wardrobeManual = document.getElementById('assemble-wardrobe-manual')?.value.trim();
+        const wardrobe = wardrobeManual || this.getFilterValue('assemble-wardrobe', 'none');
         const props = this.getFilterValue('assemble-props', 'none');
         
         // Output parameters
@@ -1712,7 +1771,13 @@ class AnamaliaViewer {
                     prompt += `. White T-mark tape at center stage position. Yellow spike tape strips marking character positions. Subtle reference marks at stage corners. Tape markings appear as physical elements on green floor`;
                 }
             } else {
-                prompt += ` at a ${scene.replace('_', ' ')}`;
+                // Use detailed scene description if available
+                const sceneDescription = this.sceneDescriptions[scene];
+                if (sceneDescription) {
+                    prompt += ` in ${sceneDescription}`;
+                } else {
+                    prompt += ` at a ${scene.replace('_', ' ')}`;
+                }
             }
         }
         
@@ -1912,7 +1977,7 @@ class AnamaliaViewer {
         const styleDirective = this.getFilterValue('assemble-style-directive', 'default');
         if (styleDirective !== 'default') {
             const styleDirectiveTexts = {
-                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a Wes Anderson-style stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
+                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
             };
             
             if (styleDirectiveTexts[styleDirective]) {
@@ -2612,9 +2677,8 @@ class AnamaliaViewer {
                     <h4>Available Scenes</h4>
                     <p>Scenes define the environment and setting where characters are placed. Each scene has unique architectural and atmospheric characteristics.</p>
                     <ul>
-                        <li><strong>Piazza v2:</strong> Outdoor cobblestone square with classical architecture</li>
-                        <li><strong>Library v1:</strong> Cozy indoor space with books, warm lighting</li>
-                        <li><strong>Garden v1:</strong> Natural outdoor setting with plants and organic elements</li>
+                        <li><strong>Green Screen v1:</strong> Professional green screen setup for compositing</li>
+                        <li><strong>Felted Wool Empty Stage:</strong> Clean minimalist stage for character focus</li>
                     </ul>
                     <div class="highlight">
                         <p><strong>🏛️ Tip:</strong> Scenes work best when paired with appropriate lighting - outdoor scenes with natural light, indoor scenes with ambient lighting.</p>
@@ -2881,7 +2945,7 @@ class AnamaliaViewer {
                     <h4>Style Directive for Assembly</h4>
                     <p>Choose a comprehensive style directive that will be added to your final prompt. This provides detailed artistic direction for the overall aesthetic and mood of your renders.</p>
                     <ul>
-                        <li><strong>Handcrafted Miniature_Anamalia:</strong> A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a Wes Anderson-style stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.</li>
+                        <li><strong>Handcrafted Miniature_Anamalia:</strong> A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.</li>
                     </ul>
                     <div class="highlight">
                         <p><strong>🎨 Style Integration:</strong> The selected style directive will be appended to your final prompt to ensure consistent artistic direction across all generated content.</p>
@@ -3058,10 +3122,8 @@ class AnamaliaViewer {
                     <h4>Scene Environment</h4>
                     <p>Select the environment where your characters will be placed. Each scene has unique architectural and atmospheric characteristics that influence the overall mood.</p>
                     <ul>
-                        <li><strong>All Scenes:</strong> Let the system choose appropriate scenes</li>
-                        <li><strong>Piazza v2:</strong> Outdoor cobblestone square with classical architecture</li>
-                        <li><strong>Library v1:</strong> Cozy indoor space with books and warm lighting</li>
-                        <li><strong>Garden v1:</strong> Natural outdoor setting with plants and organic elements</li>
+                        <li><strong>Green Screen v1:</strong> Professional green screen setup for compositing</li>
+                        <li><strong>Felted Wool Empty Stage:</strong> Clean minimalist stage for character focus</li>
                     </ul>
                     <div class="highlight">
                         <p><strong>🏛️ Environment Matching:</strong> Choose scenes that complement your lighting selection - outdoor scenes with natural light, indoor scenes with ambient lighting.</p>
@@ -3115,6 +3177,23 @@ class AnamaliaViewer {
                     </ul>
                     <div class="highlight">
                         <p><strong>👔 Character Design:</strong> Wardrobe choices should reflect the character's role and personality in the story you want to tell.</p>
+                    </div>
+                `
+            },
+            'assemble-wardrobe-manual': {
+                title: 'Manual Wardrobe Entry',
+                content: `
+                    <h4>Custom Wardrobe Description</h4>
+                    <p>Enter a custom wardrobe description to create unique clothing and accessories for your character. This overrides the preset wardrobe selection.</p>
+                    <p><strong>Examples:</strong></p>
+                    <ul>
+                        <li>"wearing a red scarf and blue mittens"</li>
+                        <li>"dressed in a vintage leather jacket"</li>
+                        <li>"wearing a flower crown and denim overalls"</li>
+                        <li>"sporting a monocle and bow tie"</li>
+                    </ul>
+                    <div class="highlight">
+                        <p><strong>💡 Pro Tip:</strong> Be specific about materials, colors, and style to get the best results. The manual entry will take priority over the dropdown selection.</p>
                     </div>
                 `
             },
@@ -4436,7 +4515,7 @@ class AnamaliaViewer {
             displayDiv.style.display = 'none';
         } else {
             const styleDirectiveTexts = {
-                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a Wes Anderson-style stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
+                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
             };
             
             if (styleDirectiveTexts[selectedValue]) {
@@ -4841,6 +4920,7 @@ class ProjectSettingsManager {
     collectWardrobeSettings() {
         return {
             wardrobe: document.getElementById('assemble-wardrobe').value,
+            wardrobeManual: document.getElementById('assemble-wardrobe-manual').value,
             props: document.getElementById('assemble-props').value
         };
     }
@@ -4940,6 +5020,7 @@ class ProjectSettingsManager {
     
     applyWardrobeSettings(settings) {
         if (settings.wardrobe) document.getElementById('assemble-wardrobe').value = settings.wardrobe;
+        if (settings.wardrobeManual) document.getElementById('assemble-wardrobe-manual').value = settings.wardrobeManual;
         if (settings.props) document.getElementById('assemble-props').value = settings.props;
     }
     

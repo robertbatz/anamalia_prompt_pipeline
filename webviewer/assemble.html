@@ -59,11 +59,6 @@
     </div>
 
     <div class="container">
-        <!-- Statistics -->
-        <div id="stats" class="stats">
-            <!-- Stats will be populated by JavaScript -->
-        </div>
-
         <!-- Assemble Mode Interface -->
         <div id="assemble-mode" class="assemble-mode">
             <div class="assemble-header">
@@ -119,114 +114,6 @@
                 </div>
             </div>
 
-            <!-- Output Parameters -->
-            <div class="filter-section">
-                <h3>📐 Output Parameters</h3>
-                <div class="filter-group">
-                    <div>
-                        <label for="output-width" class="field-label">
-                            Width (pixels)
-                            <span class="info-icon" data-field="output-width" title="Click for help">?</span>
-                        </label>
-                        <select id="output-width">
-                            <option value="default">Default (1024px)</option>
-                            <option value="512">512px</option>
-                            <option value="768">768px</option>
-                            <option value="1024" selected>1024px</option>
-                            <option value="1280">1280px</option>
-                            <option value="1536">1536px</option>
-                            <option value="2048">2048px</option>
-                            <option value="custom">Custom Width</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="output-height" class="field-label">
-                            Height (pixels)
-                            <span class="info-icon" data-field="output-height" title="Click for help">?</span>
-                        </label>
-                        <select id="output-height">
-                            <option value="default">Default (1024px)</option>
-                            <option value="512">512px</option>
-                            <option value="768">768px</option>
-                            <option value="1024" selected>1024px</option>
-                            <option value="1280">1280px</option>
-                            <option value="1536">1536px</option>
-                            <option value="2048">2048px</option>
-                            <option value="custom">Custom Height</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="filter-group">
-                    <div>
-                        <label for="output-aspect-ratio" class="field-label">
-                            Aspect Ratio
-                            <span class="info-icon" data-field="output-aspect-ratio" title="Click for help">?</span>
-                        </label>
-                        <select id="output-aspect-ratio">
-                            <option value="default">Default (16:9)</option>
-                            <option value="1:1">Square (1:1)</option>
-                            <option value="4:3">Standard (4:3)</option>
-                            <option value="16:9" selected>Widescreen (16:9)</option>
-                            <option value="3:2">Classic (3:2)</option>
-                            <option value="21:9">Ultrawide (21:9)</option>
-                            <option value="9:16">Portrait (9:16)</option>
-                            <option value="custom">Custom Ratio</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="output-quality" class="field-label">
-                            Quality
-                            <span class="info-icon" data-field="output-quality" title="Click for help">?</span>
-                        </label>
-                        <select id="output-quality">
-                            <option value="default">Default (High)</option>
-                            <option value="standard">Standard</option>
-                            <option value="high" selected>High</option>
-                            <option value="ultra">Ultra</option>
-                            <option value="lossless">Lossless</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="filter-group">
-                    <div>
-                        <label for="output-format" class="field-label">
-                            Output Format
-                            <span class="info-icon" data-field="output-format" title="Click for help">?</span>
-                        </label>
-                        <select id="output-format">
-                            <option value="default">Default (PNG)</option>
-                            <option value="png" selected>PNG</option>
-                            <option value="jpg">JPEG</option>
-                            <option value="webp">WebP</option>
-                            <option value="tiff">TIFF</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label for="output-color-space" class="field-label">
-                            Color Space
-                            <span class="info-icon" data-field="output-color-space" title="Click for help">?</span>
-                        </label>
-                        <select id="output-color-space">
-                            <option value="default">Default (sRGB)</option>
-                            <option value="sRGB" selected>sRGB</option>
-                            <option value="AdobeRGB">Adobe RGB</option>
-                            <option value="P3">P3</option>
-                            <option value="Rec2020">Rec. 2020</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="section-save-controls">
-                    <button class="btn btn-sm btn-success section-save-btn" data-section="output-parameters">
-                        💾 Save Output Parameters to Project
-                    </button>
-                </div>
-            </div>
             
             <!-- Tenner System -->
             <div class="filter-section">
@@ -428,6 +315,7 @@
                             </label>
                             <select id="tenner-pose">
                                 <option value="default">Default (Arms Open Welcome)</option>
+                                <option value="standing_t_pose">Standing in T-Pose</option>
                                 <option value="arms_open_welcome">Arms Open Welcome</option>
                                 <option value="seated_contemplative">Seated Contemplative</option>
                                 <option value="pointing_forward">Pointing Forward</option>
@@ -721,9 +609,9 @@
                 </div>
             </div>
 
-            <!-- Scene Guide -->
+            <!-- Scene / Stage Guide -->
             <div class="filter-section">
-                <h3>🏞️ Scene Guide</h3>
+                <h3>🏞️ Scene / Stage Guide</h3>
                 <div class="filter-group">
                     <div>
                         <label for="assemble-scene" class="field-label">
@@ -731,12 +619,9 @@
                             <span class="info-icon" data-field="assemble-scene" title="Click for help">?</span>
                         </label>
                         <select id="assemble-scene">
-                            <option value="default">Default (Piazza v2)</option>
-                            <option value="all">All Scenes</option>
-                            <option value="piazza_v2">Piazza v2</option>
-                            <option value="library_v1">Library v1</option>
-                            <option value="garden_v1">Garden v1</option>
+                            <option value="none">None</option>
                             <option value="greenscreen_v1">Green Screen v1</option>
+                            <option value="felted_wool_empty_stage">Felted Wool Empty Stage</option>
                         </select>
                     </div>
                     
@@ -747,6 +632,17 @@
                         </label>
                         <input type="text" id="assemble-scene-manual" placeholder="Enter custom scene description..." />
                     </div>
+                </div>
+                
+                <!-- Scene Description Display - Full Width -->
+                <div id="assemble-scene-description" class="scene-description" style="display: none;">
+                    <div class="scene-description-header">
+                        <strong>📝 Scene Description:</strong>
+                    </div>
+                    <div class="scene-description-text">
+                        <!-- Scene description will be populated by JavaScript -->
+                    </div>
+                </div>
                     
                     <!-- Tape Markings Toggle (only visible when green-screen is selected) -->
                     <div id="tape-markings-section" class="tape-markings-section" style="display: none;">
@@ -783,6 +679,14 @@
                             <option value="cowboy_hat">Cowboy Hat</option>
                             <option value="spectacles">Spectacles</option>
                         </select>
+                    </div>
+                    
+                    <div>
+                        <label for="assemble-wardrobe-manual" class="field-label">
+                            Manual Wardrobe Entry
+                            <span class="info-icon" data-field="assemble-wardrobe-manual" title="Click for help">?</span>
+                        </label>
+                        <input type="text" id="assemble-wardrobe-manual" placeholder="Enter custom wardrobe description..." />
                     </div>
                     
                     <div>
@@ -913,6 +817,115 @@
                 <div class="section-save-controls">
                     <button class="btn btn-sm btn-success section-save-btn" data-section="mood-lighting">
                         💾 Save Mood & Lighting to Project
+                    </button>
+                </div>
+            </div>
+
+            <!-- Output Parameters -->
+            <div class="filter-section">
+                <h3>📐 Output Parameters</h3>
+                <div class="filter-group">
+                    <div>
+                        <label for="output-width" class="field-label">
+                            Width (pixels)
+                            <span class="info-icon" data-field="output-width" title="Click for help">?</span>
+                        </label>
+                        <select id="output-width">
+                            <option value="default">Default (1024px)</option>
+                            <option value="512">512px</option>
+                            <option value="768">768px</option>
+                            <option value="1024" selected>1024px</option>
+                            <option value="1280">1280px</option>
+                            <option value="1536">1536px</option>
+                            <option value="2048">2048px</option>
+                            <option value="custom">Custom Width</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="output-height" class="field-label">
+                            Height (pixels)
+                            <span class="info-icon" data-field="output-height" title="Click for help">?</span>
+                        </label>
+                        <select id="output-height">
+                            <option value="default">Default (1024px)</option>
+                            <option value="512">512px</option>
+                            <option value="768">768px</option>
+                            <option value="1024" selected>1024px</option>
+                            <option value="1280">1280px</option>
+                            <option value="1536">1536px</option>
+                            <option value="2048">2048px</option>
+                            <option value="custom">Custom Height</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <div>
+                        <label for="output-aspect-ratio" class="field-label">
+                            Aspect Ratio
+                            <span class="info-icon" data-field="output-aspect-ratio" title="Click for help">?</span>
+                        </label>
+                        <select id="output-aspect-ratio">
+                            <option value="default">Default (16:9)</option>
+                            <option value="1:1">Square (1:1)</option>
+                            <option value="4:3">Standard (4:3)</option>
+                            <option value="16:9" selected>Widescreen (16:9)</option>
+                            <option value="3:2">Classic (3:2)</option>
+                            <option value="21:9">Ultrawide (21:9)</option>
+                            <option value="9:16">Portrait (9:16)</option>
+                            <option value="custom">Custom Ratio</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="output-quality" class="field-label">
+                            Quality
+                            <span class="info-icon" data-field="output-quality" title="Click for help">?</span>
+                        </label>
+                        <select id="output-quality">
+                            <option value="default">Default (High)</option>
+                            <option value="standard">Standard</option>
+                            <option value="high" selected>High</option>
+                            <option value="ultra">Ultra</option>
+                            <option value="lossless">Lossless</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <div>
+                        <label for="output-format" class="field-label">
+                            Output Format
+                            <span class="info-icon" data-field="output-format" title="Click for help">?</span>
+                        </label>
+                        <select id="output-format">
+                            <option value="default">Default (PNG)</option>
+                            <option value="png" selected>PNG</option>
+                            <option value="jpg">JPEG</option>
+                            <option value="webp">WebP</option>
+                            <option value="tiff">TIFF</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="output-color-space" class="field-label">
+                            Color Space
+                            <span class="info-icon" data-field="output-color-space" title="Click for help">?</span>
+                        </label>
+                        <select id="output-color-space">
+                            <option value="default">Default (sRGB)</option>
+                            <option value="sRGB" selected>sRGB</option>
+                            <option value="AdobeRGB">Adobe RGB</option>
+                            <option value="P3">P3</option>
+                            <option value="Rec2020">Rec. 2020</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="section-save-controls">
+                    <button class="btn btn-sm btn-success section-save-btn" data-section="output-parameters">
+                        💾 Save Output Parameters to Project
                     </button>
                 </div>
             </div>

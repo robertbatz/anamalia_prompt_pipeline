@@ -193,9 +193,9 @@
                 </div>
             </div>
 
-            <!-- Scene Guide -->
+            <!-- Scene / Stage Guide -->
             <div class="filter-section">
-                <h3>🏞️ Scene Guide</h3>
+                <h3>🏞️ Scene / Stage Guide</h3>
                 <div class="filter-group">
                     <div>
                         <label for="scene-filter" class="field-label">
@@ -203,12 +203,9 @@
                             <span class="info-icon" data-field="scene-filter" title="Click for help">?</span>
                         </label>
                         <select id="scene-filter">
-                            <option value="default">Default (All Scenes)</option>
-                            <option value="all">All Scenes</option>
-                            <option value="piazza_v2">Piazza v2</option>
-                            <option value="library_v1">Library v1</option>
-                            <option value="garden_v1">Garden v1</option>
+                            <option value="none">None</option>
                             <option value="greenscreen_v1">Green Screen v1</option>
+                            <option value="felted_wool_empty_stage">Felted Wool Empty Stage</option>
                         </select>
                     </div>
                     
@@ -219,6 +216,17 @@
                         </label>
                         <input type="text" id="scene-filter-manual" placeholder="Enter custom scene description..." />
                     </div>
+                </div>
+                
+                <!-- Scene Description Display - Full Width -->
+                <div id="browse-scene-description" class="scene-description" style="display: none;">
+                    <div class="scene-description-header">
+                        <strong>📝 Scene Description:</strong>
+                    </div>
+                    <div class="scene-description-text">
+                        <!-- Scene description will be populated by JavaScript -->
+                    </div>
+                </div>
                     
                     <div>
                         <label for="props-filter" class="field-label">
