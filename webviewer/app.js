@@ -1986,13 +1986,22 @@ class AnamaliaViewer {
         
         // Add Style Directive if selected
         const styleDirective = this.getFilterValue('assemble-style-directive', 'default');
-        if (styleDirective !== 'default') {
-            const styleDirectiveTexts = {
-                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
-            };
-            
-            if (styleDirectiveTexts[styleDirective]) {
-                prompt += `. ${styleDirectiveTexts[styleDirective]}`;
+        if (styleDirective && styleDirective !== 'default') {
+            if (styleDirective === 'custom') {
+                // Use manual entry for custom
+                const styleDirectiveManual = document.getElementById('assemble-style-directive-manual')?.value.trim();
+                if (styleDirectiveManual) {
+                    prompt += `. ${styleDirectiveManual}`;
+                }
+            } else {
+                // Use predefined style directive
+                const styleDirectiveTexts = {
+                    'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
+                };
+                
+                if (styleDirectiveTexts[styleDirective]) {
+                    prompt += `. ${styleDirectiveTexts[styleDirective]}`;
+                }
             }
         }
         
@@ -4505,16 +4514,45 @@ class AnamaliaViewer {
         const styleDirectiveSelect = document.getElementById('assemble-style-directive');
         if (styleDirectiveSelect) {
             styleDirectiveSelect.addEventListener('change', () => {
+                this.updateStyleDirectiveManualVisibility();
                 this.updateStyleDirectiveDisplay();
             });
             
             // Initialize with current selection
+            this.updateStyleDirectiveManualVisibility();
             this.updateStyleDirectiveDisplay();
+        }
+        
+        // Style Directive manual entry listener
+        const styleDirectiveManual = document.getElementById('assemble-style-directive-manual');
+        if (styleDirectiveManual) {
+            styleDirectiveManual.addEventListener('input', () => {
+                this.updateStyleDirectiveDisplay();
+            });
+        }
+    }
+    
+    updateStyleDirectiveManualVisibility() {
+        const styleDirectiveSelect = document.getElementById('assemble-style-directive');
+        const manualContainer = document.getElementById('style-directive-manual-container');
+        
+        if (styleDirectiveSelect && manualContainer) {
+            if (styleDirectiveSelect.value === 'custom') {
+                manualContainer.style.display = 'block';
+            } else {
+                manualContainer.style.display = 'none';
+                // Clear manual entry when switching away from custom
+                const manualInput = document.getElementById('assemble-style-directive-manual');
+                if (manualInput) {
+                    manualInput.value = '';
+                }
+            }
         }
     }
     
     updateStyleDirectiveDisplay() {
         const styleDirectiveSelect = document.getElementById('assemble-style-directive');
+        const styleDirectiveManual = document.getElementById('assemble-style-directive-manual');
         const displayDiv = document.getElementById('style-directive-display');
         const textDiv = document.getElementById('style-directive-text');
         
@@ -4524,7 +4562,17 @@ class AnamaliaViewer {
         
         if (selectedValue === 'default') {
             displayDiv.style.display = 'none';
+        } else if (selectedValue === 'custom') {
+            // For custom, show manual entry if it has content
+            const manualValue = styleDirectiveManual?.value.trim();
+            if (manualValue) {
+                textDiv.textContent = manualValue;
+                displayDiv.style.display = 'block';
+            } else {
+                displayDiv.style.display = 'none';
+            }
         } else {
+            // For predefined options, show the predefined text
             const styleDirectiveTexts = {
                 'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
             };
@@ -4939,6 +4987,7 @@ class ProjectSettingsManager {
         
         return {
             styleDirective: document.getElementById('assemble-style-directive').value,
+            styleDirectiveManual: document.getElementById('assemble-style-directive-manual')?.value || '',
             texture: document.getElementById('assemble-texture').value,
             material: document.getElementById('assemble-material').value,
             paletteMode: paletteMode,
@@ -4948,6 +4997,13 @@ class ProjectSettingsManager {
             customPalette: null, // TODO: Handle custom palette data
             composition: document.getElementById('assemble-composition').value,
             tone: document.getElementById('assemble-tone').value
+        };
+    }
+    
+    collectStyleDirectiveSettings() {
+        return {
+            styleDirective: document.getElementById('assemble-style-directive').value,
+            styleDirectiveManual: document.getElementById('assemble-style-directive-manual')?.value || ''
         };
     }
     
@@ -5011,7 +5067,21 @@ class ProjectSettingsManager {
     }
     
     applyStyleGuideSettings(settings) {
-        if (settings.styleDirective) document.getElementById('assemble-style-directive').value = settings.styleDirective;
+        // If manual entry exists, use custom option
+        if (settings.styleDirectiveManual !== undefined && settings.styleDirectiveManual.trim()) {
+            document.getElementById('assemble-style-directive').value = 'custom';
+        } else if (settings.styleDirective) {
+            // Otherwise use the specified style directive
+            document.getElementById('assemble-style-directive').value = settings.styleDirective;
+        }
+        // Update visibility before setting manual value
+        this.updateStyleDirectiveManualVisibility();
+        if (settings.styleDirectiveManual !== undefined) {
+            const manualInput = document.getElementById('assemble-style-directive-manual');
+            if (manualInput) manualInput.value = settings.styleDirectiveManual || '';
+            // Update display when manual entry is restored
+            this.updateStyleDirectiveDisplay();
+        }
         if (settings.texture) document.getElementById('assemble-texture').value = settings.texture;
         if (settings.material) document.getElementById('assemble-material').value = settings.material;
         if (settings.composition) document.getElementById('assemble-composition').value = settings.composition;
@@ -5073,6 +5143,24 @@ class ProjectSettingsManager {
         if (settings.singleColor && document.getElementById('assemble-color-single')) {
             document.getElementById('assemble-color-single').value = settings.singleColor;
         }
+    }
+    
+    applyStyleDirectiveSettings(settings) {
+        // If manual entry exists, use custom option
+        if (settings.styleDirectiveManual !== undefined && settings.styleDirectiveManual.trim()) {
+            document.getElementById('assemble-style-directive').value = 'custom';
+        } else if (settings.styleDirective) {
+            // Otherwise use the specified style directive
+            document.getElementById('assemble-style-directive').value = settings.styleDirective;
+        }
+        // Update visibility before setting manual value
+        this.updateStyleDirectiveManualVisibility();
+        if (settings.styleDirectiveManual !== undefined) {
+            const manualInput = document.getElementById('assemble-style-directive-manual');
+            if (manualInput) manualInput.value = settings.styleDirectiveManual || '';
+        }
+        // Update display after applying settings
+        this.updateStyleDirectiveDisplay();
     }
     
     applySceneGuideSettings(settings) {
@@ -5164,6 +5252,7 @@ class ProjectSettingsManager {
         this.applyOutputParametersSettings(settings.outputParameters);
         this.applyStyleGuideSettings(settings.styleGuide);
         this.applyColorProfileSettings(settings.colorProfiles);
+        if (settings.styleDirective) this.applyStyleDirectiveSettings(settings.styleDirective);
         this.applySceneGuideSettings(settings.sceneGuide);
         this.applyWardrobeSettings(settings.wardrobe);
         this.applyMoodLightingSettings(settings.moodLighting);
@@ -5286,6 +5375,7 @@ class ProjectSettingsManager {
         return {
             outputParameters: this.collectOutputParametersSettings(),
             styleGuide: this.collectStyleGuideSettings(),
+            styleDirective: this.collectStyleDirectiveSettings(),
             colorProfiles: this.collectColorProfileSettings(),
             sceneGuide: this.collectSceneGuideSettings(),
             wardrobe: this.collectWardrobeSettings(),
@@ -5299,6 +5389,7 @@ class ProjectSettingsManager {
         const sectionMapping = {
             'output-parameters': 'outputParameters',
             'style-guide': 'styleGuide',
+            'style-directive': 'styleDirective',
             'color-profiles': 'colorProfiles',
             'scene-guide': 'sceneGuide',
             'wardrobe': 'wardrobe',

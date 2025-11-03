@@ -40,6 +40,13 @@
                         <div class="tool-menu-desc">Upload and flip images horizontally</div>
                     </div>
                 </a>
+                <a href="rotate_prompt.html" class="tool-menu-item">
+                    <div class="tool-menu-icon">🧭</div>
+                    <div class="tool-menu-info">
+                        <div class="tool-menu-title">Rotation Prompt Tool</div>
+                        <div class="tool-menu-desc">Visualize Y-rotation and export LLM JSON</div>
+                    </div>
+                </a>
                 <a href="gif_maker.html" class="tool-menu-item">
                     <div class="tool-menu-icon">🎬</div>
                     <div class="tool-menu-info">
@@ -408,7 +415,16 @@
                         <select id="assemble-style-directive">
                             <option value="default">Default (None)</option>
                             <option value="handcrafted_miniature_anamalia" selected>Handcrafted Miniature_Anamalia</option>
+                            <option value="custom">Custom</option>
                         </select>
+                    </div>
+                    
+                    <div id="style-directive-manual-container" style="display: none;">
+                        <label for="assemble-style-directive-manual" class="field-label">
+                            Manual Style Directive Entry
+                            <span class="info-icon" data-field="assemble-style-directive-manual" title="Click for help">?</span>
+                        </label>
+                        <input type="text" id="assemble-style-directive-manual" placeholder="Enter custom style directive..." />
                     </div>
                 </div>
                 
