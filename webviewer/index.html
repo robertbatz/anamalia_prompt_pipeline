@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anamalia Prompt Assembler - Web Viewer</title>
-    <link rel="stylesheet" href="styles.css?v=202501241500">
+    <link rel="stylesheet" href="styles.css?v=202501241600">
     <script>
         // Redirect to assemble page by default
         window.location.href = 'assemble.html';
@@ -65,6 +65,13 @@
                         <div class="tool-menu-desc">Upload and flip images horizontally</div>
                     </div>
                 </a>
+                <a href="rotate_prompt.html" class="tool-menu-item">
+                    <div class="tool-menu-icon">🧭</div>
+                    <div class="tool-menu-info">
+                        <div class="tool-menu-title">Rotation Prompt Tool</div>
+                        <div class="tool-menu-desc">Visualize Y-rotation and export LLM-ready JSON</div>
+                    </div>
+                </a>
                 <a href="gif_maker.html" class="tool-menu-item">
                     <div class="tool-menu-icon">🎬</div>
                     <div class="tool-menu-info">
@@ -84,6 +91,13 @@
                     <div class="tool-menu-info">
                         <div class="tool-menu-title">Iterative Mode</div>
                         <div class="tool-menu-desc">Refine images with structured notes</div>
+                    </div>
+                </a>
+                <a href="anthropomorphic_prompting.html" class="tool-menu-item">
+                    <div class="tool-menu-icon">🎭</div>
+                    <div class="tool-menu-info">
+                        <div class="tool-menu-title">Anthropomorphic Prompting</div>
+                        <div class="tool-menu-desc">Fine-tune anthropomorphic character settings</div>
                     </div>
                 </a>
             </div>
@@ -275,6 +289,7 @@
                         <select id="scene-filter">
                             <option value="none">None</option>
                             <option value="felted_wool_empty_stage">Felted Wool Empty Stage</option>
+                            <option value="transparent_alpha_layer">Transparent / Alpha layer</option>
                         </select>
                     </div>
                     
@@ -588,8 +603,11 @@
             
             <!-- Tenner System -->
             <div class="filter-section">
-                <h3>🎯 Tenner System</h3>
-                
+                <div class="section-header">
+                    <h3>🎯 Tenner System</h3>
+                    <button id="tenner-section-toggle" class="toggle-btn" title="Toggle Tenner System">Show</button>
+                </div>
+                <div class="collapsible-content hidden" id="tenner-section-content">
                 <!-- Generation Mode Toggle -->
                 <div class="tenner-mode-toggle">
                     <label>Generation Mode:</label>
@@ -824,6 +842,7 @@
                             <input type="text" id="custom-pose-text" placeholder="Enter custom pose description (e.g., 'sitting on a chair reading a book')" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
 
@@ -1200,6 +1219,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=202501241400"></script>
+    <script src="app.js?v=202501241600"></script>
 </body>
 </html>

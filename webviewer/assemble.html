@@ -68,6 +68,13 @@
                         <div class="tool-menu-desc">Refine images with structured notes</div>
                     </div>
                 </a>
+                <a href="anthropomorphic_prompting.html" class="tool-menu-item">
+                    <div class="tool-menu-icon">🎭</div>
+                    <div class="tool-menu-info">
+                        <div class="tool-menu-title">Anthropomorphic Prompting</div>
+                        <div class="tool-menu-desc">Fine-tune anthropomorphic character settings</div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -91,6 +98,7 @@
                         </label>
                         <select id="project-default">
                             <option value="anamalia-password" selected>Anamalia Password</option>
+                            <option value="anamalia-pin">Anamalia_PIN</option>
                         </select>
                     </div>
                     
@@ -131,8 +139,11 @@
             
             <!-- Tenner System -->
             <div class="filter-section">
-                <h3>🎯 Tenner System</h3>
-                
+                <div class="section-header">
+                    <h3>🎯 Tenner System</h3>
+                    <button id="tenner-section-toggle" class="toggle-btn" title="Toggle Tenner System">Show</button>
+                </div>
+                <div class="collapsible-content hidden" id="tenner-section-content">
                 <!-- Generation Mode Toggle -->
                 <div class="tenner-mode-toggle">
                     <label>Generation Mode:</label>
@@ -401,11 +412,16 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
             <!-- Style Directive -->
             <div class="filter-section">
-                <h3>🎭 Style Directive</h3>
+                <div class="section-header">
+                    <h3>🎭 Style Directive</h3>
+                    <button id="style-directive-section-toggle" class="toggle-btn" title="Toggle Style Directive">Show</button>
+                </div>
+                <div class="collapsible-content hidden" id="style-directive-section-content">
                 <div class="filter-group">
                     <div>
                         <label for="assemble-style-directive" class="field-label">
@@ -441,6 +457,7 @@
                         💾 Save Style Directive to Project
                     </button>
                 </div>
+                </div>
             </div>
 
             <!-- Style Detail Control Settings -->
@@ -449,7 +466,7 @@
                     <h3>🎨 Style Detail Control Settings</h3>
                     <button id="style-detail-toggle" class="toggle-btn" title="Toggle Style Detail Controls">Show Details</button>
                 </div>
-                <div class="filter-group collapsible-content" id="style-detail-content" style="display: none;">
+                <div class="filter-group collapsible-content hidden" id="style-detail-content">
                     <div>
                         <label for="assemble-texture" class="field-label">
                             Texture DNA
@@ -623,18 +640,22 @@
                         </label>
                         <input type="text" id="assemble-tone-manual" placeholder="Enter custom tone description..." />
                     </div>
-                </div>
-                
-                <div class="section-save-controls">
-                    <button class="btn btn-sm btn-success section-save-btn" data-section="style-guide">
-                        💾 Save Style Guide to Project
-                    </button>
+                    
+                    <div class="section-save-controls">
+                        <button class="btn btn-sm btn-success section-save-btn" data-section="style-guide">
+                            💾 Save Style Guide to Project
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Scene / Stage Guide -->
             <div class="filter-section">
-                <h3>🏞️ Scene / Stage Guide</h3>
+                <div class="section-header">
+                    <h3>🏞️ Scene / Stage Guide</h3>
+                    <button id="scene-guide-section-toggle" class="toggle-btn" title="Toggle Scene / Stage Guide">Show</button>
+                </div>
+                <div class="collapsible-content hidden" id="scene-guide-section-content">
                 <div class="filter-group">
                     <div>
                         <label for="assemble-scene" class="field-label">
@@ -677,18 +698,22 @@
                             <p class="field-help">Add T-marks and spike tape for alignment reference</p>
                         </div>
                     </div>
-                </div>
                 
-                <div class="section-save-controls">
-                    <button class="btn btn-sm btn-success section-save-btn" data-section="scene-guide">
-                        💾 Save Scene Guide to Project
-                    </button>
+                    <div class="section-save-controls">
+                        <button class="btn btn-sm btn-success section-save-btn" data-section="scene-guide">
+                            💾 Save Scene Guide to Project
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- Wardrobe -->
             <div class="filter-section">
-                <h3>👕 Wardrobe</h3>
+                <div class="section-header">
+                    <h3>👕 Wardrobe</h3>
+                    <button id="wardrobe-section-toggle" class="toggle-btn" title="Toggle Wardrobe">Show</button>
+                </div>
+                <div class="collapsible-content hidden" id="wardrobe-section-content">
                 <div class="filter-group">
                     <div>
                         <label for="assemble-wardrobe" class="field-label">
@@ -732,11 +757,16 @@
                         💾 Save Wardrobe to Project
                     </button>
                 </div>
+                </div>
             </div>
 
             <!-- Mood & Lighting -->
             <div class="filter-section">
-                <h3>💡 Mood & Lighting</h3>
+                <div class="section-header">
+                    <h3>💡 Mood & Lighting</h3>
+                    <button id="mood-lighting-section-toggle" class="toggle-btn" title="Toggle Mood & Lighting">Show</button>
+                </div>
+                <div class="collapsible-content hidden" id="mood-lighting-section-content">
                 <div class="filter-group">
                     <div>
                         <label for="assemble-lighting" class="field-label">
@@ -842,11 +872,16 @@
                         💾 Save Mood & Lighting to Project
                     </button>
                 </div>
+                </div>
             </div>
 
             <!-- Output Parameters -->
             <div class="filter-section">
-                <h3>📐 Output Parameters</h3>
+                <div class="section-header">
+                    <h3>📐 Output Parameters</h3>
+                    <button id="output-parameters-section-toggle" class="toggle-btn" title="Toggle Output Parameters">Show</button>
+                </div>
+                <div class="collapsible-content hidden" id="output-parameters-section-content">
                 <div class="filter-group">
                     <div>
                         <label for="output-width" class="field-label">
@@ -950,6 +985,7 @@
                     <button class="btn btn-sm btn-success section-save-btn" data-section="output-parameters">
                         💾 Save Output Parameters to Project
                     </button>
+                </div>
                 </div>
             </div>
             

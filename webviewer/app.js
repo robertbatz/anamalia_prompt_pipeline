@@ -344,6 +344,72 @@ class AnamaliaViewer {
             styleDetailToggle.addEventListener('click', () => this.toggleStyleDetailControls());
         }
         
+        // Tenner Section toggle
+        const tennerSectionToggle = document.getElementById('tenner-section-toggle');
+        if (tennerSectionToggle) {
+            tennerSectionToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleTennerSection();
+            });
+            console.log('✅ Tenner section toggle listener attached');
+        } else {
+            console.warn('⚠️ Tenner section toggle button not found');
+        }
+        
+        // Style Directive Section toggle
+        const styleDirectiveSectionToggle = document.getElementById('style-directive-section-toggle');
+        if (styleDirectiveSectionToggle) {
+            styleDirectiveSectionToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleStyleDirectiveSection();
+            });
+            console.log('✅ Style Directive section toggle listener attached');
+        } else {
+            console.warn('⚠️ Style Directive section toggle button not found');
+        }
+        
+        // Scene Guide Section toggle
+        const sceneGuideSectionToggle = document.getElementById('scene-guide-section-toggle');
+        if (sceneGuideSectionToggle) {
+            sceneGuideSectionToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleSceneGuideSection();
+            });
+        }
+        
+        // Wardrobe Section toggle
+        const wardrobeSectionToggle = document.getElementById('wardrobe-section-toggle');
+        if (wardrobeSectionToggle) {
+            wardrobeSectionToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleWardrobeSection();
+            });
+        }
+        
+        // Mood & Lighting Section toggle
+        const moodLightingSectionToggle = document.getElementById('mood-lighting-section-toggle');
+        if (moodLightingSectionToggle) {
+            moodLightingSectionToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleMoodLightingSection();
+            });
+        }
+        
+        // Output Parameters Section toggle
+        const outputParametersSectionToggle = document.getElementById('output-parameters-section-toggle');
+        if (outputParametersSectionToggle) {
+            outputParametersSectionToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleOutputParametersSection();
+            });
+        }
+        
         // Project management event listeners
         this.setupProjectManagementListeners();
         
@@ -1460,18 +1526,238 @@ class AnamaliaViewer {
         const toggle = document.getElementById('style-detail-toggle');
         
         if (content && toggle) {
-            const isHidden = content.style.display === 'none';
+            const isHidden = content.classList.contains('hidden');
             
             if (isHidden) {
-                content.style.display = 'block';
+                content.classList.remove('hidden');
                 toggle.classList.add('active');
                 toggle.textContent = 'Hide Details';
                 toggle.title = 'Hide Style Detail Controls';
+                
+                // Show save buttons within this section
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = '';
+                });
             } else {
-                content.style.display = 'none';
+                content.classList.add('hidden');
                 toggle.classList.remove('active');
                 toggle.textContent = 'Show Details';
                 toggle.title = 'Show Style Detail Controls';
+                
+                // Hide save buttons within this section
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    toggleTennerSection() {
+        const content = document.getElementById('tenner-section-content');
+        const toggle = document.getElementById('tenner-section-toggle');
+        
+        if (content && toggle) {
+            // Toggle the hidden class
+            const isHidden = content.classList.contains('hidden');
+            
+            if (isHidden) {
+                content.classList.remove('hidden');
+                content.style.display = 'block';
+                toggle.classList.add('active');
+                toggle.textContent = 'Hide';
+                toggle.title = 'Hide Tenner System';
+                
+                // Show save buttons within this section
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = '';
+                });
+            } else {
+                content.classList.add('hidden');
+                content.style.display = 'none';
+                toggle.classList.remove('active');
+                toggle.textContent = 'Show';
+                toggle.title = 'Show Tenner System';
+                
+                // Hide save buttons within this section
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = 'none';
+                });
+            }
+        } else {
+            console.warn('⚠️ Tenner section toggle: content or toggle button not found', { content, toggle });
+        }
+    }
+    
+    toggleStyleDirectiveSection() {
+        const content = document.getElementById('style-directive-section-content');
+        const toggle = document.getElementById('style-directive-section-toggle');
+        
+        if (content && toggle) {
+            // Toggle the hidden class
+            const isHidden = content.classList.contains('hidden');
+            
+            if (isHidden) {
+                content.classList.remove('hidden');
+                content.style.display = 'block';
+                toggle.classList.add('active');
+                toggle.textContent = 'Hide';
+                toggle.title = 'Hide Style Directive';
+                
+                // Show save buttons within this section
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = '';
+                });
+            } else {
+                content.classList.add('hidden');
+                content.style.display = 'none';
+                toggle.classList.remove('active');
+                toggle.textContent = 'Show';
+                toggle.title = 'Show Style Directive';
+                
+                // Hide save buttons within this section
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = 'none';
+                });
+            }
+        } else {
+            console.warn('⚠️ Style Directive section toggle: content or toggle button not found', { content, toggle });
+        }
+    }
+    
+    toggleSceneGuideSection() {
+        const content = document.getElementById('scene-guide-section-content');
+        const toggle = document.getElementById('scene-guide-section-toggle');
+        
+        if (content && toggle) {
+            const isHidden = content.classList.contains('hidden');
+            
+            if (isHidden) {
+                content.classList.remove('hidden');
+                content.style.display = 'block';
+                toggle.classList.add('active');
+                toggle.textContent = 'Hide';
+                toggle.title = 'Hide Scene / Stage Guide';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = '';
+                });
+            } else {
+                content.classList.add('hidden');
+                content.style.display = 'none';
+                toggle.classList.remove('active');
+                toggle.textContent = 'Show';
+                toggle.title = 'Show Scene / Stage Guide';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    toggleWardrobeSection() {
+        const content = document.getElementById('wardrobe-section-content');
+        const toggle = document.getElementById('wardrobe-section-toggle');
+        
+        if (content && toggle) {
+            const isHidden = content.classList.contains('hidden');
+            
+            if (isHidden) {
+                content.classList.remove('hidden');
+                content.style.display = 'block';
+                toggle.classList.add('active');
+                toggle.textContent = 'Hide';
+                toggle.title = 'Hide Wardrobe';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = '';
+                });
+            } else {
+                content.classList.add('hidden');
+                content.style.display = 'none';
+                toggle.classList.remove('active');
+                toggle.textContent = 'Show';
+                toggle.title = 'Show Wardrobe';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    toggleMoodLightingSection() {
+        const content = document.getElementById('mood-lighting-section-content');
+        const toggle = document.getElementById('mood-lighting-section-toggle');
+        
+        if (content && toggle) {
+            const isHidden = content.classList.contains('hidden');
+            
+            if (isHidden) {
+                content.classList.remove('hidden');
+                content.style.display = 'block';
+                toggle.classList.add('active');
+                toggle.textContent = 'Hide';
+                toggle.title = 'Hide Mood & Lighting';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = '';
+                });
+            } else {
+                content.classList.add('hidden');
+                content.style.display = 'none';
+                toggle.classList.remove('active');
+                toggle.textContent = 'Show';
+                toggle.title = 'Show Mood & Lighting';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = 'none';
+                });
+            }
+        }
+    }
+    
+    toggleOutputParametersSection() {
+        const content = document.getElementById('output-parameters-section-content');
+        const toggle = document.getElementById('output-parameters-section-toggle');
+        
+        if (content && toggle) {
+            const isHidden = content.classList.contains('hidden');
+            
+            if (isHidden) {
+                content.classList.remove('hidden');
+                content.style.display = 'block';
+                toggle.classList.add('active');
+                toggle.textContent = 'Hide';
+                toggle.title = 'Hide Output Parameters';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = '';
+                });
+            } else {
+                content.classList.add('hidden');
+                content.style.display = 'none';
+                toggle.classList.remove('active');
+                toggle.textContent = 'Show';
+                toggle.title = 'Show Output Parameters';
+                
+                const saveControls = content.querySelectorAll('.section-save-controls');
+                saveControls.forEach(control => {
+                    control.style.display = 'none';
+                });
             }
         }
     }
@@ -1996,7 +2282,7 @@ class AnamaliaViewer {
             } else {
                 // Use predefined style directive
                 const styleDirectiveTexts = {
-                    'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
+                    'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation.\n\nMood & Tone: The setting evokes a nostalgic, storybook-like atmosphere. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.\n\nCharacters: anthropomorphic animal characters\n\nInterior Scenes: characters depicted in cozy, vintage interiors Environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls.\n\nOutdoor Scenes: Uncluttered outdoor stage-like sets.\n\nTexture:\nEach element of the scene is physically textured — e.g woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass.\n\nLighting: The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon.\n\nColor palette: The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues.\n\nMisc: the environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls.\n\nCamera: The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood.'
                 };
                 
                 if (styleDirectiveTexts[styleDirective]) {
@@ -2965,7 +3251,7 @@ class AnamaliaViewer {
                     <h4>Style Directive for Assembly</h4>
                     <p>Choose a comprehensive style directive that will be added to your final prompt. This provides detailed artistic direction for the overall aesthetic and mood of your renders.</p>
                     <ul>
-                        <li><strong>Handcrafted Miniature_Anamalia:</strong> A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.</li>
+                        <li><strong>Handcrafted Miniature_Anamalia:</strong> A richly detailed, handcrafted miniature scene in the style of a stop-motion animation.\n\nMood & Tone: The setting evokes a nostalgic, storybook-like atmosphere. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.\n\nCharacters: anthropomorphic animal characters\n\nInterior Scenes: characters depicted in cozy, vintage interiors Environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls.\n\nOutdoor Scenes: Uncluttered outdoor stage-like sets.\n\nTexture:\nEach element of the scene is physically textured — e.g woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass.\n\nLighting: The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon.\n\nColor palette: The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues.\n\nMisc: the environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls.\n\nCamera: The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood.</li>
                     </ul>
                     <div class="highlight">
                         <p><strong>🎨 Style Integration:</strong> The selected style directive will be appended to your final prompt to ensure consistent artistic direction across all generated content.</p>
@@ -4574,7 +4860,7 @@ class AnamaliaViewer {
         } else {
             // For predefined options, show the predefined text
             const styleDirectiveTexts = {
-                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation. The setting evokes a nostalgic, storybook-like atmosphere with anthropomorphic animal characters depicted in cozy, vintage interiors. Each element of the scene is physically textured — woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass. The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon. The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues. The environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls. The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.'
+                'handcrafted_miniature_anamalia': 'A richly detailed, handcrafted miniature scene in the style of a stop-motion animation.\n\nMood & Tone: The setting evokes a nostalgic, storybook-like atmosphere. The tone is whimsical yet grounded — warm, intelligent, and emotionally quiet.\n\nCharacters: anthropomorphic animal characters\n\nInterior Scenes: characters depicted in cozy, vintage interiors Environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls.\n\nOutdoor Scenes: Uncluttered outdoor stage-like sets.\n\nTexture:\nEach element of the scene is physically textured — e.g woolen fabrics, hand-stitched clothing, felt furniture, and carefully aged props made of paper, wood, and brass.\n\nLighting: The lighting is soft, naturalistic, and diffused, as if coming from a nearby window during early morning or late afternoon.\n\nColor palette: The palette consists of muted earth tones — moss green, warm browns, aged ivory, soft reds, and dusty blues.\n\nMisc: the environment is intimate and thoughtfully cluttered with miniature everyday objects: books, rugs, teacups, worn armchairs, lace doilies, firewood, candles, and wallpapered walls.\n\nCamera: The camera framing mimics diorama photography or a still from a  stop-motion film, with balanced composition and a gentle, contemplative mood.'
             };
             
             if (styleDirectiveTexts[selectedValue]) {
