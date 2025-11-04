@@ -29,6 +29,20 @@ Google Sheets → CSVs → Validation → JSON Assets → Prompt Assembly → Re
 - **CLI Layer**: Python scripts for validation, conversion, and assembly
 - **Output Layer**: Prompt bundles, renders, and web viewer
 
+### Technology Stack
+
+**Core Data & CLI Layer**
+
+Python 3.8+ command-line tooling orchestrates validation, conversion, and prompt assembly, leaning on libraries like pandas, Click, jsonschema, NumPy, and requests for structured data processing and schema enforcement.
+
+**Rendering & Quality Control**
+
+The rendering toolchain uses PyTorch, TorchVision, Hugging Face Diffusers/Transformers, Accelerate, and Safetensors, with optional Pillow and ImageHash for drift detection and visual regression support.
+
+**Web Viewer & Delivery**
+
+A Node.js-powered static web viewer is built with React 18, React Router, and Vite for bundling, with npm scripts for development, build, and preview flows.
+
 ## 📁 Repository Structure
 
 ```
